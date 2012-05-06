@@ -80,7 +80,6 @@ import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
-import org.apache.wiki.ui.admin.AdminBeanManager;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
@@ -300,8 +299,6 @@ public class WikiEngine implements Serializable {
 
 	/** Each engine has its own workflow manager. */
 	private WorkflowManager m_workflowMgr = null;
-
-	private AdminBeanManager m_adminBeanManager;
 
 	/** Stores wikiengine attributes. */
 	private Map<String, Object> m_attributes = Collections
@@ -661,9 +658,6 @@ public class WikiEngine implements Serializable {
 
 			m_templateManager = (TemplateManager) ClassUtil.getMappedObject(
 					TemplateManager.class.getName(), this, props);
-
-			m_adminBeanManager = (AdminBeanManager) ClassUtil.getMappedObject(
-					AdminBeanManager.class.getName(), this);
 
 			// Since we want to use a page filters initilize() method
 			// as a engine startup listener where we can initialize global event
@@ -2348,16 +2342,6 @@ public class WikiEngine implements Serializable {
 	 */
 	public GroupManager getGroupManager() {
 		return m_groupManager;
-	}
-
-	/**
-	 * Returns the current AdminBeanManager.
-	 * 
-	 * @return The current AdminBeanManager
-	 * @since 2.6
-	 */
-	public AdminBeanManager getAdminBeanManager() {
-		return m_adminBeanManager;
 	}
 
 	/**
