@@ -3,7 +3,6 @@
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
-<%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>

@@ -244,7 +244,9 @@ public class RenderingManager implements WikiEventListener, InternalModule
                 //  This check is needed in case the different filters have actually
                 //  changed the page data.
                 //  FIXME: Figure out a faster method
-                if( pagedata.equals(doc.getPageData()) )
+                // 2012/05/07 : sb : added doc != null
+                // FIX 
+                if( doc != null && pagedata.equals(doc.getPageData()) )
                 {
                     if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pageid );
                     return doc;
