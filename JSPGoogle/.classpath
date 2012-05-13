@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="srcprovider"/>
-	<classpathentry kind="src" path="srccache"/>
 	<classpathentry kind="src" path="srcstub"/>
 	<classpathentry kind="src" path="srcwiki"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>

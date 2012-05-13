@@ -136,6 +136,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		private final String text;
 
 		EPutPageText(WikiPage page, String text) {
+			super(true);
 			this.page = page;
 			this.text = text;
 		}
@@ -182,7 +183,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 				if (page.getLastModified() != null) {
 					page.setLastModified(page.getLastModified());
 				} else {
-					page.setLastModified(new Date());
+					page.setLastModified(getToday());
 				}
 
 				debug("Create page version: " + page);
@@ -192,7 +193,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 				ret.ent.setChangetime(page.getLastModified());
 			} else {
 				// Update page
-				ret.ent.setChangetime(new Date());
+				ret.ent.setChangetime(getToday());
 				ret.ent.setVersion(version);
 			}
 			ret.ent.setName(page.getName());
@@ -221,6 +222,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		boolean result;
 
 		PageExists(String page) {
+			super(false);
 			this.page = page;
 		}
 
@@ -245,6 +247,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		Collection res;
 
 		FindPages(QueryItem[] query) {
+			super(false);
 			this.query = query;
 		}
 
@@ -306,6 +309,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		RetResult re;
 
 		GetPageInfo(String page, int version) {
+			super(false);
 			this.page = page;
 			this.version = version;
 		}
@@ -356,6 +360,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	private class GetAllPages extends ECommand {
 
 		Collection<WikiPage> li;
+		
+		GetAllPages() {
+			super(false);
+		}
 
 		@Override
 		protected void runCommand(EntityManager eF) {
@@ -382,6 +390,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		Collection res;
 
 		GetAllChangesSince(Date date) {
+			super(false);
 			this.date = date;
 		}
 
@@ -416,6 +425,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		List res;
 
 		GetVersionHistory(String page) {
+			super(false);
 			this.page = page;
 		}
 
@@ -449,6 +459,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		String res;
 
 		GetPageText(String page, int version) {
+			super(false);
 			this.page = page;
 			this.version = version;
 		}
@@ -479,6 +490,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		String res;
 
 		DeleteVersion(String page, int version) {
+			super(true);
 			this.page = page;
 			this.version = version;
 		}
@@ -489,10 +501,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 			if (re.ent == null) {
 				return;
 			}
-			EntityTransaction tran = eF.getTransaction();
-			tran.begin();
 			eF.remove(re.ent);
-			tran.commit();
 		}
 	}
 
@@ -508,6 +517,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		private final String pageName;
 
 		DeletePage(String pageName) {
+			super(false);
 			this.pageName = pageName;
 		}
 
@@ -536,6 +546,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		private final String to;
 
 		MovePage(String from, String to) {
+			super(false);
 			this.from = from;
 			this.to = to;
 		}

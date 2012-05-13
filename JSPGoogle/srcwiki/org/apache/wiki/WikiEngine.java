@@ -193,8 +193,6 @@ public class WikiEngine implements Serializable {
 	 */
 	public static final String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
-	private static final String PROP_GOOGLE_APP_ENGINE = "jspwiki.google.app.engine";
-
 	/** Should the user info be saved with the page data as well? */
 	private boolean m_saveUserInfo = true;
 
@@ -305,12 +303,6 @@ public class WikiEngine implements Serializable {
 			.synchronizedMap(new HashMap<String, Object>());
 
 	private IObjectPersist m_objectPersist = null;
-
-	private boolean googleAppEngine = false;
-
-	public boolean isGoogleAppEngine() {
-		return googleAppEngine;
-	}
 
 	/**
 	 * Gets a WikiEngine related to this servlet. Since this method is only
@@ -488,8 +480,6 @@ public class WikiEngine implements Serializable {
 			c_configured = true;
 		}
 
-		googleAppEngine = props.getProperty(PROP_GOOGLE_APP_ENGINE) != null;
-
 		log.info("*******************************************");
 		log.info(Release.APPNAME + " " + Release.getVersionString()
 				+ " starting. Whee!");
@@ -526,7 +516,10 @@ public class WikiEngine implements Serializable {
 		//
 		// Create and find the default working directory.
 		//
-		if (!isGoogleAppEngine()) {
+		
+		// TODO: do something
+		// does not work in Google App Engine
+		if (false) {
 			m_workDir = TextUtil.getStringProperty(props, PROP_WORKDIR, null);
 
 			if (m_workDir == null) {

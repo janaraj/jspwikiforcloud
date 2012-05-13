@@ -8,6 +8,10 @@
         <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
         <class>org.apache.wiki.providers.jpa.WikiPageEnt</class>
         <class>org.apache.wiki.providers.jpa.WikiObject</class>        
+        <class>org.apache.wiki.providers.jpa.GroupEnt</class>        
+        <class>org.apache.wiki.providers.jpa.GroupMemberEnt</class>        
+        <class>org.apache.wiki.providers.jpa.UserEnt</class>        
+        <class>org.apache.wiki.providers.jpa.RoleEnt</class>        
         <exclude-unlisted-classes>true</exclude-unlisted-classes>        
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>

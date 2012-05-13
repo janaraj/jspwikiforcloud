@@ -105,7 +105,9 @@ public final class WatchDog
         m_engine    = engine;
         m_watchable = watch;
 
-        if (engine.isGoogleAppEngine()) { return; }
+        // TODO: do something
+        // Threads do not work in Google App Engine environment
+        if (true) { return; }
         synchronized(this.getClass())
         {
             if( c_watcherThread == null )

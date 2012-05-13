@@ -12,9 +12,13 @@
  */
 package org.apache.wiki.providers;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.providers.jpa.EMF;
 
 /**
@@ -26,18 +30,46 @@ import org.apache.wiki.providers.jpa.EMF;
  */
 abstract class ECommand {
 
+	private final Logger log = Logger.getLogger(ECommand.class);
+	private final boolean transact;
+
+	protected ECommand(boolean transact) {
+		this.transact = transact;
+	}
+
 	protected abstract void runCommand(EntityManager eF);
 
 	/**
 	 * Encloses command. Simple gets EntityManager, run command and close.
 	 */
-	void runCommand() {
+	private void prunCommand(boolean transact) {
 		EntityManager eF = EMF.getF();
+		EntityTransaction tran = null;
+		if (transact) {
+			tran = eF.getTransaction();
+			tran.begin();
+		}
 		try {
 			runCommand(eF);
+			if (tran != null) {
+				tran.commit();
+			}
+		} catch (Exception e) {
+			log.fatal("JPA command", e);
+			if (tran != null) {
+				tran.rollback();
+			}
 		} finally {
 			eF.close();
 		}
+	}
+
+	void runCommand() {
+		prunCommand(transact);
+	}
+
+	protected Date getToday() {
+		return new Date();
 	}
 
 	/**

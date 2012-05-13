@@ -1,6 +1,8 @@
 package com.opensymphony.oscache.base;
 
-public class CacheEntry {
+import java.io.Serializable;
+
+public class CacheEntry implements Serializable {
 	
     public Object getContent() {
     	return null;

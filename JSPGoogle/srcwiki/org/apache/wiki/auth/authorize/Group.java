@@ -90,7 +90,7 @@ public class Group
      * @param name the name of the group
      * @param wiki the wiki the group belongs to
      */
-    protected Group( String name, String wiki )
+    public Group( String name, String wiki )
     {
         m_name = name;
         m_wiki = wiki;

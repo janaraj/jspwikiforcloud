@@ -1,8 +1,10 @@
 package com.opensymphony.oscache.base;
 
+import java.io.Serializable;
+
 import com.opensymphony.oscache.base.events.CacheEventListener;
 
-public class Cache {
+public class Cache implements Serializable {
 
 	public Cache(boolean useMemoryCaching, boolean unlimitedDiskCache,
 			boolean overflowPersistence, boolean blocking,

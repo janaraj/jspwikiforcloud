@@ -63,7 +63,6 @@
             // If this fails, we're kind of screwed, because we already emailed.
             profile.setPassword( randomPassword );
             userDatabase.save( profile );
-            userDatabase.commit();
             success = true;
         }
         catch( NoSuchPrincipalException e )

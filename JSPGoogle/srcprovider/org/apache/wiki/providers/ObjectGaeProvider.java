@@ -72,7 +72,8 @@ public class ObjectGaeProvider implements IObjectPersist {
 		 * @param pName
 		 *            pName data parameter
 		 */
-		EObject(String pDir, String pName) {
+		EObject(boolean transact, String pDir, String pName) {
+			super(transact);
 			this.pDir = pDir;
 			this.pName = pName;
 		}
@@ -108,7 +109,7 @@ public class ObjectGaeProvider implements IObjectPersist {
 		ByteArrayInputStream b = null;
 
 		GetObject(String pDir, String pName) {
-			super(pDir, pName);
+			super(false, pDir, pName);
 		}
 
 		@Override
@@ -184,7 +185,7 @@ public class ObjectGaeProvider implements IObjectPersist {
 		private final ByteArrayOutputStream o;
 
 		SaveObject(String pDir, String pName, ByteArrayOutputStream o) {
-			super(pDir, pName);
+			super(true, pDir, pName);
 			this.o = o;
 		}
 
@@ -198,11 +199,8 @@ public class ObjectGaeProvider implements IObjectPersist {
 				w.setpName(pName);
 			}
 			w.setBytes(o.toByteArray());
-			EntityTransaction tran = eF.getTransaction();
-			tran.begin();
 			// the same command for inserting new record and modyfying existing
 			eF.persist(w);
-			tran.commit();
 		}
 	}
 
@@ -216,7 +214,7 @@ public class ObjectGaeProvider implements IObjectPersist {
 	private class RemoveObject extends EObject {
 
 		RemoveObject(String pDir, String pName) {
-			super(pDir, pName);
+			super(true, pDir, pName);
 		}
 
 		@Override
@@ -227,10 +225,7 @@ public class ObjectGaeProvider implements IObjectPersist {
 				return;
 			}
 			// remove
-			EntityTransaction tran = eF.getTransaction();
-			tran.begin();
 			eF.remove(w);
-			tran.commit();
 		}
 
 	}
