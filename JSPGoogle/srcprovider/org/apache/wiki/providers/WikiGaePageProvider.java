@@ -198,22 +198,22 @@ public class WikiGaePageProvider implements WikiPageProvider {
 			}
 			ret.ent.setName(page.getName());
 			ret.ent.setChangeBy(page.getAuthor());
+			log.debug("Store text, size =" + text.length());
+			log.debug(text);
 			ret.ent.setContent(text);
 			ret.ent.setChangeNote((String) page
 					.getAttribute(WikiPage.CHANGENOTE));
-			EntityTransaction tran = eF.getTransaction();
-			tran.begin();
 			eF.persist(ret.ent);
-			tran.commit();
-
 		}
 	}
 
 	@Override
 	public void putPageText(WikiPage page, String text)
 			throws ProviderException {
+		log.debug("begin putPageText");
 		ECommand e = new EPutPageText(page, text);
 		e.runCommand();
+		log.debug("after commit putPageText");
 	}
 
 	private class PageExists extends ECommand {
@@ -236,8 +236,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 
 	@Override
 	public boolean pageExists(String page) {
+		log.debug("Start: pageExists");
 		PageExists e = new PageExists(page);
 		e.runCommand();
+		log.debug("End: pageExists");
 		return e.result;
 	}
 
@@ -275,14 +277,17 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Collection findPages(QueryItem[] query) {
+		log.debug("Start: findPages");
 		FindPages e = new FindPages(query);
 		e.runCommand();
+		log.debug("End: findPages");
 		return e.res;
 	}
 
 	public RetResult getPageInfoW(EntityManager eF, String page, int version) {
 		// GetPageVersion
 		RetResult re;
+		log.debug("Start: findPages");
 		if (version == WikiPageProvider.LATEST_VERSION) {
 			re = getCurrentPageInfo(eF, page);
 		} else {
@@ -299,6 +304,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		if (re.ent != null) {
 			re.toPage();
 		}
+		log.debug("End: findPages");
 		return re;
 	}
 
@@ -324,8 +330,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@Override
 	public WikiPage getPageInfo(String page, int version)
 			throws ProviderException {
+		log.debug("Start: getPageInfo");
 		GetPageInfo r = new GetPageInfo(page, version);
 		r.runCommand();
+		log.debug("End: getPageInfo");
 		return r.re.page;
 	}
 
@@ -360,7 +368,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	private class GetAllPages extends ECommand {
 
 		Collection<WikiPage> li;
-		
+
 		GetAllPages() {
 			super(false);
 		}
@@ -379,8 +387,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Collection getAllPages() throws ProviderException {
+		log.debug("Start: getAllPages");
 		GetAllPages e = new GetAllPages();
 		e.runCommand();
+		log.debug("End: getAllPages");
 		return e.li;
 	}
 
@@ -407,15 +417,19 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Collection getAllChangedSince(Date date) {
+		log.debug("Start: getAllChangedSince");
 		GetAllChangesSince g = new GetAllChangesSince(date);
 		g.runCommand();
+		log.debug("End: getAllChangedSince");
 		return g.res;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public int getPageCount() throws ProviderException {
+		log.debug("Start: getPageCount");
 		Collection col = getAllPages();
+		log.debug("End: getPageCount");
 		return col.size();
 	}
 
@@ -447,8 +461,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List getVersionHistory(String page) throws ProviderException {
+		log.debug("Start: getVersionHistory");
 		GetVersionHistory g = new GetVersionHistory(page);
 		g.runCommand();
+		log.debug("End: getVersionHistory");
 		return g.res;
 	}
 
@@ -478,8 +494,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@Override
 	public String getPageText(String page, int version)
 			throws ProviderException {
+		log.debug("Start: getPageText");
 		GetPageText ge = new GetPageText(page, version);
 		ge.runCommand();
+		log.debug("End: getPageText");
 		return ge.res;
 	}
 
@@ -508,8 +526,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 	@Override
 	public void deleteVersion(String pageName, int version)
 			throws ProviderException {
+		log.debug("Start: deleteVersion");
 		DeleteVersion de = new DeleteVersion(pageName, version);
 		de.runCommand();
+		log.debug("End: deleteVersion");
 	}
 
 	private class DeletePage extends ECommand {
@@ -536,8 +556,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 
 	@Override
 	public void deletePage(String pageName) throws ProviderException {
+		log.debug("Start: deletePage");
 		DeletePage de = new DeletePage(pageName);
 		de.runCommand();
+		log.debug("End: deletePage");
 	}
 
 	private class MovePage extends ECommand {
@@ -567,9 +589,10 @@ public class WikiGaePageProvider implements WikiPageProvider {
 
 	@Override
 	public void movePage(String from, String to) throws ProviderException {
+		log.debug("Start: movePage");
 		MovePage mo = new MovePage(from, to);
 		mo.runCommand();
-
+		log.debug("End: movePage");
 	}
 
 }

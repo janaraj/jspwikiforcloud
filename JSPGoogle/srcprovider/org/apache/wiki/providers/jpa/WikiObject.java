@@ -21,9 +21,9 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-import com.google.appengine.api.datastore.ShortBlob;
-
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.ShortBlob;
 
 @Entity
 @NamedQueries({
@@ -42,7 +42,7 @@ public class WikiObject {
     private String pName;
 	
 	@Basic
-	private ShortBlob object;
+	private Blob object;
 
 	public String getpDir() {
 		return pDir;
@@ -60,16 +60,16 @@ public class WikiObject {
 		this.pName = pName;
 	}
 
-	public ShortBlob getObject() {
+	public Blob getObject() {
 		return object;
 	}
 
-	public void setObject(ShortBlob object) {
+	public void setObject(Blob object) {
 		this.object = object;
 	}
 	
 	public void setBytes(byte[] b) {
-		setObject(new ShortBlob(b));
+		setObject(new Blob(b));
 	}
 	
 }

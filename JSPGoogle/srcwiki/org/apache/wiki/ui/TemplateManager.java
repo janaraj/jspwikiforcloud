@@ -46,7 +46,6 @@ import java.util.jar.JarInputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -56,6 +55,8 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+
+import com.jsp.util.localize.LocaleSupport;
 
 /**
  * This class takes care of managing JSPWiki templates. This class also provides
@@ -403,6 +404,7 @@ public class TemplateManager extends ModuleManager {
 
 				if (s.length > 2 && skins[i].endsWith("/")) {
 					String skinName = s[s.length - 1];
+					if (skinName.startsWith(".")) { continue; }
 					resultSet.add(skinName);
 					if (log.isDebugEnabled())
 						log.debug("...adding skin '" + skinName + "'");
@@ -430,9 +432,8 @@ public class TemplateManager extends ModuleManager {
 	}
 
 	private void putLocaleName(PageContext pageContext, Map resultMap,
-			String prefix,String name) {
-		if (!name.startsWith(prefix)
-				|| !name.endsWith(I18NRESOURCE_SUFFIX)) {
+			String prefix, String name) {
+		if (!name.startsWith(prefix) || !name.endsWith(I18NRESOURCE_SUFFIX)) {
 			return;
 		}
 		String clientLanguage = ((HttpServletRequest) pageContext.getRequest())
@@ -459,8 +460,13 @@ public class TemplateManager extends ModuleManager {
 		URL u = this.getClass().getClassLoader().getResource("templates");
 		File dir = new File(u.getFile());
 		String lFile[] = dir.list();
+		String english = "en";
 		for (String s : lFile) {
 			putLocaleName(pageContext, resultMap, "default_", s);
+		}
+		if (resultMap.get(english) == null) {
+			putLocaleName(pageContext, resultMap, "default_", "default_"
+					+ english + ".properties");
 		}
 		return resultMap;
 	}
@@ -484,7 +490,7 @@ public class TemplateManager extends ModuleManager {
 				if (entry.isDirectory()) {
 					continue;
 				}
-				putLocaleName(pageContext, resultMap, I18NRESOURCE_PREFIX,name);
+				putLocaleName(pageContext, resultMap, I18NRESOURCE_PREFIX, name);
 			}
 		} catch (IOException ioe) {
 			if (log.isDebugEnabled())
