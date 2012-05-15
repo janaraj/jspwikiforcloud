@@ -537,7 +537,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 		private final String pageName;
 
 		DeletePage(String pageName) {
-			super(false);
+			super(true);
 			this.pageName = pageName;
 		}
 

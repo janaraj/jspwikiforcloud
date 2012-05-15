@@ -1,9 +1,12 @@
 package org.apache.wiki.providers.jpa;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -12,29 +15,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+
+import org.apache.wiki.util.Serializer;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 
-//create table @jspwiki.userdatabase.table@ (
-//		  @jspwiki.userdatabase.email@ varchar(100),
-//		  @jspwiki.userdatabase.fullName@ varchar(100),
-//		  @jspwiki.userdatabase.loginName@ varchar(100) not null primary key,
-//		  @jspwiki.userdatabase.password@ varchar(100),
-//		  @jspwiki.userdatabase.wikiName@ varchar(100),
-//		  @jspwiki.userdatabase.created@ timestamp,
-//		  @jspwiki.userdatabase.modified@ timestamp
-//		);
-//
-//		create table @jspwiki.userdatabase.roleTable@ (
-//		  @jspwiki.userdatabase.loginName@ varchar(100) not null,
-//		  @jspwiki.userdatabase.role@ varchar(100) not null
-//		);
 @Entity
 @NamedQueries({
-    	@NamedQuery(name = "FindUserByWikiName", query = "SELECT P FROM UserEnt P WHERE P.wikiName = :1"),
-    	@NamedQuery(name = "FindUserByFullName", query = "SELECT P FROM UserEnt P WHERE P.fullName = :1"),
-    	@NamedQuery(name = "FindUserByeMail", query = "SELECT P FROM UserEnt P WHERE P.email = :1"),
+		@NamedQuery(name = "FindUserByWikiName", query = "SELECT P FROM UserEnt P WHERE P.wikiName = :1"),
+		@NamedQuery(name = "FindUserByFullName", query = "SELECT P FROM UserEnt P WHERE P.fullName = :1"),
+		@NamedQuery(name = "FindUserByeMail", query = "SELECT P FROM UserEnt P WHERE P.email = :1"),
 		@NamedQuery(name = "FindUserByUid", query = "SELECT P FROM UserEnt P WHERE P.uId = :1"),
 		@NamedQuery(name = "FindUserByLoginName", query = "SELECT P FROM UserEnt P WHERE P.loginName = :1"),
 		@NamedQuery(name = "AllUsers", query = "SELECT P FROM UserEnt P") })
@@ -67,15 +58,12 @@ public class UserEnt {
 
 	@Basic(optional = false)
 	private Date modified;
-	
+
 	@Basic
 	private Date LockExpiry;
 
 	@Basic
-	private Map<String, Serializable> attributes;
-
-	@OneToMany(mappedBy = "user")
-	private Collection<RoleEnt> roleList;
+	private Text sAttributes;
 
 	public String getLoginName() {
 		return loginName;
@@ -133,14 +121,6 @@ public class UserEnt {
 		this.modified = modified;
 	}
 
-	public Collection<RoleEnt> getRoleList() {
-		return roleList;
-	}
-
-	public void setRoleList(Collection<RoleEnt> roleList) {
-		this.roleList = roleList;
-	}
-
 	public String getuId() {
 		return uId;
 	}
@@ -149,12 +129,18 @@ public class UserEnt {
 		this.uId = uId;
 	}
 
-	public Map<String, Serializable> getAttributes() {
-		return attributes;
+	public Map<String, Serializable> getAttributes() throws IOException {
+		Map<String, Serializable> hMap = new HashMap<String, Serializable>();
+		if (sAttributes != null) {
+            hMap = (Map<String, Serializable>) Serializer.deserializeFromBase64( sAttributes.getValue() );
+		}
+		return hMap;
 	}
 
-	public void setAttributes(Map<String, Serializable> attributes) {
-		this.attributes = attributes;
+	public void setAttributes(Map<String, Serializable> attributes) throws IOException {
+		if (attributes == null || attributes.isEmpty()) { sAttributes = null; return; }
+		String s = Serializer.serializeToBase64( attributes);
+		sAttributes = new Text(s);		
 	}
 
 	public Date getLockExpiry() {
@@ -164,5 +150,5 @@ public class UserEnt {
 	public void setLockExpiry(Date lockExpiry) {
 		LockExpiry = lockExpiry;
 	}
-	
+
 }

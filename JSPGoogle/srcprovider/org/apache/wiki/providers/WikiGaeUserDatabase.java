@@ -1,5 +1,6 @@
 package org.apache.wiki.providers;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,7 +28,7 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 		private final String searchName;
 		private final String queryName;
 
-		FindUser(boolean transact,String queryName , String searchName) {
+		FindUser(boolean transact, String queryName, String searchName) {
 			super(transact);
 			this.queryName = queryName;
 			this.searchName = searchName;
@@ -45,19 +46,19 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 		}
 
 	}
-	
+
 	private abstract class FindUserByLoginName extends FindUser {
-		
-		FindUserByLoginName(boolean transact,String loginName) {
-			super(transact,"FindUserByLoginName",loginName);
+
+		FindUserByLoginName(boolean transact, String loginName) {
+			super(transact, "FindUserByLoginName", loginName);
 		}
-		
+
 	}
-	
+
 	private class DeleteUserByLoginName extends FindUserByLoginName {
-		
+
 		DeleteUserByLoginName(String loginName) {
-			super(true,loginName);
+			super(true, loginName);
 		}
 
 		@Override
@@ -65,48 +66,46 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 			UserEnt e = findUser(eF);
 			if (e != null) {
 				eF.remove(e);
-			}			
+			}
 		}
 	}
-	
-	
+
 	@Override
 	public void deleteByLoginName(String loginName)
 			throws NoSuchPrincipalException, WikiSecurityException {
 		DeleteUserByLoginName command = new DeleteUserByLoginName(loginName);
-		command.runCommand();		
+		command.runCommand();
 	}
-	
+
 	private class ReadAll extends ECommand {
-		
+
 		Collection<UserEnt> uList;
-		
+
 		ReadAll() {
 			super(false);
 		}
 
 		@Override
 		protected void runCommand(EntityManager eF) {
-			Query q = getQuery(eF,"AllUsers");
+			Query q = getQuery(eF, "AllUsers");
 			uList = q.getResultList();
 		}
 	}
-	
 
 	@Override
 	public Principal[] getWikiNames() throws WikiSecurityException {
 		ReadAll command = new ReadAll();
-        Set<Principal> principals = new HashSet<Principal>();
-        for (UserEnt u : command.uList) {
-        	Principal principal = new WikiPrincipal( u.getWikiName(), WikiPrincipal.WIKI_NAME );
-            principals.add( principal );
-        }
-        return principals.toArray( new Principal[principals.size()] );
+		Set<Principal> principals = new HashSet<Principal>();
+		for (UserEnt u : command.uList) {
+			Principal principal = new WikiPrincipal(u.getWikiName(),
+					WikiPrincipal.WIKI_NAME);
+			principals.add(principal);
+		}
+		return principals.toArray(new Principal[principals.size()]);
 	}
-	
-	
+
 	private class FindUserByVal extends FindUser {
-		
+
 		UserEnt u;
 
 		FindUserByVal(String queryName, String searchName) {
@@ -117,14 +116,16 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 		protected void runCommand(EntityManager eF) {
 			u = findUser(eF);
 		}
-		
+
 	}
-	
-	
-	private UserProfile findUser(String queryName, String val) throws NoSuchPrincipalException {
-		FindUserByVal command = new FindUserByVal(queryName,val);
+
+	private UserProfile findUser(String queryName, String val)
+			throws NoSuchPrincipalException {
+		FindUserByVal command = new FindUserByVal(queryName, val);
 		command.runCommand();
-		if (command.u == null) { throw new NoSuchPrincipalException(val); }
+		if (command.u == null) {
+			throw new NoSuchPrincipalException(val);
+		}
 		UserProfile user = newProfile();
 		user.setCreated(command.u.getCreated());
 		user.setEmail(command.u.getEmail());
@@ -135,7 +136,11 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 		user.setUid(command.u.getuId());
 		user.setWikiName(command.u.getWikiName());
 		user.setLockExpiry(command.u.getLockExpiry());
-        user.getAttributes().putAll( command.u.getAttributes());
+		try {
+			user.getAttributes().putAll(command.u.getAttributes());
+		} catch (IOException e) {
+			log.error("Deserializable attributes", e);
+		}
 		return user;
 	}
 
@@ -143,11 +148,11 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 	public UserProfile findByUid(String uid) throws NoSuchPrincipalException {
 		return findUser("FindUserByUid", uid);
 	}
-	
+
 	private class RenameCommand extends FindUserByLoginName {
-		
+
 		private final String newName;
-		
+
 		RenameCommand(String loginName, String newName) {
 			super(true, loginName);
 			this.newName = newName;
@@ -160,24 +165,23 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 				u.setLoginName(newName);
 				eF.persist(u);
 			}
-			
+
 		}
 	}
-	
+
 	private class FindName extends FindUserByLoginName {
 
 		UserEnt u;
-		
+
 		FindName(String newName) {
-			super(false,newName);
+			super(false, newName);
 		}
 
 		@Override
 		protected void runCommand(EntityManager eF) {
-			u = findUser(eF);			
+			u = findUser(eF);
 		}
 	}
-	
 
 	@Override
 	public void rename(String loginName, String newName)
@@ -185,8 +189,10 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 			WikiSecurityException {
 		FindName findCommand = new FindName(newName);
 		findCommand.runCommand();
-		if (findCommand.u != null) { throw new DuplicateUserException(newName); }
-		RenameCommand renameCommand = new RenameCommand(loginName,newName);
+		if (findCommand.u != null) {
+			throw new DuplicateUserException(newName);
+		}
+		RenameCommand renameCommand = new RenameCommand(loginName, newName);
 		renameCommand.runCommand();
 	}
 
@@ -218,15 +224,15 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 	public void initialize(WikiEngine engine, Properties props)
 			throws NoRequiredPropertyException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	private class SaveCommand extends FindUserByLoginName {
-		
+
 		private final UserProfile profile;
-		
+
 		SaveCommand(UserProfile profile) {
-			super(true,profile.getLoginName());
+			super(true, profile.getLoginName());
 			this.profile = profile;
 		}
 
@@ -238,12 +244,17 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 				e.setCreated(getToday());
 				e.setLoginName(profile.getLoginName());
 			}
-			e.setAttributes(profile.getAttributes());
+			try {
+				e.setAttributes(profile.getAttributes());
+			} catch (IOException e1) {
+				log.error("Serializable attributes", e1);
+			}
 			e.setEmail(profile.getEmail());
 			e.setFullName(profile.getFullname());
 			e.setLockExpiry(profile.getLockExpiry());
 			e.setModified(getToday());
-			e.setPassword(profile.getPassword());
+			String cryptedPassword = getHash(profile.getPassword());
+			e.setPassword(cryptedPassword);
 			e.setuId(profile.getUid());
 			e.setWikiName(profile.getWikiName());
 			eF.persist(e);
@@ -253,7 +264,7 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 	@Override
 	public void save(UserProfile profile) throws WikiSecurityException {
 		SaveCommand saveCommand = new SaveCommand(profile);
-		saveCommand.runCommand();		
+		saveCommand.runCommand();
 	}
 
 }

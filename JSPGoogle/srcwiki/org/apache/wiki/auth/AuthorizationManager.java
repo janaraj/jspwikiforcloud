@@ -393,8 +393,15 @@ public final class AuthorizationManager implements Serializable
     private File policyFile;
     private String encode;
     
+    // read every time to avoid serializable growing too much
     private LocalPolicy getPolicy() {
-        return new LocalPolicy( policyFile, encode );    	
+    	LocalPolicy pol = new LocalPolicy( policyFile, encode );
+    	try {
+			pol.refresh();
+		} catch (PolicyException e) {
+			log.error("Local policy", e);
+		}
+        return pol;    	
     }
 
     /**
@@ -431,7 +438,7 @@ public final class AuthorizationManager implements Serializable
                 policyFile = new File( policyURL.getPath() );
                 log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
                 encode = engine.getContentEncoding(); 
-                
+                // replaced with getPolicy()
 //                m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
 //                m_localPolicy.refresh();
                 log.info( "Initialized default security policy: " + policyFile.getAbsolutePath() );
@@ -572,11 +579,12 @@ public final class AuthorizationManager implements Serializable
                 {
                     // Check the JVM-wide security policy first
                     AccessController.checkPermission( permission );
-                    return Boolean.TRUE;
+//                    return Boolean.TRUE;
                 }
                 catch( AccessControlException e )
                 {
-                    // Global policy denied the permission
+//                    // Global policy denied the permission
+                	return Boolean.FALSE;
                 }
 
                 // Try the local policy - check each Role/Group and User Principal
