@@ -38,15 +38,15 @@ public final class GroupCommand extends AbstractCommand
 
     /** GroupCommand for deleting a group. */
     public static final Command DELETE_GROUP 
-        = new GroupCommand( "deleteGroup", "%uDeleteGroup.jsp?group=%n", null, null, GroupPermission.DELETE_ACTION );
+        = new GroupCommand( "deleteGroup", "%uDeleteGroup.jsp?group=%n", null, new GroupPrincipal(GroupPermission.DELETE_ACTION), GroupPermission.DELETE_ACTION );
 
     /** GroupCommand for editing a group. */
        public static final Command EDIT_GROUP   
-        = new GroupCommand( "editGroup", "%uEditGroup.jsp?group=%n", "EditGroupContent.jsp", null, GroupPermission.EDIT_ACTION );
+        = new GroupCommand( "editGroup", "%uEditGroup.jsp?group=%n", "EditGroupContent.jsp", new GroupPrincipal(GroupPermission.EDIT_ACTION), GroupPermission.EDIT_ACTION );
 
        /** GroupCommand for viewing a group. */
     public static final Command VIEW_GROUP   
-        = new GroupCommand( "viewGroup", "%uGroup.jsp?group=%n", "GroupContent.jsp", null, GroupPermission.VIEW_ACTION );
+        = new GroupCommand( "viewGroup", "%uGroup.jsp?group=%n", "GroupContent.jsp", new GroupPrincipal(GroupPermission.VIEW_ACTION), GroupPermission.VIEW_ACTION );
 
     private final String m_action;
     

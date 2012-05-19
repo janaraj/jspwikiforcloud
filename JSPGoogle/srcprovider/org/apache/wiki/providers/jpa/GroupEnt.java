@@ -5,13 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
 
@@ -22,7 +21,7 @@ import com.google.appengine.api.datastore.Key;
 })
 
 public class GroupEnt {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Key key;
@@ -41,10 +40,9 @@ public class GroupEnt {
 	
 	@Basic(optional=false)
 	private Date modified;
-	
-	@OneToMany(fetch = FetchType.EAGER,mappedBy="group")
-	private Collection<GroupMemberEnt> memberList;
 
+	@Lob
+	private Collection<GroupMember> memberList;
 	
 	public String getName() {
 		return name;
@@ -86,11 +84,11 @@ public class GroupEnt {
 		this.modified = modified;
 	}
 
-	public Collection<GroupMemberEnt> getMemberList() {
+	public Collection<GroupMember> getMemberList() {
 		return memberList;
 	}
 
-	public void setMemberList(Collection<GroupMemberEnt> memberList) {
+	public void setMemberList(Collection<GroupMember> memberList) {
 		this.memberList = memberList;
 	}
 

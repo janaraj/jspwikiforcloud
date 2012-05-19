@@ -59,8 +59,9 @@ public final class WikiCommand extends AbstractCommand
     public static final Command MESSAGE
         = new WikiCommand( "message", "%uMessage.jsp", "DisplayMessage.jsp", null, null );
     
+// stanislawbartkowski@gmail.com 2012/05/15 -- add target to force valid permission    
     public static final Command PREFS
-        = new WikiCommand( "prefs", "%uUserPreferences.jsp", "PreferencesContent.jsp", null, WikiPermission.EDIT_PROFILE_ACTION );
+        = new WikiCommand( "prefs", "%uUserPreferences.jsp", "PreferencesContent.jsp", WikiPermission.EDIT_PROFILE_ACTION, WikiPermission.EDIT_PROFILE_ACTION );
 
     public static final Command WORKFLOW
         = new WikiCommand( "workflow", "%uWorkflow.jsp", "WorkflowContent.jsp", null, null );

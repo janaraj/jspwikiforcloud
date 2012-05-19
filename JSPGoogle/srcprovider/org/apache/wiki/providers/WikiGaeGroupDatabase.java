@@ -17,7 +17,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupDatabase;
 import org.apache.wiki.providers.jpa.GroupEnt;
-import org.apache.wiki.providers.jpa.GroupMemberEnt;
+import org.apache.wiki.providers.jpa.GroupMember;
 
 public class WikiGaeGroupDatabase implements GroupDatabase {
 
@@ -100,10 +100,11 @@ public class WikiGaeGroupDatabase implements GroupDatabase {
 			}
 			ge.setModifier(modifier.getName());
 			ge.setModified(getToday());
-			Collection<GroupMemberEnt> mList = new ArrayList<GroupMemberEnt>();
+			Collection<GroupMember> mList = new ArrayList<GroupMember>();
 			for (Principal p : g.members()) {
-				GroupMemberEnt me = new GroupMemberEnt();
+				GroupMember me = new GroupMember();
 				me.setMemberName(p.getName());
+				mList.add(me);
 			}
 			ge.setMemberList(mList);
 			eF.persist(ge);
@@ -114,7 +115,9 @@ public class WikiGaeGroupDatabase implements GroupDatabase {
 	@Override
 	public void save(Group group, Principal modifier)
 			throws WikiSecurityException {
-		if (group.getName() == null) { return; }
+		if (group.getName() == null) {
+			return;
+		}
 		log.debug("Save group " + group.getName());
 		SaveCommand command = new SaveCommand(group, modifier);
 		command.runCommand();
@@ -150,22 +153,27 @@ public class WikiGaeGroupDatabase implements GroupDatabase {
 		}
 		int no = 0;
 		for (GroupEnt g : command.g) {
-			if (g.getName() == null) { continue; }
+			if (g.getName() == null) {
+				continue;
+			}
 			no++;
 		}
 		Group[] gList = new Group[no];
 		int i = 0;
 		for (GroupEnt g : command.g) {
-			if (g.getName() == null) { continue; }
+			if (g.getName() == null) {
+				continue;
+			}
 			Group gr = new Group(g.getName(), wikiName);
 			gr.setCreated(g.getCreated());
 			gr.setCreator(g.getCreator());
 			gr.setLastModified(g.getModified());
 			gr.setModifier(g.getModifier());
-			for (GroupMemberEnt me : g.getMemberList()) {
-				Principal member = new WikiPrincipal(me.getMemberName());
-				gr.add(member);
-			}
+			if (g.getMemberList() != null)
+				for (GroupMember me : g.getMemberList()) {
+					Principal member = new WikiPrincipal(me.getMemberName());
+					gr.add(member);
+				}
 			gList[i++] = gr;
 		}
 		return gList;

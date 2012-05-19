@@ -9,7 +9,6 @@
         <class>org.apache.wiki.providers.jpa.WikiPageEnt</class>
         <class>org.apache.wiki.providers.jpa.WikiObject</class>        
         <class>org.apache.wiki.providers.jpa.GroupEnt</class>        
-        <class>org.apache.wiki.providers.jpa.GroupMemberEnt</class>        
         <class>org.apache.wiki.providers.jpa.UserEnt</class>        
         <exclude-unlisted-classes>true</exclude-unlisted-classes>        
         <properties>
