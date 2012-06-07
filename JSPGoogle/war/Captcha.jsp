@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
 <%@ page import="org.apache.wiki.*" %>
@@ -11,7 +11,7 @@
 <fmt:setBundle basename="CoreResources"/>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Log log = LogFactory.getLog("JSPWiki");
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

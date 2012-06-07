@@ -20,14 +20,27 @@
  */
 package org.apache.wiki;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -133,7 +146,7 @@ public class ReferenceManager extends BasicPageFilter implements
 
 	private boolean m_matchEnglishPlurals = false;
 
-	private static Logger log = Logger.getLogger(ReferenceManager.class);
+	private static Log log = LogFactory.getLog(ReferenceManager.class);
 
 	private static final String SERIALIZATION_FILE = "refmgr.ser";
 	private static final String SERIALIZATION_DIR = "refmgr-attr";

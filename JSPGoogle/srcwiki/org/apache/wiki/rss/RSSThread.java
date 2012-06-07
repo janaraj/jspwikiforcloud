@@ -31,7 +31,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.FileUtil;
 import org.apache.wiki.WikiEngine;
@@ -44,7 +44,7 @@ import org.apache.wiki.util.WikiBackgroundThread;
  */
 public class RSSThread extends WikiBackgroundThread
 {
-    static Logger              log = Logger.getLogger( RSSThread.class );
+    static Log              log = LogFactory.getLog( RSSThread.class );
         
     private final File m_rssFile;
     private final int m_rssInterval;
@@ -129,7 +129,7 @@ public class RSSThread extends WikiBackgroundThread
                     log.fatal("Could not close I/O for RSS", e );
                     m_generator.setEnabled( false );
                 }
-                m_watchdog.exitState();
+                m_watchdog.exitState(null);
             }
 
         }

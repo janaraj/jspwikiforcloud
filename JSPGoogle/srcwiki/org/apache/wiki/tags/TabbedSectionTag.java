@@ -23,7 +23,7 @@ package org.apache.wiki.tags;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 
 /**
@@ -47,7 +47,7 @@ public class TabbedSectionTag extends BodyTagSupport
 
     private StringBuffer m_buffer = new StringBuffer(BUFFER_SIZE);
     
-    private static Logger log = Logger.getLogger( TabbedSectionTag.class );
+    private static Log log = LogFactory.getLog( TabbedSectionTag.class );
 
     private static final int FIND_DEFAULT_TAB = 0;
     private static final int GENERATE_TABMENU = 1;

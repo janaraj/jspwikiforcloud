@@ -33,7 +33,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.weakmap.WeakHashMapFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
@@ -82,7 +83,7 @@ public final class UserManager implements Serializable
 
     private WikiEngine m_engine;
 
-    private static Logger log = Logger.getLogger(UserManager.class);
+    private static Log log = LogFactory.getLog(UserManager.class);
 
     /** Message key for the "save profile" message. */
     public  static final String SAVE_APPROVER               = "workflow.createUserProfile";

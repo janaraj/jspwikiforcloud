@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.regex.*;
 
 import org.apache.wiki.*;
@@ -63,7 +63,7 @@ public class RCSFileProvider
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
     private String m_deleteVersionCommand = "rcs -o1.%v %s";
 
-    private static final Logger   log = Logger.getLogger(RCSFileProvider.class);
+    private static final Log   log = LogFactory.getLog(RCSFileProvider.class);
 
     /** Property name for the checkin command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";

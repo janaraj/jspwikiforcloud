@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <%@ page import="java.util.*,org.apache.wiki.*" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="com.opensymphony.oscache.base.*" %>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Log log = LogFactory.getLog("JSPWiki");
     Cache m_cache = new Cache( true, false, false, true, 
                                "com.opensymphony.oscache.base.algorithm.LRUCache", 256 );
 %>
@@ -100,7 +100,7 @@
     if( !hasChanged && changed.size() > 0 )
     {
         response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
-        w.exitState();
+        w.exitState(request.getSession());
         return;
     }
 
@@ -138,5 +138,5 @@
     
     out.println(rss);
     
-    w.exitState(); 
+    w.exitState(request.getSession()); 
     %>

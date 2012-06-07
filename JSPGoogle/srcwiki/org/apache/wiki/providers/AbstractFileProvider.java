@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 
@@ -46,7 +46,7 @@ import org.apache.wiki.*;
 public abstract class AbstractFileProvider
     implements WikiPageProvider
 {
-    private static final Logger   log = Logger.getLogger(AbstractFileProvider.class);
+    private static final Log   log = LogFactory.getLog(AbstractFileProvider.class);
     private String m_pageDirectory = "/tmp/";
     
     protected String m_encoding;

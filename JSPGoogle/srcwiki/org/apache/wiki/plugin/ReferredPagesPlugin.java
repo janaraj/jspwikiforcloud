@@ -22,7 +22,7 @@ package org.apache.wiki.plugin;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.regex.*;
 
 import org.apache.wiki.*;
@@ -44,7 +44,7 @@ import org.apache.wiki.*;
  */
 public class ReferredPagesPlugin implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( ReferredPagesPlugin.class );
+    private static Log log = LogFactory.getLog( ReferredPagesPlugin.class );
     private WikiEngine     m_engine;
     private int            m_depth;
     private HashSet<String> m_exists  = new HashSet<String>();

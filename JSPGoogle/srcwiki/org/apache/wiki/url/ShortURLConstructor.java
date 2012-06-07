@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.TextUtil;
@@ -44,7 +44,7 @@ public class ShortURLConstructor
 {
     private static final String DEFAULT_PREFIX = "wiki/";
 
-    static Logger log = Logger.getLogger( ShortURLConstructor.class );
+    static Log log = LogFactory.getLog( ShortURLConstructor.class );
     
     /**
      *  Contains the path part after the JSPWiki base URL

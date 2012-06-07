@@ -32,7 +32,8 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
@@ -46,7 +47,7 @@ import org.apache.wiki.modules.InternalModule;
 @SuppressWarnings("serial")
 public class VariableManager implements Serializable
 {
-    private static Logger log = Logger.getLogger( VariableManager.class );
+    private static Log log = LogFactory.getLog( VariableManager.class );
    
     // FIXME: These are probably obsolete.
     public static final String VAR_ERROR = "error";

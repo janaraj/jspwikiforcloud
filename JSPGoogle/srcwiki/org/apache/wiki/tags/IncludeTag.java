@@ -21,12 +21,13 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.TextUtil;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.providers.ProviderException;
 
 /**
@@ -41,7 +42,7 @@ public class IncludeTag
 {
     private static final long serialVersionUID = 0L;
     
-	private static final Logger log = Logger.getLogger(IncludeTag.class);
+	private static final Log log = LogFactory.getLog(IncludeTag.class);
 
     
     protected String m_page;

@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.workflow;
 
+//import java.security.Principal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;

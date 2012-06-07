@@ -29,7 +29,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
@@ -95,7 +95,7 @@ public final class CommandResolver implements Serializable
         }
     }
 
-    private final Logger        m_log = Logger.getLogger( CommandResolver.class );
+    private final Log        m_log = LogFactory.getLog( CommandResolver.class );
 
     private final WikiEngine    m_engine;
 

@@ -75,7 +75,7 @@ public abstract class AbstractCommand implements Command
 
     private final String           m_contentTemplate;
 
-    private final Object           m_target;
+    protected final Object           m_target;
 
     /**
      * Constructs a new Command with a specified wiki context, URL pattern,

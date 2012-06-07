@@ -27,8 +27,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 
@@ -41,7 +41,7 @@ import org.apache.wiki.WikiContext;
  */
 public class ProfanityFilter extends BasicPageFilter
 {
-    private static Logger     log = Logger.getLogger(ProfanityFilter.class);
+    private static Log     log = LogFactory.getLog(ProfanityFilter.class);
     
     private static final String PROPERTYFILE = "org/apache/wiki/filters/profanity.properties";
     private static String[] c_profanities = new String[0];

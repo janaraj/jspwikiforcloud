@@ -22,11 +22,10 @@ package org.apache.wiki.dav;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -39,7 +38,7 @@ import org.apache.wiki.providers.ProviderException;
 public class AttachmentDavProvider implements DavProvider
 {
     protected WikiEngine m_engine;
-    protected static final Logger log = Logger.getLogger( AttachmentDavProvider.class );
+    protected static final Log log = LogFactory.getLog( AttachmentDavProvider.class );
 
     public AttachmentDavProvider( WikiEngine engine )
     {

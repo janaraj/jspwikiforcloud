@@ -5,13 +5,13 @@
 <%@ page import="org.apache.wiki.auth.PrincipalComparator" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
 <%@ page errorPage="/Error.jsp" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Log log = LogFactory.getLog("JSPWiki");
 %>
 
 <%

@@ -22,7 +22,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.*;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,7 +40,7 @@ import java.util.*;
  */
 public class WeblogEntryPlugin implements WikiPlugin
 {
-    private static Logger     log = Logger.getLogger(WeblogEntryPlugin.class);
+    private static Log     log = LogFactory.getLog(WeblogEntryPlugin.class);
 
     private static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 

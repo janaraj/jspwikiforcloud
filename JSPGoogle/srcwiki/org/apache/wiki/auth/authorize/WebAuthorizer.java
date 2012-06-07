@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.auth.authorize;
 
+
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;

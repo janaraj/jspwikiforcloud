@@ -142,7 +142,7 @@ public final class PagePermission extends Permission implements Serializable
     private final String               m_wiki;
 
     /** For serialization purposes. */
-    protected PagePermission()
+    private PagePermission()
     {
         this("");
     }

@@ -231,7 +231,7 @@ public class TimedCounterList<T> extends AbstractList<T> implements Serializable
         return res;
     }
     
-    private static class CounterItem<E>
+    private static class CounterItem<E> implements Serializable
     {
         private E      m_obj;
         private long   m_addTime;

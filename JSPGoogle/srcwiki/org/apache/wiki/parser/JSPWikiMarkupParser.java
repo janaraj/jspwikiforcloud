@@ -24,18 +24,42 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EmptyStackException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Stack;
 
 import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
-import org.jdom.*;
-
-import org.apache.wiki.*;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.MatchResult;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.StringTransmutator;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.VariableManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -47,6 +71,12 @@ import org.apache.wiki.plugin.WikiPlugin;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
+import org.jdom.Attribute;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.IllegalDataException;
+import org.jdom.ProcessingInstruction;
+import org.jdom.Verifier;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
@@ -85,7 +115,7 @@ public class JSPWikiMarkupParser
     protected static final int              IMAGEWIKILINK = 9;
     protected static final int              ATTACHMENT    = 10;
 
-    private static Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
+    private static Log log = LogFactory.getLog( JSPWikiMarkupParser.class );
 
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;

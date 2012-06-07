@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Collection;
 import java.util.Iterator;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.intabulas.sandler.*;
 import org.intabulas.sandler.exceptions.*;
 import org.intabulas.sandler.elements.*;
@@ -51,7 +51,7 @@ import org.apache.wiki.providers.ProviderException;
 // FIXME: Rewrite using some other library
 public class AtomAPIServlet extends HttpServlet
 {
-    static final Logger log = Logger.getLogger( AtomAPIServlet.class );
+    static final Log log = LogFactory.getLog( AtomAPIServlet.class );
 
     private static final long serialVersionUID = 0L;
 

@@ -28,7 +28,7 @@ import java.util.Date;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.WikiPage;
 
@@ -39,7 +39,7 @@ import org.apache.wiki.WikiPage;
  */
 public final class HttpUtil
 {
-    static Logger log = Logger.getLogger( HttpUtil.class );
+    static Log log = LogFactory.getLog( HttpUtil.class );
     
     /**
      * Private constructor to prevent direct instantiation.

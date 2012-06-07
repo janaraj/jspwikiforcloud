@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
@@ -100,7 +100,7 @@ public class BasicAttachmentProvider
     /** The default extension for the attachment directory. */
     public static final String ATTDIR_EXTENSION = "-dir";
     
-    static final Logger log = Logger.getLogger( BasicAttachmentProvider.class );
+    static final Log log = LogFactory.getLog( BasicAttachmentProvider.class );
 
     /**
      *  {@inheritDoc}

@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.dav.methods.DavMethod;
 import org.apache.wiki.dav.methods.GetMethod;
@@ -44,7 +44,7 @@ public class WikiDavServlet extends WebdavServlet
     private static final long          serialVersionUID = 1L;
 
     private WikiEngine m_engine;
-    Logger log = Logger.getLogger(this.getClass().getName());
+    private Log log = LogFactory.getLog(this.getClass().getName());
     private DavProvider m_rawProvider;
     private DavProvider m_rootProvider;
     private DavProvider m_htmlProvider;

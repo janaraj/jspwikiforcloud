@@ -20,6 +20,8 @@
  */
 package org.apache.wiki.auth.authorize;
 
+//import java.security.Principal;
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
 import java.util.Vector;
@@ -59,7 +61,7 @@ import org.apache.wiki.auth.GroupPrincipal;
  *
  * @since 2.3
  */
-public class Group
+public class Group implements Serializable
 {
 
     static final String[]  RESTRICTED_GROUPNAMES = new String[]

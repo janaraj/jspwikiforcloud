@@ -3,14 +3,14 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
 <%@ page import="org.apache.wiki.ui.Installer" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Log log = LogFactory.getLog("JSPWiki"); 
 %>
 
 <%

@@ -25,13 +25,26 @@ import java.text.Collator;
 import java.text.ParseException;
 import java.text.RuleBasedCollator;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
-import org.apache.wiki.*;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.StringTransmutator;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.preferences.Preferences;
@@ -65,7 +78,7 @@ import org.apache.wiki.util.comparators.LocaleComparator;
 public abstract class AbstractReferralPlugin
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
+    private static Log log = LogFactory.getLog( AbstractReferralPlugin.class );
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;

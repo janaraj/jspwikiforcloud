@@ -20,13 +20,18 @@
  */
 package org.apache.wiki.filters;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;
+
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.xmlrpc.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.*;
-import org.apache.log4j.Logger;
+import org.apache.xmlrpc.AsyncCallback;
+import org.apache.xmlrpc.XmlRpcClient;
 
 /**
  *  A very dumb class that pings weblogs.com on each save.  INTERNAL USE ONLY SO FAR!
@@ -39,7 +44,7 @@ import org.apache.log4j.Logger;
 public class PingWeblogsComFilter
     extends BasicPageFilter
 {
-    static Logger log = Logger.getLogger( PingWeblogsComFilter.class );
+    static Log log = LogFactory.getLog( PingWeblogsComFilter.class );
 
     private String m_pingURL;
 

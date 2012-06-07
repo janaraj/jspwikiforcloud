@@ -22,6 +22,7 @@ package org.apache.wiki.ui;
 
 import java.security.Permission;
 
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 
@@ -149,6 +150,7 @@ public final class WikiCommand extends AbstractCommand
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
+	@Override
     public final Permission requiredPermission()
     {
         return m_permission;

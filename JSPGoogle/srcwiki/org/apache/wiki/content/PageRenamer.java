@@ -27,7 +27,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
@@ -52,7 +53,7 @@ import org.apache.wiki.providers.ProviderException;
 public class PageRenamer implements Serializable
 {
 
-    private static final Logger log = Logger.getLogger( PageRenamer.class );
+    private static final Log log = LogFactory.getLog( PageRenamer.class );
     
     private boolean m_camelCase = false;
     

@@ -2,7 +2,6 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<!-- <%@ page import="com.jsp.util.localize.LocaleSupport" %> -->
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>

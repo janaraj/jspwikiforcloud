@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
-    Logger log = Logger.getLogger("JSPWikiSearch");
+    Log log = LogFactory.getLog("JSPWikiSearch");
 %>
 
 <%

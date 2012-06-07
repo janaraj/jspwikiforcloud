@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.VariableManager" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page import="org.apache.wiki.WikiSession" %>
@@ -16,7 +16,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Log log = LogFactory.getLog("JSPWiki"); 
 %>
 
 <%

@@ -57,7 +57,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
     public static final String WIKI_NAME  = "wikiName";
     
     /** Generic WikiPrincipal of unspecified type. */
-    public static final String UNSPECIFIED  = "unspecified";
+    private static final String UNSPECIFIED  = "unspecified";
     
     /** Static instance of Comparator that allows Principals to be sorted. */
     public static final Comparator<Principal> COMPARATOR = new PrincipalComparator();

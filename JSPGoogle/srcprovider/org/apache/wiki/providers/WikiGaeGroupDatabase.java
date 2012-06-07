@@ -9,7 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -21,7 +22,7 @@ import org.apache.wiki.providers.jpa.GroupMember;
 
 public class WikiGaeGroupDatabase implements GroupDatabase {
 
-	private final Logger log = Logger.getLogger(WikiGaeGroupDatabase.class);
+	private final Log log = LogFactory.getLog(WikiGaeGroupDatabase.class);
 
 	private String wikiName;
 

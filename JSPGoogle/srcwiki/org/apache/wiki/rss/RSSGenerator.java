@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.PageTimeComparator;
 import org.apache.wiki.TextUtil;
@@ -60,7 +60,7 @@ import org.apache.wiki.providers.ProviderException;
 @SuppressWarnings("serial")
 public class RSSGenerator implements Serializable
 {
-    static Logger              log = Logger.getLogger( RSSGenerator.class );
+    static Log              log = LogFactory.getLog( RSSGenerator.class );
     private WikiEngine         m_engine;
 
     private String             m_channelDescription = "";

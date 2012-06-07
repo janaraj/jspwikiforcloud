@@ -23,15 +23,27 @@ package org.apache.wiki;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
-import javax.security.auth.Subject;
+// import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.auth.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.SessionMonitor;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
@@ -40,6 +52,8 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.security.WikiSubject;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * <p>
@@ -109,13 +123,13 @@ public final class WikiSession implements WikiEventListener {
 
 	private static final int DOT = 46;
 
-	private static final Logger log = Logger.getLogger(WikiSession.class);
+	private static final Log log = LogFactory.getLog(WikiSession.class);
 
 	private static final String ALL = "*";
 
 	private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<WikiSession>();
 
-	private final Subject m_subject = new Subject();
+//	private final WikiSubject getSubject() = new WikiSubject();
 
 	private final Map<String, Set<String>> m_messages = new HashMap<String, Set<String>>();
 
@@ -139,7 +153,7 @@ public final class WikiSession implements WikiEventListener {
 	 *            the group to test
 	 * @return the result
 	 */
-	protected final boolean isInGroup(Group group) {
+	private final boolean isInGroup(Group group) {
 		for (Principal principal : getPrincipals()) {
 			if (isAuthenticated() && group.isMember(principal)) {
 				return true;
@@ -154,6 +168,11 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	private WikiSession() {
 	}
+	
+	
+	private WikiSubject getSubject() {
+		return BeanHolder.getSubject();
+	}
 
 	/**
 	 * Returns <code>true</code> if the user is considered asserted via a
@@ -162,8 +181,8 @@ public final class WikiSession implements WikiEventListener {
 	 * 
 	 * @return Returns <code>true</code> if the user is asserted
 	 */
-	public final boolean isAsserted() {
-		return m_subject.getPrincipals().contains(Role.ASSERTED);
+	private final boolean isAsserted() {
+		return getSubject().getPrincipals().contains(Role.ASSERTED);
 	}
 
 	/**
@@ -177,19 +196,23 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	public final boolean isAuthenticated() {
 		if (!m_engine.getAuthenticationManager().isM_useJAAS()) { return true; }
+		log.debug("Test : isAuthenticated");
 		// If Role.AUTHENTICATED is in principals set, always return true.
-		if (m_subject.getPrincipals().contains(Role.AUTHENTICATED)) {
+		if (getSubject().getPrincipals().contains(Role.AUTHENTICATED)) {
+			log.debug("OK. is Authenticated");
 			return true;
 		}
+		log.debug("Not authenticated");
 
 		// With non-JSPWiki LoginModules, the role may not be there, so
 		// we need to add it if the user really is authenticated.
 		if (!isAnonymous() && !isAsserted()) {
 			// Inject AUTHENTICATED role
-			m_subject.getPrincipals().add(Role.AUTHENTICATED);
+			log.debug("Not autheticated and not asserted");
+			getSubject().getPrincipals().add(Role.AUTHENTICATED);
 			return true;
 		}
-
+		log.debug("Aautheticated or Asserted");
 		return false;
 	}
 
@@ -207,8 +230,7 @@ public final class WikiSession implements WikiEventListener {
 	 * IP address.</li>
 	 * </ul>
 	 * <p>
-	 * The criteria above are listed in the order in which they are evaluated.
-	 * </p>
+	 * The criteria above are listed in the order in which they are evalPrincipal* </p>
 	 * 
 	 * @return whether the current user's identity is equivalent to an IP
 	 *         address
@@ -217,7 +239,7 @@ public final class WikiSession implements WikiEventListener {
 		
 		if (!m_engine.getAuthenticationManager().isM_useJAAS()) { return true; }
 		
-		Set<Principal> principals = m_subject.getPrincipals();
+		Set<Principal> principals = getSubject().getPrincipals();
 		return principals.contains(Role.ANONYMOUS)
 				|| principals.contains(WikiPrincipal.GUEST)
 				|| isIPV4Address(getUserPrincipal().getName());
@@ -376,7 +398,7 @@ public final class WikiSession implements WikiEventListener {
 		ArrayList<Principal> principals = new ArrayList<Principal>();
 
 		// Take the first non Role as the main Principal
-		for (Principal principal : m_subject.getPrincipals()) {
+		for (Principal principal : getSubject().getPrincipals()) {
 			if (AuthenticationManager.isUserPrincipal(principal)) {
 				principals.add(principal);
 			}
@@ -403,10 +425,10 @@ public final class WikiSession implements WikiEventListener {
 		Set<Principal> roles = new HashSet<Principal>();
 
 		// Add all of the Roles possessed by the Subject directly
-		roles.addAll(m_subject.getPrincipals(Role.class));
+		roles.addAll(getSubject().getPrincipals(Role.class));
 
 		// Add all of the GroupPrincipals possessed by the Subject directly
-		roles.addAll(m_subject.getPrincipals(GroupPrincipal.class));
+		roles.addAll(getSubject().getPrincipals(GroupPrincipal.class));
 
 		// Return a defensive copy
 		Principal[] roleArray = roles.toArray(new Principal[roles.size()]);
@@ -443,7 +465,7 @@ public final class WikiSession implements WikiEventListener {
 	 * @return the result
 	 */
 	public final boolean hasPrincipal(Principal principal) {
-		return m_subject.getPrincipals().contains(principal);
+		return getSubject().getPrincipals().contains(principal);
 
 	}
 
@@ -457,26 +479,27 @@ public final class WikiSession implements WikiEventListener {
 	public final void actionPerformed(WikiEvent event) {
 		if (event instanceof WikiSecurityEvent) {
 			WikiSecurityEvent e = (WikiSecurityEvent) event;
+			log.debug("Security action performed " + e.eventName(e.getType()));
 			if (e.getTarget() != null) {
 				switch (e.getType()) {
 				case WikiSecurityEvent.GROUP_ADD: {
 					Group group = (Group) e.getTarget();
 					if (isInGroup(group)) {
-						m_subject.getPrincipals().add(group.getPrincipal());
+						getSubject().getPrincipals().add(group.getPrincipal());
 					}
 					break;
 				}
 				case WikiSecurityEvent.GROUP_REMOVE: {
 					Group group = (Group) e.getTarget();
-					if (m_subject.getPrincipals()
+					if (getSubject().getPrincipals()
 							.contains(group.getPrincipal())) {
-						m_subject.getPrincipals().remove(group.getPrincipal());
+						getSubject().getPrincipals().remove(group.getPrincipal());
 					}
 					break;
 				}
 				case WikiSecurityEvent.GROUP_CLEAR_GROUPS: {
-					m_subject.getPrincipals().removeAll(
-							m_subject.getPrincipals(GroupPrincipal.class));
+					getSubject().getPrincipals().removeAll(
+							getSubject().getPrincipals(GroupPrincipal.class));
 					break;
 				}
 				case WikiSecurityEvent.LOGIN_INITIATED: {
@@ -485,7 +508,7 @@ public final class WikiSession implements WikiEventListener {
 				case WikiSecurityEvent.PRINCIPAL_ADD: {
 					WikiSession target = (WikiSession) e.getTarget();
 					if (this.equals(target) && m_status == AUTHENTICATED) {
-						Set<Principal> principals = m_subject.getPrincipals();
+						Set<Principal> principals = getSubject().getPrincipals();
 						principals.add((Principal) e.getPrincipal());
 					}
 					break;
@@ -496,7 +519,7 @@ public final class WikiSession implements WikiEventListener {
 						m_status = ANONYMOUS;
 
 						// Set the login/user principals and login status
-						Set<Principal> principals = m_subject.getPrincipals();
+						Set<Principal> principals = getSubject().getPrincipals();
 						m_loginPrincipal = (Principal) e.getPrincipal();
 						m_userPrincipal = m_loginPrincipal;
 
@@ -512,10 +535,11 @@ public final class WikiSession implements WikiEventListener {
 				case WikiSecurityEvent.LOGIN_ASSERTED: {
 					WikiSession target = (WikiSession) e.getTarget();
 					if (this.equals(target)) {
+						log.debug("SET ASSERTED");
 						m_status = ASSERTED;
 
 						// Set the login/user principals and login status
-						Set<Principal> principals = m_subject.getPrincipals();
+						Set<Principal> principals = getSubject().getPrincipals();
 						m_loginPrincipal = (Principal) e.getPrincipal();
 						m_userPrincipal = m_loginPrincipal;
 
@@ -529,12 +553,14 @@ public final class WikiSession implements WikiEventListener {
 					break;
 				}
 				case WikiSecurityEvent.LOGIN_AUTHENTICATED: {
+					log.debug("LOGIN_AUTHETICATED");
 					WikiSession target = (WikiSession) e.getTarget();
 					if (this.equals(target)) {
+						log.debug("LOGIN_AUTHENTICATED : equals");
 						m_status = AUTHENTICATED;
 
 						// Set the login/user principals and login status
-						Set<Principal> principals = m_subject.getPrincipals();
+						Set<Principal> principals = getSubject().getPrincipals();
 						m_loginPrincipal = (Principal) e.getPrincipal();
 						m_userPrincipal = m_loginPrincipal;
 
@@ -549,6 +575,8 @@ public final class WikiSession implements WikiEventListener {
 						injectUserProfilePrincipals(); // Add principals for the
 														// user profile
 						injectGroupPrincipals(); // Inject group principals
+					} else {
+						log.debug("LOGIN_AUTHENTICATED : not equals");
 					}
 					break;
 				}
@@ -574,7 +602,7 @@ public final class WikiSession implements WikiEventListener {
 									"User profile FullName cannot be null.");
 						}
 
-						Set<Principal> principals = m_subject.getPrincipals();
+						Set<Principal> principals = getSubject().getPrincipals();
 						m_loginPrincipal = new WikiPrincipal(
 								newProfile.getLoginName());
 
@@ -611,10 +639,10 @@ public final class WikiSession implements WikiEventListener {
 		if (!m_engine.getAuthenticationManager().isM_useJAAS()) {
 			return;
 		}
-		m_subject.getPrincipals().clear();
-		m_subject.getPrincipals().add(WikiPrincipal.GUEST);
-		m_subject.getPrincipals().add(Role.ANONYMOUS);
-		m_subject.getPrincipals().add(Role.ALL);
+		getSubject().getPrincipals().clear();
+		getSubject().getPrincipals().add(WikiPrincipal.GUEST);
+		getSubject().getPrincipals().add(Role.ANONYMOUS);
+		getSubject().getPrincipals().add(Role.ALL);
 		m_userPrincipal = WikiPrincipal.GUEST;
 		m_loginPrincipal = WikiPrincipal.GUEST;
 	}
@@ -634,14 +662,14 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	protected final void injectGroupPrincipals() {
 		// Flush the existing GroupPrincipals
-		m_subject.getPrincipals().removeAll(
-				m_subject.getPrincipals(GroupPrincipal.class));
+		getSubject().getPrincipals().removeAll(
+				getSubject().getPrincipals(GroupPrincipal.class));
 
 		// Get the GroupManager and test for each Group
 		GroupManager manager = m_engine.getGroupManager();
 		for (Principal group : manager.getRoles()) {
 			if (manager.isUserInRole(this, group)) {
-				m_subject.getPrincipals().add(group);
+				getSubject().getPrincipals().add(group);
 			}
 		}
 	}
@@ -673,7 +701,7 @@ public final class WikiSession implements WikiEventListener {
 					.getLoginName());
 			for (Principal principal : principals) {
 				// Add the Principal to the Subject
-				m_subject.getPrincipals().add(principal);
+				getSubject().getPrincipals().add(principal);
 
 				// Set the user principal if needed; we prefer FullName, but the
 				// WikiName will also work
@@ -857,9 +885,9 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	public static final Object doPrivileged(WikiSession session,
 			PrivilegedAction<?> action) throws AccessControlException {
-		return Subject.doAsPrivileged(session.m_subject, action, null);
+		return WikiSubject.doAsPrivileged(session.getSubject(), action);
 	}
-
+	
 	/**
 	 * Verifies whether a String represents an IPv4 address. The algorithm is
 	 * extremely efficient and does not allocate any objects.

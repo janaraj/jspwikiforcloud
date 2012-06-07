@@ -22,9 +22,19 @@
 package org.apache.wiki.event;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent
@@ -144,7 +154,7 @@ import org.apache.log4j.Logger;
  */
 public final class WikiEventManager
 {
-    private static final Logger log = Logger.getLogger(WikiEventManager.class);
+    private static final Log log = LogFactory.getLog(WikiEventManager.class);
 
     /* If true, permits a WikiEventMonitor to be set. */
     private static boolean c_permitMonitor = false;

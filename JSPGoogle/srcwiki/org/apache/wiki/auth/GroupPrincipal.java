@@ -20,7 +20,10 @@
  */
 package org.apache.wiki.auth;
 
+import java.io.Serializable;
 import java.security.Principal;
+
+//import java.security.Principal;
 
 /**
  * Immutable Principal that represents a Group. GroupPrincipals are injected
@@ -34,7 +37,7 @@ import java.security.Principal;
  * @see org.apache.wiki.auth.authorize.Group
  * @since 2.3.79
  */
-public final class GroupPrincipal implements Principal
+public final class GroupPrincipal implements Principal, Serializable
 {
     private final String m_name;
 

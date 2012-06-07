@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.*;
 
 import org.apache.wiki.WikiContext;
@@ -61,7 +61,7 @@ public class RPCServlet extends HttpServlet
     private WikiEngine       m_engine;
     private XmlRpcServer     m_xmlrpcServer = new XmlRpcServer();
 
-    static Logger log = Logger.getLogger( RPCServlet.class );
+    static Log log = LogFactory.getLog( RPCServlet.class );
 
     public void initHandler( String prefix, String handlerName )
         throws ClassNotFoundException,

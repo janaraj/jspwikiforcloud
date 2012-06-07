@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
 import org.apache.wiki.InternalWikiException;
@@ -55,7 +55,7 @@ public class Preferences
      */
     public static final String SESSIONPREFS = "prefs";
      
-    private static Logger log = Logger.getLogger( Preferences.class );
+    private static Log log = LogFactory.getLog( Preferences.class );
     
     /**
      *  This is an utility method which is called to make sure that the

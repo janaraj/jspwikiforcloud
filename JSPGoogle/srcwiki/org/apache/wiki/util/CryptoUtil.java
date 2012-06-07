@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 /**
  * Hashes and verifies salted SHA-1 passwords, which are compliant with RFC
@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public final class CryptoUtil
 {
-    private static final Logger log = Logger.getLogger( CryptoUtil.class );
+    private static final Log log = LogFactory.getLog( CryptoUtil.class );
 
     private static final String SSHA = "{SSHA}";
 

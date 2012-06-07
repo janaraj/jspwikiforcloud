@@ -10,29 +10,21 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-package org.apache.log4j;
+package org.apache.wiki.security;
 
-/**
- * Stub for org.apache.log4j
- * <p>
- * Reason: not supported by Google App Engine because of FileOutputStream class
- * and also should be Serializable
- * </p>
- * Do nothing, only to have stuff compiled.
- * 
- * @author stanislawbartkowski@gmail.com
- * 
- */
+import java.security.AccessControlException;
+import java.security.Permission;
 
-public class NDC {
+public class WikiAccessController {
 	
-	public static void push(String message) {
+	private WikiAccessController() { }
+		
+	    public static void checkPermission(Permission perm)
+	   		 throws AccessControlException {
+	    	// do nothing now
+//            AccessController.checkPermission( permission );
+
+	       }
+
 	}
 
-	public static void pop() {
-	}
-
-	public static void remove() {
-	}
-
-}

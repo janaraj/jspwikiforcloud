@@ -20,7 +20,7 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.*;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
@@ -45,7 +45,7 @@ import java.io.IOException;
 public class TableOfContents
     implements WikiPlugin, HeadingListener
 {
-    private static Logger log = Logger.getLogger( TableOfContents.class );
+    private static Log log = LogFactory.getLog( TableOfContents.class );
 
     /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";

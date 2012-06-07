@@ -21,12 +21,11 @@
 package org.apache.wiki.event;
 
 import java.security.Principal;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.event.WikiEvent;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>Event class for security events: login/logout, wiki group adds/changes, and
@@ -117,7 +116,7 @@ public final class WikiSecurityEvent extends WikiEvent
     public static final int   PROFILE_NAME_CHANGED     = 54;
     
     /** The security logging service. */
-    protected static final Logger log = Logger.getLogger( "SecurityLog" );
+    protected static final Log log = LogFactory.getLog( "SecurityLog" );
     
     private final Principal m_principal;
     
@@ -151,15 +150,15 @@ public final class WikiSecurityEvent extends WikiEvent
         }
         this.m_principal = principal;
         this.m_target = target;
-        if ( log.isEnabledFor( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
+        if ( log.isErrorEnabled() && ArrayUtils.contains( ERROR_EVENTS, type ) )
         {
             log.error( this );
         }
-        else if ( log.isEnabledFor( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
+        else if ( log.isWarnEnabled() && ArrayUtils.contains( WARN_EVENTS, type ) )
         {
             log.warn( this );
         }
-        else if ( log.isEnabledFor( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
+        else if ( log.isInfoEnabled() && ArrayUtils.contains( INFO_EVENTS, type ) )
         {
             log.info( this );
         }

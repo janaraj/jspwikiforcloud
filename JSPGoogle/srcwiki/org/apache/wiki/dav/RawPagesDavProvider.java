@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
@@ -34,6 +34,7 @@ import org.apache.wiki.dav.items.DavItem;
 import org.apache.wiki.dav.items.DirectoryItem;
 import org.apache.wiki.dav.items.PageDavItem;
 import org.apache.wiki.providers.ProviderException;
+
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 
@@ -45,7 +46,7 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  */
 public class RawPagesDavProvider extends WikiDavProvider
 {
-    protected static final Logger log = Logger.getLogger( RawPagesDavProvider.class );
+    protected static final Log log = LogFactory.getLog( RawPagesDavProvider.class );
 
     private Cache m_davItemCache = new Cache(true,false,false);
     

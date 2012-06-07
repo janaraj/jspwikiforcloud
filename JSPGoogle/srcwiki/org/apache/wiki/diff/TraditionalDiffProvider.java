@@ -29,10 +29,17 @@ import java.text.NumberFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.commons.jrcs.diff.*;
+import org.apache.commons.jrcs.diff.AddDelta;
+import org.apache.commons.jrcs.diff.ChangeDelta;
+import org.apache.commons.jrcs.diff.Chunk;
+import org.apache.commons.jrcs.diff.DeleteDelta;
+import org.apache.commons.jrcs.diff.Diff;
+import org.apache.commons.jrcs.diff.DifferentiationFailedException;
+import org.apache.commons.jrcs.diff.Revision;
+import org.apache.commons.jrcs.diff.RevisionVisitor;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
@@ -47,7 +54,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 
 public class TraditionalDiffProvider implements DiffProvider
 {
-    private static final Logger log = Logger.getLogger(TraditionalDiffProvider.class);
+    private static final Log log = LogFactory.getLog(TraditionalDiffProvider.class);
 
     private static final String CSS_DIFF_ADDED = "<tr><td class=\"diffadd\">";
     private static final String CSS_DIFF_REMOVED = "<tr><td class=\"diffrem\">";

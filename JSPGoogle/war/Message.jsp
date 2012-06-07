@@ -1,10 +1,10 @@
 <%@ page isErrorPage="true" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.tags.WikiTagBase" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Log log = LogFactory.getLog("JSPWiki"); 
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

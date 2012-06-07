@@ -20,14 +20,18 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
-import org.apache.log4j.Logger;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.providers.ProviderException;
 
@@ -44,7 +48,7 @@ import org.apache.wiki.providers.ProviderException;
  */
 public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( IndexPlugin.class );
+    private static Log log = LogFactory.getLog( IndexPlugin.class );
     
     /**
      *  {@inheritDoc}

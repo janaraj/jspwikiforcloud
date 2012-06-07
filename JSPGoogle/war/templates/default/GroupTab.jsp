@@ -8,7 +8,7 @@
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

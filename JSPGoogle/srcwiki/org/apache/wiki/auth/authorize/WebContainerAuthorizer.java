@@ -32,20 +32,20 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 
 /**
  * Authorizes users by delegating role membership checks to the servlet
@@ -59,7 +59,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
 {
     private static final String J2EE_SCHEMA_24_NAMESPACE = "http://java.sun.com/xml/ns/j2ee";
 
-    protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
+    protected static final Log log                   = LogFactory.getLog( WebContainerAuthorizer.class );
 
     protected WikiEngine          m_engine;
 

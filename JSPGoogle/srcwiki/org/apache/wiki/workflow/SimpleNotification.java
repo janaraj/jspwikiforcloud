@@ -20,6 +20,8 @@
  */
 package org.apache.wiki.workflow;
 
+//import java.security.Principal;
+
 import java.security.Principal;
 
 import org.apache.wiki.WikiException;

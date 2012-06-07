@@ -24,7 +24,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -63,7 +63,7 @@ import org.apache.wiki.util.WikiBackgroundThread;
  */
 public class LuceneSearchProvider implements SearchProvider
 {
-    protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
+    protected static final Log log = LogFactory.getLog(LuceneSearchProvider.class);
 
     private WikiEngine m_engine;
 
@@ -738,7 +738,7 @@ public class LuceneSearchProvider implements SearchProvider
             m_watchdog.enterState("Full reindex");
             // Reindex everything
             m_provider.doFullLuceneReindex();
-            m_watchdog.exitState();
+            m_watchdog.exitState(null);
         }
 
         public void backgroundTask() throws Exception
@@ -756,7 +756,7 @@ public class LuceneSearchProvider implements SearchProvider
                 }
             }
 
-            m_watchdog.exitState();
+            m_watchdog.exitState(null);
         }
 
     }

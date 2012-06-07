@@ -10,23 +10,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-package org.apache.log4j;
+package org.apache.wiki.security;
 
-/**
- * Stub for org.apache.log4j
- * <p>
- * Reason: not supported by Google App Engine because of FileOutputStream class
- * </p>
- * 
- * @author stanislawbartkowski@gmail.com
- * 
- */
+import java.util.Map;
 
-public class Level {
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
 
-	public static Level ALL;
-	public static Level ERROR;
-	public static Level WARN;
-	public static Level INFO;
-
+public interface WikiLoginModule {
+	
+    void initialize(WikiSubject subject, CallbackHandler callbackHandler,
+		    Map<String,?> sharedState,
+		    Map<String,?> options);
+    
+    boolean login() throws LoginException;
+    boolean commit() throws LoginException;
 }

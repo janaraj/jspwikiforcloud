@@ -20,8 +20,20 @@
  */
 package org.apache.wiki.filters;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Random;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,13 +41,31 @@ import javax.servlet.jsp.PageContext;
 
 import net.sf.akismet.Akismet;
 
-import org.apache.commons.jrcs.diff.*;
+import org.apache.commons.jrcs.diff.AddDelta;
+import org.apache.commons.jrcs.diff.ChangeDelta;
+import org.apache.commons.jrcs.diff.DeleteDelta;
+import org.apache.commons.jrcs.diff.Delta;
+import org.apache.commons.jrcs.diff.Diff;
+import org.apache.commons.jrcs.diff.DifferentiationFailedException;
+import org.apache.commons.jrcs.diff.Revision;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
-import org.apache.oro.text.regex.*;
-
-import org.apache.wiki.*;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.MatchResult;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.FileUtil;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.providers.ProviderException;
@@ -144,8 +174,8 @@ public class SpamFilter
 
     private Date            m_lastRebuild = new Date( 0L );
 
-    private static  Logger  c_spamlog = Logger.getLogger( "SpamLog" );
-    private static  Logger  log = Logger.getLogger( SpamFilter.class );
+    private static  Log  c_spamlog = LogFactory.getLog( "SpamLog" );
+    private static  Log  log = LogFactory.getLog( SpamFilter.class );
 
 
     private Vector<Host>    m_temporaryBanList = new Vector<Host>();

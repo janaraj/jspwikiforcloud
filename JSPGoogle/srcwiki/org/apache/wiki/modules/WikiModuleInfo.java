@@ -23,11 +23,11 @@ package org.apache.wiki.modules;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 
-import org.jdom.Element;
-
 import org.apache.wiki.FileUtil;
+import org.jdom.Element;
 
 /**
  *  A WikiModule describes whatever JSPWiki plugin there is: it can be a plugin,
@@ -36,7 +36,7 @@ import org.apache.wiki.FileUtil;
  *  @since 2.4
  */
 public class WikiModuleInfo
-    implements Comparable<WikiModuleInfo>
+    implements Comparable<WikiModuleInfo>, Serializable
 {
     protected String m_name;
     protected String m_scriptLocation;

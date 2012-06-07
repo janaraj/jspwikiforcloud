@@ -3,12 +3,13 @@ package org.apache.wiki;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.util.ClassUtil;
 
 public class ClassProviderFactory {
 
-	private static Logger log = Logger.getLogger(ClassProviderFactory.class);
+	private static Log log = LogFactory.getLog(ClassProviderFactory.class);
 
 	@SuppressWarnings("unchecked")
 	public static <T extends WikiProvider> T construct(WikiEngine engine,

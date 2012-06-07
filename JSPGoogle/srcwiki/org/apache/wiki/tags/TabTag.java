@@ -23,7 +23,7 @@ package org.apache.wiki.tags;
 
 import javax.servlet.jsp.*;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.TextUtil;
 
 /**
@@ -53,7 +53,7 @@ public class TabTag extends WikiTagBase
     private String m_accesskey;
     private String m_tabTitle;
     private String m_url;
-    private static Logger log = Logger.getLogger( TabTag.class );
+    private static Log log = LogFactory.getLog( TabTag.class );
 
 
     /**

@@ -32,14 +32,19 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.*;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.Authorizer;
+import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -70,7 +75,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
     private static final String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
 
-    static final Logger         log                = Logger.getLogger( GroupManager.class );
+    static final Log         log                = LogFactory.getLog( GroupManager.class );
 
     protected WikiEngine        m_engine;
 
@@ -144,10 +149,10 @@ public final class GroupManager implements Authorizer, WikiEventListener
         {
             Properties props = m_engine.getWikiProperties();
             dbClassName = props.getProperty( PROP_GROUPDATABASE );
-            if ( dbClassName == null )
-            {
-                dbClassName = XMLGroupDatabase.class.getName();
-            }
+//            if ( dbClassName == null )
+//            {
+//                dbClassName = XMLGroupDatabase.class.getName();
+//            }
             log.info( "Attempting to load group database class " + dbClassName );
             Class<?> dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
             m_groupDatabase = (GroupDatabase) dbClass.newInstance();

@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.regex.*;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -136,7 +136,7 @@ public class PluginManager extends ModuleManager
 {
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
-    private static Logger log = Logger.getLogger( PluginManager.class );
+    private static Log log = LogFactory.getLog( PluginManager.class );
 
     /**
      *  This is the default package to try in case the instantiation

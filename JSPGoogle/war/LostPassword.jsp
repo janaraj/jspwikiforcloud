@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*"%>
+<%@ page import="org.apache.commons.logging.*"%>
 <%@ page import="org.apache.wiki.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.text.*"%>
@@ -11,7 +11,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="org.apache.wiki.tags.WikiTagBase"%>
 <%@ page import="com.jsp.util.localize.LocaleSupport"%>
-<%!Logger log = Logger.getLogger( "JSPWiki" );
+<%!Log log = LogFactory.getLog( "JSPWiki" );
 
     String message = null;
 

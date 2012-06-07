@@ -21,11 +21,11 @@ import java.io.ObjectOutputStream;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.IObjectPersist;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
@@ -39,7 +39,7 @@ import org.apache.wiki.providers.jpa.WikiObject;
 @SuppressWarnings("serial")
 public class ObjectGaeProvider implements IObjectPersist {
 
-	private final Logger log = Logger.getLogger(ObjectGaeProvider.class);
+	private final Log log = LogFactory.getLog(ObjectGaeProvider.class);
 
 	@Override
 	public void initialize(WikiEngine engine, Properties properties)

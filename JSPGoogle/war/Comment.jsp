@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
@@ -16,7 +16,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Log log = LogFactory.getLog("JSPWiki");
 
 	String findParam( PageContext ctx, String key )
 	{

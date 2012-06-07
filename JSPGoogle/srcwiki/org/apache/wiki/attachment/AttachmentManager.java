@@ -32,7 +32,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiContext;
@@ -81,7 +82,7 @@ public class AttachmentManager implements Serializable
      */
     public static final String PROP_FORDBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
 
-    static Logger log = Logger.getLogger( AttachmentManager.class );
+    static Log log = LogFactory.getLog( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
     private WikiEngine             m_engine;
 

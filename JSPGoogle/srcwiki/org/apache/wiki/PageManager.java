@@ -23,18 +23,29 @@ package org.apache.wiki;
 import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
-import org.apache.wiki.event.*;
+import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.filters.FilterException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.providers.CachingProvider;
@@ -109,7 +120,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /** Fact name for storing whether the user is authenticated or not.  Value is {@value}. */
     public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
-    static Logger log = Logger.getLogger( PageManager.class );
+    static Log log = LogFactory.getLog( PageManager.class );
 
     private WikiPageProvider m_provider;
 

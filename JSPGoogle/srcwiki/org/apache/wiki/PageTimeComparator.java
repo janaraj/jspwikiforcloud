@@ -21,8 +21,11 @@
 package org.apache.wiki;
 
 import java.io.Serializable;
-import java.util.*;
-import org.apache.log4j.Logger;
+import java.util.Comparator;
+import java.util.Date;
+
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
@@ -39,7 +42,7 @@ public class PageTimeComparator
 {
     private static final long serialVersionUID = 0L;
 
-    static Logger log = Logger.getLogger( PageTimeComparator.class ); 
+    static Log log = LogFactory.getLog( PageTimeComparator.class ); 
 
     /**
      *  {@inheritDoc}

@@ -20,7 +20,18 @@
  */
 package org.apache.wiki;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -28,7 +39,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *  Generic utilities related to file and stream handling.
@@ -38,7 +50,7 @@ public final class FileUtil
 {
     /** Size of the buffer used when copying large chunks of data. */
     private static final int      BUFFER_SIZE = 4096;
-    private static final Logger   log         = Logger.getLogger(FileUtil.class);
+    private static final Log   log         = LogFactory.getLog(FileUtil.class);
 
     /**
      *  Private constructor prevents instantiation.

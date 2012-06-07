@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -40,7 +41,7 @@ import org.apache.wiki.util.ClassUtil;
 @SuppressWarnings("serial")
 public class DifferenceManager implements Serializable
 {
-    private static final Logger log = Logger.getLogger(DifferenceManager.class);
+    private static final Log log = LogFactory.getLog(DifferenceManager.class);
 
     /** Property value for storing a diff provider.  Value is {@value}. */
     public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";

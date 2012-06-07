@@ -7,7 +7,7 @@ package com.opensymphony.oscache.base;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 
 import com.opensymphony.oscache.base.algorithm.AbstractConcurrentReadCache;

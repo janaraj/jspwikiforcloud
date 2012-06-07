@@ -22,6 +22,8 @@ package org.apache.wiki.workflow;
 
 import java.security.Principal;
 
+//import java.security.Principal;
+
 /**
  * Decision subclass that includes two available Outcomes:
  * {@link Outcome#DECISION_APPROVE} or {@link Outcome#DECISION_DENY}.

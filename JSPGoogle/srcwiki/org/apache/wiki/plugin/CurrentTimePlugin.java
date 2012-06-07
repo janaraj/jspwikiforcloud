@@ -41,7 +41,7 @@ import org.apache.wiki.preferences.Preferences.TimeFormat;
 public class CurrentTimePlugin
     implements WikiPlugin
 {
-    // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
+    // private static Log log = LogFactory.getLog( CurrentTimePlugin.class );
 
     /**
      *  {@inheritDoc}

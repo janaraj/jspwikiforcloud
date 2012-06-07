@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
@@ -9,7 +9,7 @@
 <%@ page import="java.text.*" %>
 <fmt:setBundle basename="CoreResources"/>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Log log = LogFactory.getLog("JSPWiki");
 %>
 
 <%

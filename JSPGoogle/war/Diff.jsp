@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Log log = LogFactory.getLog("JSPWiki"); 
 %>
 
 <%
@@ -71,4 +71,4 @@
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
-<% } finally { w.exitState(); } %>
+<% } finally { w.exitState(request.getSession()); } %>

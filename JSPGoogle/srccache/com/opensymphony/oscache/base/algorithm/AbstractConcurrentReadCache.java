@@ -40,7 +40,7 @@ import com.opensymphony.oscache.base.CacheEntry;
 import com.opensymphony.oscache.base.persistence.CachePersistenceException;
 import com.opensymphony.oscache.base.persistence.PersistenceListener;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;

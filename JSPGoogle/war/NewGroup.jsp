@@ -1,4 +1,4 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.NoSuchPrincipalException" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
@@ -9,7 +9,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Log log = LogFactory.getLog("JSPWiki"); 
 %>
 
 <%

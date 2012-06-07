@@ -25,7 +25,7 @@ import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiContext;
@@ -51,7 +51,7 @@ public class AttachmentsIteratorTag
 {
     private static final long serialVersionUID = 0L;
     
-    static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
+    static final Log log = LogFactory.getLog( AttachmentsIteratorTag.class );
 
     /**
      *  {@inheritDoc}

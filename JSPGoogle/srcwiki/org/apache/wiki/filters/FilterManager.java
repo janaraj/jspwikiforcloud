@@ -25,15 +25,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -43,6 +44,11 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PriorityList;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 
 
 /**
@@ -97,7 +103,7 @@ public final class FilterManager extends ModuleManager
 
     private HashMap<String, PageFilterInfo>          m_filterClassMap = new HashMap<String,PageFilterInfo>();
 
-    private static final Logger log = Logger.getLogger(WikiEngine.class);
+    private static final Log log = LogFactory.getLog(WikiEngine.class);
 
     /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
     public static final String PROP_FILTERXML = "jspwiki.filterConfig";

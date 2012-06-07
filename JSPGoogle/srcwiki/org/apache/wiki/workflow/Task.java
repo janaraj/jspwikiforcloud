@@ -22,6 +22,8 @@ package org.apache.wiki.workflow;
 
 import java.security.Principal;
 
+//import java.security.Principal;
+
 /**
  * AbstractStep subclass that executes instructions, uninterrupted, and results
  * in an Outcome. Concrete classes only need to implement {@link Task#execute()}.

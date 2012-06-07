@@ -24,30 +24,40 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.*;
+import java.security.AccessControlException;
+import java.security.KeyStore;
+import java.security.Permission;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.security.ProtectionDomain;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.security.auth.Subject;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
-import org.freshcookies.security.policy.PolicyReader;
-import org.jdom.JDOMException;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.authorize.*;
+import org.apache.wiki.auth.authorize.Group;
+import org.apache.wiki.auth.authorize.GroupDatabase;
+import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.security.WikiAccessController;
+import org.apache.wiki.security.WikiSubject;
+import org.freshcookies.security.policy.PolicyReader;
+import org.jdom.JDOMException;
 
 /**
  * Helper class for verifying JSPWiki's security configuration. Invoked by
@@ -129,7 +139,7 @@ public final class SecurityVerifier
 
     private static final String   BG_RED                       = "bgcolor=\"#ffc0c0\"";
 
-    private static final Logger LOG                          = Logger.getLogger( SecurityVerifier.class.getName() );
+    private static final Log LOG                          = LogFactory.getLog( SecurityVerifier.class.getName() );
 
     /**
      * Constructs a new SecurityVerifier for a supplied WikiEngine and WikiSession.
@@ -163,7 +173,7 @@ public final class SecurityVerifier
      * the policy.
      * @return the array of principals
      */
-    public final Principal[] policyPrincipals()
+    private final Principal[] policyPrincipals()
     {
         return m_policyPrincipals;
     }
@@ -488,7 +498,7 @@ public final class SecurityVerifier
      * Verifies that the group datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
-    protected final void verifyGroupDatabase()
+    private final void verifyGroupDatabase()
     {
         GroupManager mgr = m_engine.getGroupManager();
         GroupDatabase db = null;
@@ -791,24 +801,25 @@ public final class SecurityVerifier
      */
     protected final boolean verifyStaticPermission( Principal principal, final Permission permission )
     {
-        Subject subject = new Subject();
+        WikiSubject subject = new WikiSubject();
         subject.getPrincipals().add( principal );
-        boolean allowedByGlobalPolicy = ((Boolean)
-            Subject.doAsPrivileged( subject, new PrivilegedAction<Object>()
-            {
-                public Object run()
+        PrivilegedAction<Object> act = new PrivilegedAction<Object>()
                 {
-                    try
-                    {
-                        AccessController.checkPermission( permission );
-                        return Boolean.TRUE;
-                    }
-                    catch ( AccessControlException e )
-                    {
-                        return Boolean.FALSE;
-                    }
+            public Object run()
+            {
+                try
+                {
+                    WikiAccessController.checkPermission( permission );
+                    return Boolean.TRUE;
                 }
-            }, null )).booleanValue();
+                catch ( AccessControlException e )
+                {
+                    return Boolean.FALSE;
+                }
+            }
+        };
+        boolean allowedByGlobalPolicy = ((Boolean)
+            WikiSubject.doAsPrivileged( subject, act)).booleanValue();
 
         if ( allowedByGlobalPolicy )
         {
@@ -821,10 +832,10 @@ public final class SecurityVerifier
     }
 
     /**
-     * Verifies that the user datbase was initialized properly, and that
+     * Verifies that the user database was initialized properly, and that
      * user add and delete operations work as they should.
      */
-    protected final void verifyUserDatabase()
+    private final void verifyUserDatabase()
     {
         UserDatabase db = m_engine.getUserManager().getUserDatabase();
 

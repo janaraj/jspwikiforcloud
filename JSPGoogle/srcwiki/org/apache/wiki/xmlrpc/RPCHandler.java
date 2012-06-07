@@ -23,7 +23,7 @@ package org.apache.wiki.xmlrpc;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 
 import org.apache.wiki.*;
@@ -42,7 +42,7 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 public class RPCHandler
     extends AbstractRPCHandler
 {
-    private static Logger log = Logger.getLogger( RPCHandler.class ); 
+    private static Log log = LogFactory.getLog( RPCHandler.class ); 
 
     /**
      *  {@inheritDoc}

@@ -31,10 +31,19 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
@@ -43,20 +52,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.plugin.InitializablePlugin;
-import org.apache.wiki.plugin.PluginException;
-import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.plugin.WikiPlugin;
 import org.apache.wiki.util.WikiBackgroundThread;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Matcher;
 
 /**
  * Counts the number of times each page has been viewed. Parameters:
@@ -68,7 +64,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
  */
 public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin, InitializablePlugin
 {
-    private static final Logger log = Logger.getLogger( PageViewPlugin.class );
+    private static final Log log = LogFactory.getLog( PageViewPlugin.class );
 
     /** The page view manager. */
     private static PageViewManager c_singleton = null;

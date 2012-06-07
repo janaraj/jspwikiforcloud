@@ -20,15 +20,21 @@
  */
 package org.apache.wiki.auth;
 
+//import java.security.Principal;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.weakmap.WeakHashMapFactory;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -47,7 +53,7 @@ import org.apache.wiki.rpc.json.JSONRPCManager;
  */
 public class SessionMonitor implements HttpSessionListener
 {
-    private static Logger log = Logger.getLogger( SessionMonitor.class );
+    private static Log log = LogFactory.getLog( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
     private static Map<WikiEngine, SessionMonitor>          c_monitors   = new HashMap<WikiEngine, SessionMonitor>();
@@ -250,6 +256,7 @@ public class SessionMonitor implements HttpSessionListener
      * 
      * @param se the HTTP session event
      */
+    @Override
     public void sessionCreated( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
@@ -262,6 +269,7 @@ public class SessionMonitor implements HttpSessionListener
      * container destoys an HTTP session.
      * @param se the HTTP session event
      */
+    @Override
     public void sessionDestroyed( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();

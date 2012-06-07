@@ -42,9 +42,15 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.*;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.dav.AttachmentDavProvider;
@@ -80,7 +86,7 @@ public class AttachmentServlet
     private static final long serialVersionUID = 3257282552187531320L;
 
     private WikiEngine m_engine;
-    static Logger log = Logger.getLogger(AttachmentServlet.class.getName());
+    static Log log = LogFactory.getLog(AttachmentServlet.class.getName());
 
     private static final String HDR_VERSION     = "version";
     // private static final String HDR_NAME        = "page";

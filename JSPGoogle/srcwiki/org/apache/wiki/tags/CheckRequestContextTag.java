@@ -23,97 +23,84 @@ package org.apache.wiki.tags;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.providers.ProviderException;
 
 /**
- *  Includes body, if the request context matches.  To understand more about
- *  RequestContexts, please look at the WikiContext class.
- *
- *  @since 2.0
- *  @see org.apache.wiki.WikiContext
+ * Includes body, if the request context matches. To understand more about
+ * RequestContexts, please look at the WikiContext class.
+ * 
+ * @since 2.0
+ * @see org.apache.wiki.WikiContext
  */
-public class CheckRequestContextTag
-    extends WikiTagBase
-{
-    private static final long serialVersionUID = 0L;
-    
-    private String m_context;
-    private String[] m_contextList = {};
-    
-    static    Logger    log = Logger.getLogger( CheckRequestContextTag.class );
+public class CheckRequestContextTag extends WikiTagBase {
+	private static final long serialVersionUID = 0L;
 
+	private String m_context;
+	private String[] m_contextList = {};
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public void initTag()
-    {
-        super.initTag();
-        m_context = null;
-        m_contextList = new String[0];
-    }
-    
-    /**
-     *  Returns the context.
-     *  
-     *  @return Return the context.
-     */
-    public String getContext()
-    {
-        return m_context;
-    }
+	static final private Log log = LogFactory
+			.getLog(CheckRequestContextTag.class);
 
-    /**
-     *  Set the context to check for.
-     *  
-     *  @param arg One of the RequestsContexts.
-     */
-    public void setContext( String arg )
-    {
-        m_context = arg;
-        
-        m_contextList = StringUtils.split(arg,'|');
-        
-        log.debug("Check request context setContext=" + arg);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initTag() {
+		super.initTag();
+		m_context = null;
+		m_contextList = new String[0];
+	}
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        log.debug("Check request context doWikiStartTag");
-        for(int i = 0; i < m_contextList.length; i++ )
-        {
-            String ctx = m_wikiContext.getRequestContext();
-            
-            String checkedCtx = m_contextList[i];
+	/**
+	 * Returns the context.
+	 * 
+	 * @return Return the context.
+	 */
+	public String getContext() {
+		return m_context;
+	}
 
-            if( checkedCtx.length() > 0 )
-            {
-                if( checkedCtx.charAt(0) == '!' )
-                {
-                    if( !ctx.equalsIgnoreCase(checkedCtx.substring(1) ) )
-                    {
-                        log.debug("Check request context EVAL_BODY_INCLUDE");                    	
-                        return EVAL_BODY_INCLUDE;
-                    }
-                }
-                else if( ctx.equalsIgnoreCase(m_contextList[i]) )
-                {
-                    log.debug("Check request context EVAL_BODY_INCLUDE");                    	
-                    return EVAL_BODY_INCLUDE;
-                }
-            }
-        }
+	/**
+	 * Set the context to check for.
+	 * 
+	 * @param arg
+	 *            One of the RequestsContexts.
+	 */
+	public void setContext(String arg) {
+		m_context = arg;
 
-        log.debug("Check request context SKIP_BODY");                    	
-        return SKIP_BODY;
-    }
+		m_contextList = StringUtils.split(arg, '|');
+
+		log.debug("Check request context setContext=" + arg);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int doWikiStartTag() throws IOException, ProviderException {
+		log.debug("Check request context doWikiStartTag");
+		for (int i = 0; i < m_contextList.length; i++) {
+			String ctx = m_wikiContext.getRequestContext();
+
+			String checkedCtx = m_contextList[i];
+
+			if (checkedCtx.length() > 0) {
+				if (checkedCtx.charAt(0) == '!') {
+					if (!ctx.equalsIgnoreCase(checkedCtx.substring(1))) {
+						log.debug("Check request context EVAL_BODY_INCLUDE");
+						return EVAL_BODY_INCLUDE;
+					}
+				} else if (ctx.equalsIgnoreCase(m_contextList[i])) {
+					log.debug("Check request context EVAL_BODY_INCLUDE");
+					return EVAL_BODY_INCLUDE;
+				}
+			}
+		}
+
+		log.debug("Check request context SKIP_BODY");
+		return SKIP_BODY;
+	}
 }

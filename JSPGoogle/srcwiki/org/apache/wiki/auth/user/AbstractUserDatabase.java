@@ -20,15 +20,17 @@
  */
 package org.apache.wiki.auth.user;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.catalina.util.HexUtils;
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -44,7 +46,7 @@ import org.apache.wiki.util.CryptoUtil;
 public abstract class AbstractUserDatabase implements UserDatabase
 {
 
-    protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
+    protected static final Log log = LogFactory.getLog( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
 

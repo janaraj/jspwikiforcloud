@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -77,7 +77,7 @@ import org.apache.wiki.providers.ProviderException;
 public class WeblogPlugin
     implements WikiPlugin, ParserStagePlugin
 {
-    private static Logger     log = Logger.getLogger(WeblogPlugin.class);
+    private static Log     log = LogFactory.getLog(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */

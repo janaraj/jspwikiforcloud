@@ -25,7 +25,7 @@ import org.apache.wiki.WikiContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -51,7 +51,7 @@ public class BreadcrumbsTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = Logger.getLogger(BreadcrumbsTag.class);
+    private static final Log log = LogFactory.getLog(BreadcrumbsTag.class);
     /** The name of the session attribute representing the breadcrumbtrail */
     public static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;

@@ -23,6 +23,7 @@ package org.apache.wiki.ui;
 import java.security.Permission;
 
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 
@@ -141,6 +142,7 @@ public final class PageCommand extends AbstractCommand
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
+	@Override
     public final Permission requiredPermission()
     {
         return m_permission;

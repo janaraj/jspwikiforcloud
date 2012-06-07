@@ -23,7 +23,7 @@ package org.apache.wiki.providers;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 import org.apache.wiki.parser.MarkupParser;
@@ -57,7 +57,7 @@ import com.opensymphony.oscache.base.events.*;
 public class CachingProvider
     implements WikiPageProvider, VersioningProvider
 {
-    private static final Logger log = Logger.getLogger(CachingProvider.class);
+    private static final Log log = LogFactory.getLog(CachingProvider.class);
 
     private WikiPageProvider m_provider;
     // FIXME: Find another way to the search engine to use instead of from WikiEngine?

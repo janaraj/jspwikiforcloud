@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.IObjectPersist;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
@@ -20,7 +20,7 @@ import xjava.io.FileOutputStream;
 @SuppressWarnings("serial")
 public class FileObjectPersist implements IObjectPersist {
 
-	private static Logger log = Logger.getLogger(FileObjectPersist.class);
+	private static Log log = LogFactory.getLog(FileObjectPersist.class);
 
 	private WikiEngine m_engine = null;
 

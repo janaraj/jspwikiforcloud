@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 
@@ -61,7 +61,7 @@ public class VersioningFileProvider
     extends AbstractFileProvider
     implements VersioningProvider
 {
-    private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
+    private static final Log     log = LogFactory.getLog(VersioningFileProvider.class);
    
     /** Name of the directory where the old versions are stored. */
     public static final String      PAGEDIR      = "OLD";

@@ -25,7 +25,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.QueryItem;
 import org.apache.wiki.SearchMatcher;
@@ -49,7 +50,7 @@ public class WikiGaePageProvider implements WikiPageProvider {
 
 	private WikiEngine m_engine;
 
-	private final Logger log = Logger.getLogger(WikiGaePageProvider.class);
+	private final Log log = LogFactory.getLog(WikiGaePageProvider.class);
 
 	// TODO: should be taken as a configuration parameter
 	/** Time out to recognize new version of the page or continuation. */

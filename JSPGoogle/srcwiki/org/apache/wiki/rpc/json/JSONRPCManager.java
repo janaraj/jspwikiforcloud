@@ -28,7 +28,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -171,7 +171,7 @@ public final class JSONRPCManager extends RPCManager
     static class WikiJSONAccessor implements InvocationCallback
     {
         private static final long serialVersionUID = 1L;
-        private static final Logger log = Logger.getLogger( WikiJSONAccessor.class );
+        private static final Log log = LogFactory.getLog( WikiJSONAccessor.class );
         
         /**
          *  Create an accessor.

@@ -23,6 +23,8 @@ package org.apache.wiki.ui;
 import java.io.Serializable;
 import java.security.Permission;
 
+import org.apache.wiki.WikiSession;
+
 /**
  * <p>
  * Represents a logical "unit of work" that includes a request context, JSP,

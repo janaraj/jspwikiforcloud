@@ -7,7 +7,7 @@ package com.opensymphony.oscache.web;
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.CacheEntry;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;

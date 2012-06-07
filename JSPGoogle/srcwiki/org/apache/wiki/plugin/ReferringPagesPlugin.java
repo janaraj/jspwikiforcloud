@@ -20,7 +20,7 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.*;
 
 import java.text.MessageFormat;
@@ -46,7 +46,7 @@ import java.util.*;
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
 {
-    private static Logger log = Logger.getLogger( ReferringPagesPlugin.class );
+    private static Log log = LogFactory.getLog( ReferringPagesPlugin.class );
 
     /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX      = "max";

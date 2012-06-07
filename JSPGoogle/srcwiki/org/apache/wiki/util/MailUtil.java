@@ -31,7 +31,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
@@ -200,7 +200,7 @@ public final class MailUtil
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    protected static final Logger log = Logger.getLogger(MailUtil.class);
+    protected static final Log log = LogFactory.getLog(MailUtil.class);
 
     protected static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 

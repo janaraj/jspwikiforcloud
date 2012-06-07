@@ -9,7 +9,7 @@ import com.opensymphony.oscache.base.persistence.CachePersistenceException;
 import com.opensymphony.oscache.base.persistence.PersistenceListener;
 import com.opensymphony.oscache.web.ServletCacheAdministrator;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;

@@ -22,6 +22,8 @@ package org.apache.wiki.ui;
 
 import java.security.Permission;
 
+import org.apache.wiki.WikiSession;
+
 /**
  * <p>Defines Commands for redirections to off-site special pages. 
  * RedirectCommands do not have associated
@@ -94,6 +96,7 @@ public final class RedirectCommand extends AbstractCommand
      * No-op; always returns <code>null</code>.
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
+	@Override
     public final Permission requiredPermission()
     {
         return null;

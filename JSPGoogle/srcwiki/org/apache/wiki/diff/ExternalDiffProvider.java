@@ -27,9 +27,13 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.*;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.FileUtil;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 
 /**
  * This DiffProvider allows external command line tools to be used to generate
@@ -37,7 +41,7 @@ import org.apache.wiki.*;
  */
 public class ExternalDiffProvider implements DiffProvider
 {
-    private static final Logger log = Logger.getLogger(ExternalDiffProvider.class);
+    private static final Log log = LogFactory.getLog(ExternalDiffProvider.class);
 
     /**
      * Determines the command to be used for 'diff'. This program must be able

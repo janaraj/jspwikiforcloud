@@ -26,7 +26,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.*;
 
@@ -41,7 +41,7 @@ public class ContentTag extends WikiTagBase {
 
 	private Map<String, String> m_mappings = new HashMap<String, String>();
 
-	private static Logger log = Logger.getLogger(ContentTag.class);
+	private static Log log = LogFactory.getLog(ContentTag.class);
 
 	/**
 	 * Set the template for the VIEW context.

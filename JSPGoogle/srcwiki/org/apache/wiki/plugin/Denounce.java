@@ -22,16 +22,26 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.log4j.Logger;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
-
-import java.util.*;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.WikiContext;
 
 /**
  *  Denounces a link by removing it from any search engine. 
@@ -47,7 +57,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class Denounce implements WikiPlugin
 {
-    private static Logger     log = Logger.getLogger(Denounce.class);
+    private static Log     log = LogFactory.getLog(Denounce.class);
 
     /** Parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK = "link";

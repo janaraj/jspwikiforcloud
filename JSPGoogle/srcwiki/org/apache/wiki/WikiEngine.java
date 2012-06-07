@@ -48,8 +48,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -76,6 +76,7 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
 import org.apache.wiki.search.SearchManager;
+import org.apache.wiki.spring.WikiSetContext;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
@@ -111,7 +112,7 @@ import org.apache.wiki.workflow.WorkflowManager;
 public class WikiEngine implements Serializable {
 	private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
 
-	private static final Logger log = Logger.getLogger(WikiEngine.class);
+	private static final Log log = LogFactory.getLog(WikiEngine.class);
 
 	/** True, if log4j has been configured. */
 	// FIXME: If you run multiple applications, the first application
@@ -371,6 +372,7 @@ public class WikiEngine implements Serializable {
 
 	public static synchronized WikiEngine getInstance(ServletContext context,
 			Properties props) throws InternalWikiException {
+		WikiSetContext.setContext(context, "WikiEngine");
 		WikiEngine engine = (WikiEngine) context.getAttribute(ATTR_WIKIENGINE);
 
 		if (engine == null) {
@@ -473,12 +475,12 @@ public class WikiEngine implements Serializable {
 		// the property file, we do not do any property setting
 		// either.q
 		//
-		if (!c_configured) {
-			if (props.getProperty("log4j.rootCategory") != null) {
-				PropertyConfigurator.configure(props);
-			}
-			c_configured = true;
-		}
+		// if (!c_configured) {
+		// if (props.getProperty("log4j.rootCategory") != null) {
+		// PropertyConfigurator.configure(props);
+		// }
+		// c_configured = true;
+		// }
 
 		log.info("*******************************************");
 		log.info(Release.APPNAME + " " + Release.getVersionString()
@@ -516,7 +518,7 @@ public class WikiEngine implements Serializable {
 		//
 		// Create and find the default working directory.
 		//
-		
+
 		// TODO: do something
 		// does not work in Google App Engine
 		if (false) {
@@ -2178,6 +2180,7 @@ public class WikiEngine implements Serializable {
 	// name as well, or check it elsewhere.
 	public WikiContext createContext(HttpServletRequest request,
 			String requestContext) {
+
 		if (!m_isConfigured) {
 			throw new InternalWikiException(
 					"WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");

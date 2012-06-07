@@ -22,7 +22,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.ProviderException;
@@ -37,7 +37,7 @@ public class NoSuchPageTag
 {
     private static final long serialVersionUID = 0L;
     
-    private static Logger log = Logger.getLogger( NoSuchPageTag.class );
+    private static Log log = LogFactory.getLog( NoSuchPageTag.class );
 
     
     private String m_pageName;

@@ -9,7 +9,7 @@ import com.opensymphony.oscache.base.events.ScopeEvent;
 import com.opensymphony.oscache.base.events.ScopeEventListener;
 import com.opensymphony.oscache.base.events.ScopeEventType;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;

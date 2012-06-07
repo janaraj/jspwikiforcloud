@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -131,7 +131,7 @@ public class TemplateManager extends ModuleManager {
 
 	// private Cache m_propertyCache;
 
-	protected static final Logger log = Logger.getLogger(TemplateManager.class);
+	protected static final Log log = LogFactory.getLog(TemplateManager.class);
 
 	/** Requests a HTTP header. Value is {@value} . */
 	public static final String RESOURCE_HTTPHEADER = "httpheader";

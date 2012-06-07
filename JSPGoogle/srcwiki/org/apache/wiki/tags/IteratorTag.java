@@ -29,7 +29,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -53,7 +53,7 @@ public abstract class IteratorTag
     protected Iterator    m_iterator;
     protected WikiContext m_wikiContext;
 
-    private static Logger log = Logger.getLogger( IteratorTag.class );
+    private static Log log = LogFactory.getLog( IteratorTag.class );
 
     /**
      *  Sets the collection that is used to form the iteration.

@@ -25,10 +25,15 @@ import java.io.StringWriter;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -52,7 +57,7 @@ import org.apache.wiki.parser.MarkupParser;
 public class BugReportHandler
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( BugReportHandler.class );
+    private static Log log = LogFactory.getLog( BugReportHandler.class );
 
     /** Parameter name for setting the title.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TITLE          = "title";

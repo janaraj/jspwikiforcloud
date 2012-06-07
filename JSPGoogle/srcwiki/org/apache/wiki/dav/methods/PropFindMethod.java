@@ -30,7 +30,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.dav.DavContext;
+import org.apache.wiki.dav.DavPath;
+import org.apache.wiki.dav.DavProvider;
+import org.apache.wiki.dav.WebdavServlet;
+import org.apache.wiki.dav.items.DavItem;
+import org.apache.wiki.providers.ProviderException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -40,13 +47,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
-import org.apache.wiki.dav.DavContext;
-import org.apache.wiki.dav.DavPath;
-import org.apache.wiki.dav.DavProvider;
-import org.apache.wiki.dav.WebdavServlet;
-import org.apache.wiki.dav.items.DavItem;
-import org.apache.wiki.providers.ProviderException;
-
 /**
  *
  *  @since 
@@ -54,7 +54,7 @@ import org.apache.wiki.providers.ProviderException;
 public class PropFindMethod
     extends DavMethod
 {
-    private static Logger log = Logger.getLogger( PropFindMethod.class );
+    private static Log log = LogFactory.getLog( PropFindMethod.class );
  
     /**
      * 

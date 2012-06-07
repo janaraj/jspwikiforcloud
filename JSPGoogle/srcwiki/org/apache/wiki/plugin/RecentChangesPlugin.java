@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.ecs.xhtml.*;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
@@ -62,7 +62,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     public static final String DEFAULT_TIME_FORMAT ="HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT ="dd.MM.yyyy";
 
-    private static Logger log = Logger.getLogger( RecentChangesPlugin.class );
+    private static Log log = LogFactory.getLog( RecentChangesPlugin.class );
 
     private boolean isSameDay( Date a, Date b )
     {

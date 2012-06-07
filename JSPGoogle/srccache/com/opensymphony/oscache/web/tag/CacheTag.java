@@ -10,7 +10,7 @@ import com.opensymphony.oscache.util.StringUtil;
 import com.opensymphony.oscache.web.ServletCacheAdministrator;
 import com.opensymphony.oscache.web.WebEntryRefreshPolicy;
 
-import org.apache.commons.logging.Log;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;

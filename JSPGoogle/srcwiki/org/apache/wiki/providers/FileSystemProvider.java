@@ -22,7 +22,7 @@ package org.apache.wiki.providers;
 
 import java.io.*;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 
@@ -37,7 +37,7 @@ import org.apache.wiki.*;
 public class FileSystemProvider
     extends AbstractFileProvider
 {
-    private static final Logger   log = Logger.getLogger(FileSystemProvider.class);
+    private static final Log   log = LogFactory.getLog(FileSystemProvider.class);
     /**
      *  All metadata is stored in a file with this extension.
      */

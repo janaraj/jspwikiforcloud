@@ -22,7 +22,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.*;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,7 +39,7 @@ import java.util.*;
  */
 public class WeblogArchivePlugin implements WikiPlugin
 {
-    private static Logger     log = Logger.getLogger(WeblogArchivePlugin.class);
+    private static Log     log = LogFactory.getLog(WeblogArchivePlugin.class);
 
     /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE = "page";

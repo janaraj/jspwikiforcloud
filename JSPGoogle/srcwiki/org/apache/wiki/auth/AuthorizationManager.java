@@ -34,11 +34,11 @@ import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
 import java.util.Map;
 import java.util.Properties;
-import java.util.WeakHashMap;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.weakmap.WeakHashMapFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
@@ -56,6 +56,7 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.security.WikiAccessController;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
@@ -95,14 +96,14 @@ import org.freshcookies.security.policy.PolicyException;
 @SuppressWarnings("serial")
 public final class AuthorizationManager implements Serializable
 {
-    private static final Logger log = Logger.getLogger( AuthorizationManager.class );
+    private static final Log log = LogFactory.getLog( AuthorizationManager.class );
     /**
      * The default external Authorizer is the {@link org.apache.wiki.auth.authorize.WebContainerAuthorizer}
      */
     public static final String                DEFAULT_AUTHORIZER = "org.apache.wiki.auth.authorize.WebContainerAuthorizer";
 
     /** Property that supplies the security policy file name, in WEB-INF. */
-    protected static final String             POLICY      = "jspwiki.policy.file";
+    private static final String             POLICY      = "jspwiki.policy.file";
     
     /** Name of the default security policy file, in WEB-INF. */
     protected static final String             DEFAULT_POLICY      = "jspwiki.policy";
@@ -116,7 +117,7 @@ public final class AuthorizationManager implements Serializable
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
 //    private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
-    private Map<Principal, ProtectionDomain>                               m_cachedPds       = WeakHashMapFactory.constructWeakHashMap();
+//    private Map<Principal, ProtectionDomain>                               m_cachedPds       = WeakHashMapFactory.constructWeakHashMap();
 
     private WikiEngine                        m_engine          = null;
 
@@ -531,16 +532,19 @@ public final class AuthorizationManager implements Serializable
         for ( Principal principal : principals )
         {
             // Get ProtectionDomain for this Principal from cache, or create new one
-            ProtectionDomain pd = m_cachedPds.get( principal );
-            if ( pd == null )
-            {
-                ClassLoader cl = this.getClass().getClassLoader();
-                CodeSource cs = new CodeSource( null, (Certificate[])null );
-                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principal } );
-                m_cachedPds.put( principal, pd );
-            }
+//            ProtectionDomain pd = m_cachedPds.get( principal );
+//            if ( pd == null )
+//            {
+//                ClassLoader cl = this.getClass().getClassLoader();
+//                CodeSource cs = new CodeSource( null, (Certificate[])null );
+//                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principal } );
+//                m_cachedPds.put( principal, pd );
+//            }
 
             // Consult the local policy and get the answer
+            ClassLoader cl = this.getClass().getClassLoader();
+            CodeSource cs = new CodeSource( null, (Certificate[])null );
+        	ProtectionDomain pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principal } );
             if ( getPolicy().implies( pd, permission ) )
             {
                 return true;
@@ -578,7 +582,7 @@ public final class AuthorizationManager implements Serializable
                 try
                 {
                     // Check the JVM-wide security policy first
-                    AccessController.checkPermission( permission );
+                    WikiAccessController.checkPermission( permission );
 //                    return Boolean.TRUE;
                 }
                 catch( AccessControlException e )

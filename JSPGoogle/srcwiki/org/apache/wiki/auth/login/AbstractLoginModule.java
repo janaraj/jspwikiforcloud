@@ -25,14 +25,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import javax.security.auth.Subject;
+//import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.security.WikiLoginModule;
+import org.apache.wiki.security.WikiSubject;
 
 /**
  * Abstract JAAS {@link javax.security.auth.spi.LoginModule}that implements
@@ -42,10 +43,10 @@ import org.apache.wiki.auth.WikiPrincipal;
  * {@link #logout()} should be sufficient for most purposes.
  * @since 2.3
  */
-public abstract class AbstractLoginModule implements LoginModule
+public abstract class AbstractLoginModule implements WikiLoginModule
 {
 
-    private static final Logger   log = Logger.getLogger( AbstractLoginModule.class );
+    private static final Log   log = LogFactory.getLog( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
 
@@ -97,7 +98,7 @@ public abstract class AbstractLoginModule implements LoginModule
 
     protected Map<String,?>             m_state;
 
-    protected Subject         m_subject;
+    protected WikiSubject         m_subject;
 
     protected static final String NULL           = "(null)";
 
@@ -182,7 +183,8 @@ public abstract class AbstractLoginModule implements LoginModule
      * @param sharedState {@inheritDoc}
      * @param options {@inheritDoc}
      */
-    public final void initialize( Subject subject, CallbackHandler callbackHandler, Map<String,?> sharedState, Map<String,?> options )
+    @Override
+    public final void initialize( WikiSubject subject, CallbackHandler callbackHandler, Map<String,?> sharedState, Map<String,?> options )
     {
         m_previousWikiPrincipals = new HashSet<Principal>();
         m_principals = new HashSet<Principal>();

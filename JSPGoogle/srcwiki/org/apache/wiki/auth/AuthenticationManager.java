@@ -20,21 +20,29 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -42,10 +50,17 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
-import org.apache.wiki.auth.login.*;
+import org.apache.wiki.auth.login.AnonymousLoginModule;
+import org.apache.wiki.auth.login.CookieAssertionLoginModule;
+import org.apache.wiki.auth.login.CookieAuthenticationLoginModule;
+import org.apache.wiki.auth.login.UserDatabaseLoginModule;
+import org.apache.wiki.auth.login.WebContainerCallbackHandler;
+import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.security.WikiLoginModule;
+import org.apache.wiki.security.WikiSubject;
 import org.apache.wiki.util.TimedCounterList;
 
 /**
@@ -100,7 +115,7 @@ public final class AuthenticationManager implements Serializable
     /** Whether logins should be throttled to limit brute-forcing attempts. Defaults to true. */
     public static final String                 PROP_LOGIN_THROTTLING = "jspwiki.login.throttling";
 
-    protected static final Logger              log                 = Logger.getLogger( AuthenticationManager.class );
+    protected static final Log              log                 = LogFactory.getLog( AuthenticationManager.class );
 
     /** Prefix for LoginModule options key/value pairs. */
     protected static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
@@ -115,7 +130,7 @@ public final class AuthenticationManager implements Serializable
     protected static final Map<String,String> EMPTY_MAP = Collections.unmodifiableMap( new HashMap<String,String>() );
     
     /** Class (of type LoginModule) to use for custom authentication. */
-    protected Class<? extends LoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;
+    protected Class<? extends WikiLoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;
     
     /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}; 
      * initialized by {@link #initialize(WikiEngine, Properties)}. */
@@ -193,7 +208,7 @@ public final class AuthenticationManager implements Serializable
         String loginModuleClassName = TextUtil.getStringProperty( props, PROP_LOGIN_MODULE, DEFAULT_LOGIN_MODULE );
         try
         {
-            m_loginModuleClass = (Class<? extends LoginModule>) Class.forName( loginModuleClassName );
+            m_loginModuleClass = (Class<? extends WikiLoginModule>) Class.forName( loginModuleClassName );
         }
         catch (ClassNotFoundException e)
         {
@@ -271,6 +286,7 @@ public final class AuthenticationManager implements Serializable
     public final boolean login( HttpServletRequest request ) throws WikiSecurityException
     {
         if( !m_useJAAS ) { return true; }
+        log.trace("entering login HttpServletEquest");
         HttpSession httpSession = request.getSession();
         WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
         AuthenticationManager authenticationMgr = m_engine.getAuthenticationManager();
@@ -280,13 +296,16 @@ public final class AuthenticationManager implements Serializable
 
         // If user not authenticated, check if container logged them in, or if
         // there's an authentication cookie
+        log.trace("before is Authenticated");
         if ( !session.isAuthenticated() )
         {
             // Create a callback handler
             handler = new WebContainerCallbackHandler( m_engine, request );
             
             // Execute the container login module, then (if that fails) the cookie auth module
-            Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
+//            Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
+            // do not user WebContainerLoginModule
+            Set<Principal> principals = new HashSet<Principal>();
             if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
             {
                 principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
@@ -373,6 +392,7 @@ public final class AuthenticationManager implements Serializable
      */
     public final boolean login( WikiSession session, HttpServletRequest request, String username, String password ) throws WikiSecurityException
     {
+    	log.trace("Aythentication manager login");
         if ( session == null )
         {
             log.error( "No wiki session provided, cannot log in." );
@@ -545,10 +565,11 @@ public final class AuthenticationManager implements Serializable
      * @throws WikiSecurityException
      *             if the LoginModule could not be instantiated for any reason
      */
-    protected Set<Principal> doJAASLogin(Class<? extends LoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException
+    protected Set<Principal> doJAASLogin(Class<? extends WikiLoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException
     {
         // Instantiate the login module
-        LoginModule loginModule = null;
+    	log.trace("Entering doJASSLogin");
+        WikiLoginModule loginModule = null;
         try
         {
             loginModule = clazz.newInstance();
@@ -563,7 +584,7 @@ public final class AuthenticationManager implements Serializable
         }
 
         // Initialize the LoginModule
-        Subject subject = new Subject();
+        WikiSubject subject = new WikiSubject();
         loginModule.initialize( subject, handler, EMPTY_MAP, options );
 
         // Try to log in:

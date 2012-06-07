@@ -20,14 +20,14 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 /**
  * Misc J2EE Compatibility Utility Functions
  */
 public class UtilJ2eeCompat
 {
-    private static Logger log = Logger.getLogger( UtilJ2eeCompat.class.getName() );
+    private static Log log = LogFactory.getLog( UtilJ2eeCompat.class.getName() );
 
     public static final String TOMCAT = "Apache Tomcat";
 

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.*;
 import org.apache.wiki.attachment.Attachment;
@@ -52,7 +52,7 @@ import com.opensymphony.oscache.base.events.*;
 public class CachingAttachmentProvider
     implements WikiAttachmentProvider
 {
-    private static final Logger log = Logger.getLogger(CachingAttachmentProvider.class);
+    private static final Log log = LogFactory.getLog(CachingAttachmentProvider.class);
 
     private WikiAttachmentProvider m_provider;
 
@@ -446,7 +446,7 @@ public class CachingAttachmentProvider
      */
     private static class CachedAttachmentCollector implements CacheEntryEventListener
     {
-        private static final Logger log = Logger.getLogger( CachedAttachmentCollector.class );
+        private static final Log log = LogFactory.getLog( CachedAttachmentCollector.class );
 
         private Map<String, Attachment> m_allItems = new HashMap<String, Attachment>();
 

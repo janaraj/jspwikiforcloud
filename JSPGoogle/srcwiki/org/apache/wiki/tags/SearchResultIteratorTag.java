@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.WikiContext;
@@ -56,7 +56,7 @@ public class SearchResultIteratorTag
     private   int         m_count = 0;
     private   int         m_start = 0;
     
-    static Logger log = Logger.getLogger(SearchResultIteratorTag.class);
+    static Log log = LogFactory.getLog(SearchResultIteratorTag.class);
     
     public void release()
     {

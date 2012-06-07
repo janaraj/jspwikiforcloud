@@ -29,8 +29,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -59,7 +59,7 @@ import org.apache.wiki.auth.user.UserProfile;
 public class UserDatabaseLoginModule extends AbstractLoginModule
 {
 
-    private static final Logger log = Logger.getLogger( UserDatabaseLoginModule.class );
+    private static final Log log = LogFactory.getLog( UserDatabaseLoginModule.class );
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()

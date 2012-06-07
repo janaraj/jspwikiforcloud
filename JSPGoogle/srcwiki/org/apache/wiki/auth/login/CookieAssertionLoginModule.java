@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
+import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.util.HttpUtil;
@@ -68,7 +68,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
      *  @deprecated */
     public static final String PROMPT            = "User name";
 
-    protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
+    protected static final Log    log         = LogFactory.getLog( CookieAssertionLoginModule.class );
 
     /**
      * Logs in the user by calling back to the registered CallbackHandler with

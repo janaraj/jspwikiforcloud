@@ -119,7 +119,7 @@ public class UserCheckTag
      *             as if status = anonymous.
      *  @deprecated
      */
-    public void setExists( String arg )
+    private void setExists( String arg )
     {
         if("true".equals(arg))
         {
@@ -145,6 +145,7 @@ public class UserCheckTag
         AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
         boolean containerAuth = mgr.isContainerAuthenticated();
         boolean cookieAssertions = mgr.allowsCookieAssertions();
+        log.debug("doWikiStartTag m_status=" + m_status + " session status = " + status);
 
         if( m_status != null )
         {

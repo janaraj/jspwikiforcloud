@@ -1,10 +1,10 @@
 <%@ page import="java.util.*,org.apache.wiki.*" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Log log = LogFactory.getLog("JSPWiki");
 %>
 <%
     /*
