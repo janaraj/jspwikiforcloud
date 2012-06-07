@@ -3,7 +3,8 @@ package org.apache.wiki;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.util.ClassUtil;
 
@@ -33,7 +34,7 @@ public class ClassProviderFactory {
 			log.error(e);
 		} catch (IllegalAccessException e) {
 			log.error(e);
-		} catch (IOException e) {
+		} catch (WikiException e) {
 			log.error(e);
 		}
 		return m_provider;

@@ -54,7 +54,7 @@ public class CreoleFilter extends BasicPageFilter
     /**
      *  {@inheritDoc}
      */
-    public void initialize(WikiEngine engine, Properties props) throws FilterException 
+    public void initialize(WikiEngine engine, Properties props) 
     {
     }
 

@@ -8,21 +8,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Properties;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.IObjectPersist;
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.WikiEngine;
 
 import xjava.io.FileOutputStream;
 
 @SuppressWarnings("serial")
-public class FileObjectPersist implements IObjectPersist {
+public class FileObjectPersist extends AbstractWikiProvider implements IObjectPersist {
 
 	private static Log log = LogFactory.getLog(FileObjectPersist.class);
-
-	private WikiEngine m_engine = null;
 
 	@Override
 	public ObjectInputStream constructInput(String pDir, String pName) {
@@ -79,18 +76,6 @@ public class FileObjectPersist implements IObjectPersist {
 			log.debug(f.getAbsolutePath(), e);
 		}
 		return out;
-	}
-
-	@Override
-	public void initialize(WikiEngine engine, Properties properties)
-			throws NoRequiredPropertyException, IOException {
-		this.m_engine = engine;
-	}
-
-	@Override
-	public String getProviderInfo() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

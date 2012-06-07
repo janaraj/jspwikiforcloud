@@ -12,26 +12,26 @@
  */
 package org.apache.wiki.spring;
 
-import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 public class ApplicationContextHolder {
 
 	/**
-	 * ApplicationContext holder by means of ThreadLocal 
+	 * ApplicationContext holder by means of ThreadLocal
 	 */
-	private static final ThreadLocal<ApplicationContext> contextSession = new ThreadLocal<ApplicationContext>();
+	private static final ThreadLocal<WebApplicationContext> contextSession = new ThreadLocal<WebApplicationContext>();
 
 	private ApplicationContextHolder() {
 	}
 
 	/** Access to spring wired beans. */
-	static ApplicationContext getContext() {
-		ApplicationContext at = contextSession.get();
+	static WebApplicationContext getContext() {
+		WebApplicationContext at = contextSession.get();
 		return at;
 	}
 
 	/** Access to spring wired beans. */
-	static void setContext(ApplicationContext atx) {
+	static void setContext(WebApplicationContext atx) {
 		contextSession.set(atx);
 	}
 

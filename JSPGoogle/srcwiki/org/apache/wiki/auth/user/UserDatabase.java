@@ -20,12 +20,12 @@
  */
 package org.apache.wiki.auth.user;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Properties;
 
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 
@@ -33,7 +33,7 @@ import org.apache.wiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @since 2.3
  */
-public interface UserDatabase extends Serializable
+public interface UserDatabase extends WikiProvider
 {
 
     /**
@@ -143,11 +143,6 @@ public interface UserDatabase extends Serializable
      * @return the user profile
      */
     public UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
-
-    /**
-     * Initializes the user database based on values from a Properties object.
-     */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
      * Factory method that instantiates a new user profile.

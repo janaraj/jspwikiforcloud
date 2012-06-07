@@ -29,9 +29,9 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.catalina.util.HexUtils;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -43,7 +43,7 @@ import org.apache.wiki.util.CryptoUtil;
  * profiles, building Principal collections and hashing passwords.
  * @since 2.3
  */
-public abstract class AbstractUserDatabase implements UserDatabase
+public abstract class AbstractUserDatabase extends AbstractWikiProvider implements UserDatabase
 {
 
     protected static final Log log = LogFactory.getLog( AbstractUserDatabase.class );
@@ -169,12 +169,6 @@ public abstract class AbstractUserDatabase implements UserDatabase
             throw e;
         }
     }
-
-    /**
-     * {@inheritDoc}
-     * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
-     */
-    public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
      * Factory method that instantiates a new DefaultUserProfile with a new, distinct
@@ -366,5 +360,11 @@ public abstract class AbstractUserDatabase implements UserDatabase
             return 0;
         }
     }
+    
+	@Override
+	public String getProviderInfo() {
+		return null;
+	}
+
 
 }

@@ -33,8 +33,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -50,510 +52,472 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
-
 /**
- *  Manages the page filters.  Page filters are components that can be executed
- *  at certain places:
- *  <ul>
- *    <li>Before the page is translated into HTML.
- *    <li>After the page has been translated into HTML.
- *    <li>Before the page is saved.
- *    <li>After the page has been saved.
- *  </ul>
+ * Manages the page filters. Page filters are components that can be executed at
+ * certain places:
+ * <ul>
+ * <li>Before the page is translated into HTML.
+ * <li>After the page has been translated into HTML.
+ * <li>Before the page is saved.
+ * <li>After the page has been saved.
+ * </ul>
  * 
- *  Using page filters allows you to modify the page data on-the-fly, and do things like
- *  adding your own custom WikiMarkup.
+ * Using page filters allows you to modify the page data on-the-fly, and do
+ * things like adding your own custom WikiMarkup.
  * 
- *  <p>
- *  The initial page filter configuration is kept in a file called "filters.xml".  The
- *  format is really very simple:
- *  <pre>
+ * <p>
+ * The initial page filter configuration is kept in a file called "filters.xml".
+ * The format is really very simple:
+ * 
+ * <pre>
  *  <?xml version="1.0"?>
  * 
  *  <pagefilters>
- *
+ * 
  *    <filter>
  *      <class>org.apache.wiki.filters.ProfanityFilter</class>
  *    </filter>
  *  
  *    <filter>
  *      <class>org.apache.wiki.filters.TestFilter</class>
- *
+ * 
  *      <param>
  *        <name>foobar</name>
  *        <value>Zippadippadai</value>
  *      </param>
- *
+ * 
  *      <param>
  *        <name>blatblaa</name>
  *        <value>5</value>
  *      </param>
- *
+ * 
  *    </filter>
  *  </pagefilters>
- *  </pre>
- *
- *  The &lt;filter> -sections define the filters.  For more information, please see
- *  the PageFilterConfiguration page in the JSPWiki distribution.
- *
+ * </pre>
+ * 
+ * The &lt;filter> -sections define the filters. For more information, please
+ * see the PageFilterConfiguration page in the JSPWiki distribution.
+ * 
  */
-public final class FilterManager extends ModuleManager
-{
-    private PriorityList    m_pageFilters = new PriorityList();
+public final class FilterManager extends ModuleManager {
+	private PriorityList m_pageFilters = new PriorityList();
 
-    private HashMap<String, PageFilterInfo>          m_filterClassMap = new HashMap<String,PageFilterInfo>();
+	private HashMap<String, PageFilterInfo> m_filterClassMap = new HashMap<String, PageFilterInfo>();
 
-    private static final Log log = LogFactory.getLog(WikiEngine.class);
+	private static final Log log = LogFactory.getLog(WikiEngine.class);
 
-    /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
-    public static final String PROP_FILTERXML = "jspwiki.filterConfig";
-    
-    /** Default location for the filter XML property file.  Value is <tt>{@value}</tt>. */
-    public static final String DEFAULT_XMLFILE = "/WEB-INF/filters.xml";
+	/**
+	 * Property name for setting the filter XML property file. Value is
+	 * <tt>{@value}</tt>.
+	 */
+	public static final String PROP_FILTERXML = "jspwiki.filterConfig";
 
-    /** JSPWiki system filters are all below this value. */
-    public static final int SYSTEM_FILTER_PRIORITY = -1000;
-    
-    /** The standard user level filtering. */
-    public static final int USER_FILTER_PRIORITY   = 0;
-    
-    /**
-     *  Constructs a new FilterManager object.
-     *  
-     *  @param engine The WikiEngine which owns the FilterManager
-     *  @param props Properties to initialize the FilterManager with
-     *  @throws WikiException If something goes wrong.
-     */
-    public FilterManager( WikiEngine engine, Properties props )
-        throws WikiException
-    {
-        super( engine );
-        initialize( props );
-    }
+	/**
+	 * Default location for the filter XML property file. Value is
+	 * <tt>{@value}</tt>.
+	 */
+	public static final String DEFAULT_XMLFILE = "/WEB-INF/filters.xml";
 
-    /**
-     *  Adds a page filter to the queue.  The priority defines in which
-     *  order the page filters are run, the highest priority filters go
-     *  in the queue first.
-     *  <p>
-     *  In case two filters have the same priority, their execution order
-     *  is the insertion order.
-     *
-     *  @since 2.1.44.
-     *  @param f PageFilter to add
-     *  @param priority The priority in which position to add it in.
-     *  @throws IllegalArgumentException If the PageFilter is null or invalid.
-     */
-    public void addPageFilter( PageFilter f, int priority ) throws IllegalArgumentException
-    {
-        if( f == null )
-        {
-            throw new IllegalArgumentException("Attempt to provide a null filter - this should never happen.  Please check your configuration (or if you're a developer, check your own code.)");
-        }
+	/** JSPWiki system filters are all below this value. */
+	public static final int SYSTEM_FILTER_PRIORITY = -1000;
 
-        m_pageFilters.add( f, priority );
-    }
+	/** The standard user level filtering. */
+	public static final int USER_FILTER_PRIORITY = 0;
 
-    private void initPageFilter( String className, Properties props )
-    {
-        try
-        {
-            PageFilterInfo info = m_filterClassMap.get( className );
-            
-            if( info != null && !checkCompatibility(info) )
-            {
-                String msg = "Filter '"+info.getName()+"' not compatible with this version of JSPWiki";
-                log.warn(msg);
-                return;
-            }
-            
-            int priority = 0; // FIXME: Currently fixed.
+	/**
+	 * Adds a page filter to the queue. The priority defines in which order the
+	 * page filters are run, the highest priority filters go in the queue first.
+	 * <p>
+	 * In case two filters have the same priority, their execution order is the
+	 * insertion order.
+	 * 
+	 * @since 2.1.44.
+	 * @param f
+	 *            PageFilter to add
+	 * @param priority
+	 *            The priority in which position to add it in.
+	 * @throws IllegalArgumentException
+	 *             If the PageFilter is null or invalid.
+	 */
+	public void addPageFilter(PageFilter f, int priority)
+			throws IllegalArgumentException {
+		if (f == null) {
+			throw new IllegalArgumentException(
+					"Attempt to provide a null filter - this should never happen.  Please check your configuration (or if you're a developer, check your own code.)");
+		}
 
-            Class cl = ClassUtil.findClass( "org.apache.wiki.filters",
-                                            className );
+		m_pageFilters.add(f, priority);
+	}
 
-            PageFilter filter = (PageFilter)cl.newInstance();
+	private void initPageFilter(String className, Properties props) {
+		try {
+			PageFilterInfo info = m_filterClassMap.get(className);
 
-            filter.initialize( m_engine, props );
+			if (info != null && !checkCompatibility(info)) {
+				String msg = "Filter '" + info.getName()
+						+ "' not compatible with this version of JSPWiki";
+				log.warn(msg);
+				return;
+			}
 
-            addPageFilter( filter, priority );
-            log.info("Added page filter "+cl.getName()+" with priority "+priority);
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.error("Unable to find the filter class: "+className);
-        }
-        catch( InstantiationException e )
-        {
-            log.error("Cannot create filter class: "+className);
-        }
-        catch( IllegalAccessException e )
-        {
-            log.error("You are not allowed to access class: "+className);
-        }
-        catch( ClassCastException e )
-        {
-            log.error("Suggested class is not a PageFilter: "+className);
-        }
-        catch( FilterException e )
-        {
-            log.error("Filter "+className+" failed to initialize itself.", e);
-        }
-    }
+			int priority = 0; // FIXME: Currently fixed.
 
+			Class cl = ClassUtil
+					.findClass("org.apache.wiki.filters", className);
 
-    /**
-     *  Initializes the filters from an XML file.
-     *  
-     *  @param props The list of properties.  Typically jspwiki.properties
-     *  @throws WikiException If something goes wrong.
-     */
-    protected void initialize( Properties props )
-        throws WikiException
-    {
-        InputStream xmlStream = null;
-        String      xmlFile   = props.getProperty( PROP_FILTERXML );
+			PageFilter filter = (PageFilter) cl.newInstance();
 
-        try
-        {
-            registerFilters();
-            
-            if( m_engine.getServletContext() != null )
-            {
-                log.debug( "Attempting to locate " + DEFAULT_XMLFILE + " from servlet context." );
-                if( xmlFile == null )
-                {
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
-                }
-                else
-                {
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( xmlFile );
-                }
-            }
+			filter.initialize(m_engine, props);
 
-            if( xmlStream == null )
-            {
-                // just a fallback element to the old behaviour prior to 2.5.8
-                log.debug( "Attempting to locate filters.xml from class path." );
+			addPageFilter(filter, priority);
+			log.info("Added page filter " + cl.getName() + " with priority "
+					+ priority);
+		} catch (ClassNotFoundException e) {
+			log.error("Unable to find the filter class: " + className);
+		} catch (InstantiationException e) {
+			log.error("Cannot create filter class: " + className);
+		} catch (IllegalAccessException e) {
+			log.error("You are not allowed to access class: " + className);
+		} catch (ClassCastException e) {
+			log.error("Suggested class is not a PageFilter: " + className);
+		} catch (FilterException e) {
+			log.error("Filter " + className + " failed to initialize itself.",
+					e);
+		} catch (WikiException e) {
+			log.error("Filter " + className + " failed to initialize itself.",
+					e);
+		}
+	}
 
-                if( xmlFile == null )
-                {
-                    xmlStream = getClass().getResourceAsStream( "/filters.xml" );
-                }
-                else
-                {
-                    xmlStream = getClass().getResourceAsStream( xmlFile );
-                }
-            }
+	/**
+	 * Initializes the filters from an XML file.
+	 * 
+	 * @param props
+	 *            The list of properties. Typically jspwiki.properties
+	 * @throws WikiException
+	 *             If something goes wrong.
+	 */
+	public void initializeFilter() {
+		InputStream xmlStream = null;
+		String xmlFile = m_properties.getProperty(PROP_FILTERXML);
+		try {
+			registerFilters();
 
-            if( (xmlStream == null) && (xmlFile != null) )
-            {
-                log.debug("Attempting to load property file "+xmlFile);
-                xmlStream = new FileInputStream( new File(xmlFile) );
-            }
+			if (m_engine.getServletContext() != null) {
+				log.debug("Attempting to locate " + DEFAULT_XMLFILE
+						+ " from servlet context.");
+				if (xmlFile == null) {
+					xmlStream = m_engine.getServletContext()
+							.getResourceAsStream(DEFAULT_XMLFILE);
+				} else {
+					xmlStream = m_engine.getServletContext()
+							.getResourceAsStream(xmlFile);
+				}
+			}
 
-            if( xmlStream == null )
-            {
-                log.info("Cannot find property file for filters (this is okay, expected to find it as: '"+ (xmlFile == null ? DEFAULT_XMLFILE : xmlFile ) +"')");
-                return;
-            }
-            
-            parseConfigFile( xmlStream );
-        }
-        catch( IOException e )
-        {
-            log.error("Unable to read property file", e);
-        }
-        catch( JDOMException e )
-        {
-            log.error("Problem in the XML file",e);
-        }
-    }
+			if (xmlStream == null) {
+				// just a fallback element to the old behaviour prior to 2.5.8
+				log.debug("Attempting to locate filters.xml from class path.");
 
-    /**
-     *  Parses the XML filters configuration file.
-     *  
-     * @param xmlStream
-     * @throws JDOMException
-     * @throws IOException
-     */
-    private void parseConfigFile( InputStream xmlStream )
-        throws JDOMException,
-               IOException
-    {
-        Document doc = new SAXBuilder().build( xmlStream );
-        
-        XPath xpath = XPath.newInstance("/pagefilters/filter");
-    
-        List nodes = xpath.selectNodes( doc );
-        
-        for( Iterator i = nodes.iterator(); i.hasNext(); )
-        {
-            Element f = (Element) i.next();
-            
-            String filterClass = f.getChildText("class");
+				if (xmlFile == null) {
+					xmlStream = getClass().getResourceAsStream("/filters.xml");
+				} else {
+					xmlStream = getClass().getResourceAsStream(xmlFile);
+				}
+			}
 
-            Properties props = new Properties();
-            
-            List params = f.getChildren("param");
-            
-            for( Iterator par = params.iterator(); par.hasNext(); )
-            {
-                Element p = (Element) par.next();
-                
-                props.setProperty( p.getChildText("name"), p.getChildText("value") );
-            }
+			if ((xmlStream == null) && (xmlFile != null)) {
+				log.debug("Attempting to load property file " + xmlFile);
+				xmlStream = new FileInputStream(new File(xmlFile));
+			}
 
-            initPageFilter( filterClass, props );
-        }
-        
-    }
-    
- 
-    /**
-     *  Does the filtering before a translation.
-     *  
-     *  @param context The WikiContext
-     *  @param pageData WikiMarkup data to be passed through the preTranslate chain.
-     *  @throws FilterException If any of the filters throws a FilterException
-     *  @return The modified WikiMarkup
-     *  
-     *  @see PageFilter#preTranslate(WikiContext, String)
-     */
-    public String doPreTranslateFiltering( WikiContext context, String pageData )
-        throws FilterException
-    {
-        fireEvent( WikiPageEvent.PRE_TRANSLATE_BEGIN, context );
+			if (xmlStream == null) {
+				log.info("Cannot find property file for filters (this is okay, expected to find it as: '"
+						+ (xmlFile == null ? DEFAULT_XMLFILE : xmlFile) + "')");
+				return;
+			}
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
+			parseConfigFile(xmlStream);
+		} catch (IOException e) {
+			log.error("Unable to read property file", e);
+		} catch (JDOMException e) {
+			log.error("Problem in the XML file", e);
+		}
+	}
 
-            pageData = f.preTranslate( context, pageData );
-        }
+	/**
+	 * Parses the XML filters configuration file.
+	 * 
+	 * @param xmlStream
+	 * @throws JDOMException
+	 * @throws IOException
+	 */
+	private void parseConfigFile(InputStream xmlStream) throws JDOMException,
+			IOException {
+		Document doc = new SAXBuilder().build(xmlStream);
 
-        fireEvent( WikiPageEvent.PRE_TRANSLATE_END, context );
+		XPath xpath = XPath.newInstance("/pagefilters/filter");
 
-        return pageData;
-    }
+		List nodes = xpath.selectNodes(doc);
 
-    /**
-     *  Does the filtering after HTML translation.
-     *  
-     *  @param context The WikiContext
-     *  @param htmlData HTML data to be passed through the postTranslate
-     *  @throws FilterException If any of the filters throws a FilterException
-     *  @return The modified HTML
-     *  @see PageFilter#postTranslate(WikiContext, String)
-     */
-    public String doPostTranslateFiltering( WikiContext context, String htmlData )
-        throws FilterException
-    {
-        fireEvent( WikiPageEvent.POST_TRANSLATE_BEGIN, context );
+		for (Iterator i = nodes.iterator(); i.hasNext();) {
+			Element f = (Element) i.next();
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
+			String filterClass = f.getChildText("class");
 
-            htmlData = f.postTranslate( context, htmlData );
-        }
+			Properties props = new Properties();
 
-        fireEvent( WikiPageEvent.POST_TRANSLATE_END, context );
+			List params = f.getChildren("param");
 
-        return htmlData;
-    }
+			for (Iterator par = params.iterator(); par.hasNext();) {
+				Element p = (Element) par.next();
 
-    /**
-     *  Does the filtering before a save to the page repository.
-     *  
-     *  @param context The WikiContext
-     *  @param pageData WikiMarkup data to be passed through the preSave chain.
-     *  @throws FilterException If any of the filters throws a FilterException
-     *  @return The modified WikiMarkup
-     *  @see PageFilter#preSave(WikiContext, String)
-     */
-    public String doPreSaveFiltering( WikiContext context, String pageData )
-        throws FilterException
-    {
-        fireEvent( WikiPageEvent.PRE_SAVE_BEGIN, context );
+				props.setProperty(p.getChildText("name"),
+						p.getChildText("value"));
+			}
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
+			initPageFilter(filterClass, props);
+		}
 
-            pageData = f.preSave( context, pageData );
-        }
+	}
 
-        fireEvent( WikiPageEvent.PRE_SAVE_END, context );
+	/**
+	 * Does the filtering before a translation.
+	 * 
+	 * @param context
+	 *            The WikiContext
+	 * @param pageData
+	 *            WikiMarkup data to be passed through the preTranslate chain.
+	 * @throws FilterException
+	 *             If any of the filters throws a FilterException
+	 * @return The modified WikiMarkup
+	 * 
+	 * @see PageFilter#preTranslate(WikiContext, String)
+	 */
+	public String doPreTranslateFiltering(WikiContext context, String pageData)
+			throws FilterException {
+		fireEvent(WikiPageEvent.PRE_TRANSLATE_BEGIN, context);
 
-        return pageData;
-    }
+		for (Iterator i = m_pageFilters.iterator(); i.hasNext();) {
+			PageFilter f = (PageFilter) i.next();
 
-    /**
-     *  Does the page filtering after the page has been saved.
-     * 
-     *  @param context The WikiContext
-     *  @param pageData WikiMarkup data to be passed through the postSave chain.
-     *  @throws FilterException If any of the filters throws a FilterException
-     * 
-     *  @see PageFilter#postSave(WikiContext, String)
-     */
-    public void doPostSaveFiltering( WikiContext context, String pageData )
-        throws FilterException
-    {
-        fireEvent( WikiPageEvent.POST_SAVE_BEGIN, context );
+			pageData = f.preTranslate(context, pageData);
+		}
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
+		fireEvent(WikiPageEvent.PRE_TRANSLATE_END, context);
 
-            // log.info("POSTSAVE: "+f.toString() );
-            f.postSave( context, pageData );
-        }
+		return pageData;
+	}
 
-        fireEvent( WikiPageEvent.POST_SAVE_END, context );
-    }
+	/**
+	 * Does the filtering after HTML translation.
+	 * 
+	 * @param context
+	 *            The WikiContext
+	 * @param htmlData
+	 *            HTML data to be passed through the postTranslate
+	 * @throws FilterException
+	 *             If any of the filters throws a FilterException
+	 * @return The modified HTML
+	 * @see PageFilter#postTranslate(WikiContext, String)
+	 */
+	public String doPostTranslateFiltering(WikiContext context, String htmlData)
+			throws FilterException {
+		fireEvent(WikiPageEvent.POST_TRANSLATE_BEGIN, context);
 
-    /**
-     *  Returns the list of filters currently installed.  Note that this is not
-     *  a copy, but the actual list.  So be careful with it.
-     *  
-     *  @return A List of PageFilter objects
-     */
-    public List getFilterList()
-    {
-        return m_pageFilters;
-    }
+		for (Iterator i = m_pageFilters.iterator(); i.hasNext();) {
+			PageFilter f = (PageFilter) i.next();
 
-    /**
-     * 
-     * Notifies PageFilters to clean up their ressources.
-     *
-     */
-    public void destroy()
-    {
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
+			htmlData = f.postTranslate(context, htmlData);
+		}
 
-            f.destroy( m_engine );
-        }        
-    }
-    
-    // events processing .......................................................
+		fireEvent(WikiPageEvent.POST_TRANSLATE_END, context);
 
-    /**
-     *  Fires a WikiPageEvent of the provided type and WikiContext.
-     *  Invalid WikiPageEvent types are ignored.
-     *
-     * @see org.apache.wiki.event.WikiPageEvent 
-     * @param type      the WikiPageEvent type to be fired.
-     * @param context   the WikiContext of the event.
-     */
-    public final void fireEvent( int type, WikiContext context )
-    {
-        if ( WikiEventManager.isListening(this) && WikiPageEvent.isValidType(type) )
-        {
-            WikiEventManager.fireEvent(this,
-                    new WikiPageEvent(m_engine,type,context.getPage().getName()) );
-        }
-    }
+		return htmlData;
+	}
 
-    /**
-     *  {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public Collection modules()
-    {
-        ArrayList modules = new ArrayList();
-        
-        modules.addAll( m_pageFilters );
-        
-        return modules;
-    }
+	/**
+	 * Does the filtering before a save to the page repository.
+	 * 
+	 * @param context
+	 *            The WikiContext
+	 * @param pageData
+	 *            WikiMarkup data to be passed through the preSave chain.
+	 * @throws FilterException
+	 *             If any of the filters throws a FilterException
+	 * @return The modified WikiMarkup
+	 * @see PageFilter#preSave(WikiContext, String)
+	 */
+	public String doPreSaveFiltering(WikiContext context, String pageData)
+			throws FilterException {
+		fireEvent(WikiPageEvent.PRE_SAVE_BEGIN, context);
 
-    private void registerFilters()
-    {
-        log.info( "Registering filters" );
+		for (Iterator i = m_pageFilters.iterator(); i.hasNext();) {
+			PageFilter f = (PageFilter) i.next();
 
-        SAXBuilder builder = new SAXBuilder();
+			pageData = f.preSave(context, pageData);
+		}
 
-        try
-        {
-            //
-            // Register all filters which have created a resource containing its properties.
-            //
-            // Get all resources of all plugins.
-            //
+		fireEvent(WikiPageEvent.PRE_SAVE_END, context);
 
-            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
+		return pageData;
+	}
 
-            while( resources.hasMoreElements() )
-            {
-                URL resource = (URL) resources.nextElement();
+	/**
+	 * Does the page filtering after the page has been saved.
+	 * 
+	 * @param context
+	 *            The WikiContext
+	 * @param pageData
+	 *            WikiMarkup data to be passed through the postSave chain.
+	 * @throws FilterException
+	 *             If any of the filters throws a FilterException
+	 * 
+	 * @see PageFilter#postSave(WikiContext, String)
+	 */
+	public void doPostSaveFiltering(WikiContext context, String pageData)
+			throws FilterException {
+		fireEvent(WikiPageEvent.POST_SAVE_BEGIN, context);
 
-                try
-                {
-                    log.debug( "Processing XML: " + resource );
+		for (Iterator i = m_pageFilters.iterator(); i.hasNext();) {
+			PageFilter f = (PageFilter) i.next();
 
-                    Document doc = builder.build( resource );
+			// log.info("POSTSAVE: "+f.toString() );
+			f.postSave(context, pageData);
+		}
 
-                    List plugins = XPath.selectNodes( doc, "/modules/filter");
+		fireEvent(WikiPageEvent.POST_SAVE_END, context);
+	}
 
-                    for( Iterator i = plugins.iterator(); i.hasNext(); )
-                    {
-                        Element pluginEl = (Element) i.next();
+	/**
+	 * Returns the list of filters currently installed. Note that this is not a
+	 * copy, but the actual list. So be careful with it.
+	 * 
+	 * @return A List of PageFilter objects
+	 */
+	public List getFilterList() {
+		return m_pageFilters;
+	}
 
-                        String className = pluginEl.getAttributeValue("class");
+	/**
+	 * 
+	 * Notifies PageFilters to clean up their ressources.
+	 * 
+	 */
+	public void destroy() {
+		for (Iterator i = m_pageFilters.iterator(); i.hasNext();) {
+			PageFilter f = (PageFilter) i.next();
 
-                        PageFilterInfo pluginInfo = PageFilterInfo.newInstance( className, pluginEl );
+			f.destroy(m_engine);
+		}
+	}
 
-                        if( pluginInfo != null )
-                        {
-                            registerPlugin( pluginInfo );
-                        }
-                    }
-                }
-                catch( java.io.IOException e )
-                {
-                    log.error( "Couldn't load " + PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
-                }
-                catch( JDOMException e )
-                {
-                    log.error( "Error parsing XML for filter: "+PLUGIN_RESOURCE_LOCATION );
-                }
-            }
-        }
-        catch( java.io.IOException e )
-        {
-            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
-        }
-    }
+	// events processing .......................................................
 
-    private void registerPlugin(PageFilterInfo pluginInfo)
-    {
-        m_filterClassMap.put( pluginInfo.getName(), pluginInfo );
-    }
+	/**
+	 * Fires a WikiPageEvent of the provided type and WikiContext. Invalid
+	 * WikiPageEvent types are ignored.
+	 * 
+	 * @see org.apache.wiki.event.WikiPageEvent
+	 * @param type
+	 *            the WikiPageEvent type to be fired.
+	 * @param context
+	 *            the WikiContext of the event.
+	 */
+	public final void fireEvent(int type, WikiContext context) {
+		if (WikiEventManager.isListening(this)
+				&& WikiPageEvent.isValidType(type)) {
+			WikiEventManager.fireEvent(this, new WikiPageEvent(m_engine, type,
+					context.getPage().getName()));
+		}
+	}
 
-    /**
-     *  Stores information about the filters.
-     * 
-     *  @since 2.6.1
-     */
-    private static final class PageFilterInfo extends WikiModuleInfo
-    {
-        private PageFilterInfo( String name )
-        {
-            super(name);
-        }
-        
-        protected static PageFilterInfo newInstance(String className, Element pluginEl)
-        {
-            if( className == null || className.length() == 0 ) return null;
-            PageFilterInfo info = new PageFilterInfo( className );
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public Collection modules() {
+		ArrayList modules = new ArrayList();
 
-            info.initializeFromXML( pluginEl );
-            return info;        
-        }
-    }
+		modules.addAll(m_pageFilters);
+
+		return modules;
+	}
+
+	private void registerFilters() {
+		log.info("Registering filters");
+
+		SAXBuilder builder = new SAXBuilder();
+
+		try {
+			//
+			// Register all filters which have created a resource containing its
+			// properties.
+			//
+			// Get all resources of all plugins.
+			//
+
+			Enumeration resources = getClass().getClassLoader().getResources(
+					PLUGIN_RESOURCE_LOCATION);
+
+			while (resources.hasMoreElements()) {
+				URL resource = (URL) resources.nextElement();
+
+				try {
+					log.debug("Processing XML: " + resource);
+
+					Document doc = builder.build(resource);
+
+					List plugins = XPath.selectNodes(doc, "/modules/filter");
+
+					for (Iterator i = plugins.iterator(); i.hasNext();) {
+						Element pluginEl = (Element) i.next();
+
+						String className = pluginEl.getAttributeValue("class");
+
+						PageFilterInfo pluginInfo = PageFilterInfo.newInstance(
+								className, pluginEl);
+
+						if (pluginInfo != null) {
+							registerPlugin(pluginInfo);
+						}
+					}
+				} catch (java.io.IOException e) {
+					log.error("Couldn't load " + PLUGIN_RESOURCE_LOCATION
+							+ " resources: " + resource, e);
+				} catch (JDOMException e) {
+					log.error("Error parsing XML for filter: "
+							+ PLUGIN_RESOURCE_LOCATION);
+				}
+			}
+		} catch (java.io.IOException e) {
+			log.error("Couldn't load all " + PLUGIN_RESOURCE_LOCATION
+					+ " resources", e);
+		}
+	}
+
+	private void registerPlugin(PageFilterInfo pluginInfo) {
+		m_filterClassMap.put(pluginInfo.getName(), pluginInfo);
+	}
+
+	/**
+	 * Stores information about the filters.
+	 * 
+	 * @since 2.6.1
+	 */
+	private static final class PageFilterInfo extends WikiModuleInfo {
+		private PageFilterInfo(String name) {
+			super(name);
+		}
+
+		protected static PageFilterInfo newInstance(String className,
+				Element pluginEl) {
+			if (className == null || className.length() == 0)
+				return null;
+			PageFilterInfo info = new PageFilterInfo(className);
+
+			info.initializeFromXML(pluginEl);
+			return info;
+		}
+	}
 }

@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.spring.WikiSetContext;
@@ -86,9 +87,9 @@ public class WikiJSPFilter extends WikiServletFilter {
 	private Boolean m_useOutputStream;
 
 	/** {@inheritDoc} */
+	@Override
 	public void init(FilterConfig config) throws ServletException {
 		super.init(config);
-		ServletContext context = config.getServletContext();
 		m_useOutputStream = UtilJ2eeCompat.useOutputStream(context
 				.getServerInfo());
 	}
@@ -98,10 +99,10 @@ public class WikiJSPFilter extends WikiServletFilter {
 			FilterChain chain) throws ServletException, IOException {
 		log.trace("entering doFilter");
 		HttpServletRequest re = (HttpServletRequest) request;
-		WikiSetContext.setContext(re.getSession(),"WikiJSPFilter");
+		WikiSetContext.setContext(re.getSession(), "WikiJSPFilter");
 		log.trace("after set Context");
-		
-		response.getWriter();
+
+		WikiEngine m_engine = getEngine();
 
 		WatchDog w = m_engine.getCurrentWatchDog();
 		try {
@@ -125,7 +126,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
 			}
 
-			// fire PAGE_REQUESTED event			
+			// fire PAGE_REQUESTED event
 			response.getWriter();
 			String pagename = DefaultURLConstructor.parsePageFromURL(
 					(HttpServletRequest) request,
@@ -137,57 +138,48 @@ public class WikiJSPFilter extends WikiServletFilter {
 			log.trace("After file event");
 
 			// after using responseWrapper does not work in development mode
-//			super.doFilter(request, response, chain);
+			// super.doFilter(request, response, chain);
 			super.doFilter(request, responseWrapper, chain);
-			Enumeration en = re.getSession().getAttributeNames();
-			log.debug("Session attributes:");
-     	    while(en.hasMoreElements()) {
-               String current = (String) en.nextElement();
-               Object o = re.getSession().getAttribute(current);
-               log.debug(current + " = " + o);
-     	    }
 			if (!response.isCommitted()) {
 				log.trace("Is commited");
-			response.getWriter();
-			
-			log.trace("after super.doFilter");
-
-			// The response is now complete. Lets replace the markers now.
-
-			// WikiContext is only available after doFilter! (That is after
-			// interpreting the jsp)
-
-			try {
-				w.enterState("Delivering response", 30);
-				response.getWriter();
-				WikiContext wikiContext = getWikiContext(request);
-				response.getWriter();				
-				String r = filter(wikiContext, responseWrapper);
 				response.getWriter();
 
-				// String encoding = "UTF-8";
-				// if( wikiContext != null ) encoding =
-				// wikiContext.getEngine().getContentEncoding();
+				log.trace("after super.doFilter");
 
-				// Only now write the (real) response to the client.
-				// response.setContentLength(r.length());
-				// response.setContentType(encoding);
-                log.trace("before response wrapper = " + r);
-				response.getWriter().write(r);
+				// The response is now complete. Lets replace the markers now.
 
-				// Clean up the UI messages and loggers
-				if (wikiContext != null) {
-					wikiContext.getWikiSession().clearMessages();
+				// WikiContext is only available after doFilter! (That is after
+				// interpreting the jsp)
+
+				try {
+					w.enterState("Delivering response", 30);
+					response.getWriter();
+					WikiContext wikiContext = getWikiContext(request);
+					response.getWriter();
+					String r = filter(wikiContext, responseWrapper);
+					response.getWriter();
+
+					// String encoding = "UTF-8";
+					// if( wikiContext != null ) encoding =
+					// wikiContext.getEngine().getContentEncoding();
+
+					// Only now write the (real) response to the client.
+					// response.setContentLength(r.length());
+					// response.setContentType(encoding);
+					log.trace("before response wrapper = " + r);
+					response.getWriter().write(r);
+
+					// Clean up the UI messages and loggers
+					if (wikiContext != null) {
+						wikiContext.getWikiSession().clearMessages();
+					}
+
+					// fire PAGE_DELIVERED event
+					fireEvent(WikiPageEvent.PAGE_DELIVERED, pagename);
+
+				} finally {
+					w.exitState(re.getSession());
 				}
-
-				// fire PAGE_DELIVERED event
-				fireEvent(WikiPageEvent.PAGE_DELIVERED, pagename);
-				
-				
-
-			} finally {
-				w.exitState(re.getSession());
-			}
 			}
 		} finally {
 			w.exitState(re.getSession());
@@ -229,7 +221,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 					key = headers[i].substring(0, split);
 					value = headers[i].substring(split + 1);
 				}
-                log.trace("add respones header key=" + key + " value=" + value);
+				log.trace("add respones header key=" + key + " value=" + value);
 				response.addHeader(key.trim(), value.trim());
 			}
 		}
@@ -409,6 +401,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 	 *            the wiki page name as a String
 	 */
 	protected final void fireEvent(int type, String pagename) {
+		WikiEngine m_engine = getEngine();
 		if (WikiEventManager.isListening(m_engine)) {
 			WikiEventManager.fireEvent(m_engine, new WikiPageEvent(m_engine,
 					type, pagename));

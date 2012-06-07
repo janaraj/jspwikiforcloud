@@ -21,6 +21,8 @@
 
 package org.apache.wiki.modules;
 
+import org.apache.wiki.WikiProvider;
+
 /**
  *  This is a simple interface which is implemented by a number of JSPWiki
  *  components to signal that they should not be included in things like
@@ -33,6 +35,6 @@ package org.apache.wiki.modules;
  *  
  *  @since 2.4
  */
-public interface InternalModule
+public interface InternalModule extends WikiProvider
 {
 }

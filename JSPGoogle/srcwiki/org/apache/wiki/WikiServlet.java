@@ -29,80 +29,86 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.url.DefaultURLConstructor;
 
 /**
- *  This provides a master servlet for dealing with short urls.  It mostly does
- *  redirects to the proper JSP pages. It also intercepts the servlet
- *  shutdown events and uses it to signal wiki shutdown.
- *  
- *  @since 2.2
+ * This provides a master servlet for dealing with short urls. It mostly does
+ * redirects to the proper JSP pages. It also intercepts the servlet shutdown
+ * events and uses it to signal wiki shutdown.
+ * 
+ * @since 2.2
  */
-public class WikiServlet
-    extends HttpServlet
-{
-    private static final long serialVersionUID = 3258410651167633973L;
-    private WikiEngine m_engine;
-    static final Log log = LogFactory.getLog(WikiServlet.class.getName());
+public class WikiServlet extends HttpServlet {
+	private static final long serialVersionUID = 3258410651167633973L;
+//	private WikiEngine m_engine;
+	static final Log log = LogFactory.getLog(WikiServlet.class.getName());
 
-    /**
-     *  {@inheritDoc}
-     */
-    public void init( ServletConfig config )
-        throws ServletException 
-    {
-        super.init( config );
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 
-        m_engine         = WikiEngine.getInstance( config );
+//		m_engine = WikiEngine.getInstance(config);
 
-        log.info("WikiServlet initialized.");
-    }
+		log.info("WikiServlet initialized.");
+	}
+	
+	private WikiEngine getEngine() {
+		WikiEngine m_engine = WikiEngine.getInstance(this.getServletContext(),null);
+		return m_engine;
+	}
 
-    /**
-     * Destroys the WikiServlet; called by the servlet container
-     * when shutting down the webapp. This method calls the
-     * protected method {@link WikiEngine#shutdown()}, which
-     * sends {@link org.apache.wiki.event.WikiEngineEvent#SHUTDOWN}
-     * events to registered listeners.
-     * @see javax.servlet.GenericServlet#destroy()
-     */
-    public void destroy()
-    {
-        log.info("WikiServlet shutdown.");
-        m_engine.shutdown();
-        super.destroy();
-    }
+	/**
+	 * Destroys the WikiServlet; called by the servlet container when shutting
+	 * down the webapp. This method calls the protected method
+	 * {@link WikiEngine#shutdown()}, which sends
+	 * {@link org.apache.wiki.event.WikiEngineEvent#SHUTDOWN} events to
+	 * registered listeners.
+	 * 
+	 * @see javax.servlet.GenericServlet#destroy()
+	 */
+	@Override
+	public void destroy() {
+		log.info("WikiServlet shutdown.");
+		getEngine().shutdown();
+		super.destroy();
+	}
 
-    /**
-     *  {@inheritDoc}
-     */
-    public void doPost( HttpServletRequest req, HttpServletResponse res )
-        throws IOException, ServletException
-    {
-        doGet( req, res );
-    }
-    
-    /**
-     *  {@inheritDoc}
-     */
-    public void doGet( HttpServletRequest req, HttpServletResponse res ) 
-        throws IOException, ServletException 
-    {
-        String pageName = DefaultURLConstructor.parsePageFromURL( req,
-                                                                  m_engine.getContentEncoding() );
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse res)
+			throws IOException, ServletException {
+		doGet(req, res);
+	}
 
-        log.info("Request for page: "+pageName);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse res)
+			throws IOException, ServletException {
+		WikiEngine m_engine = getEngine();
+		String pageName = DefaultURLConstructor.parsePageFromURL(req,
+				m_engine.getContentEncoding());
 
-        if( pageName == null ) pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well
-        
-        String jspPage = m_engine.getURLConstructor().getForwardPage( req );
-        
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/"+jspPage+"?page="+m_engine.encodeName(pageName)+"&"+req.getQueryString() );
+		log.info("Request for page: " + pageName);
 
-        dispatcher.forward( req, res );
-    }
+		if (pageName == null)
+			pageName = m_engine.getFrontPage(); // FIXME: Add special pages as
+												// well
+
+		String jspPage = m_engine.getURLConstructor().getForwardPage(req);
+
+		RequestDispatcher dispatcher = req.getRequestDispatcher("/" + jspPage
+				+ "?page=" + m_engine.encodeName(pageName) + "&"
+				+ req.getQueryString());
+
+		dispatcher.forward(req, res);
+	}
 }
-
-

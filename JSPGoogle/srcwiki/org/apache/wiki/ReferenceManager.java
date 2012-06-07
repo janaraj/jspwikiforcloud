@@ -123,7 +123,7 @@ import org.apache.wiki.providers.WikiPageProvider;
 // replace forthwith. However, this is a workaround for the great deal
 // of problems that occur here...
 
-public class ReferenceManager extends BasicPageFilter implements
+public class ReferenceManager extends BasicPageFilter implements WikiProvider,
 		InternalModule, WikiEventListener {
 	/**
 	 * Maps page wikiname to a Collection of pages it refers to. The Collection
@@ -141,9 +141,6 @@ public class ReferenceManager extends BasicPageFilter implements
 	private Map<String, Set<String>> m_referredBy;
 	private Map<String, Set<String>> m_unmutableReferredBy;
 
-	/** The WikiEngine that owns this object. */
-	private WikiEngine m_engine;
-
 	private boolean m_matchEnglishPlurals = false;
 
 	private static Log log = LogFactory.getLog(ReferenceManager.class);
@@ -153,29 +150,6 @@ public class ReferenceManager extends BasicPageFilter implements
 
 	/** We use this also a generic serialization id */
 	private static final long serialVersionUID = 4L;
-
-	/**
-	 * Builds a new ReferenceManager.
-	 * 
-	 * @param engine
-	 *            The WikiEngine to which this is managing references to.
-	 */
-	public ReferenceManager(WikiEngine engine) {
-		m_refersTo = new HashMap<String, Collection<String>>();
-		m_referredBy = new HashMap<String, Set<String>>();
-		m_engine = engine;
-
-		m_matchEnglishPlurals = TextUtil.getBooleanProperty(
-				engine.getWikiProperties(), WikiEngine.PROP_MATCHPLURALS,
-				m_matchEnglishPlurals);
-
-		//
-		// Create two maps that contain unmutable versions of the two basic
-		// maps.
-		//
-		m_unmutableReferredBy = Collections.unmodifiableMap(m_referredBy);
-		m_unmutableRefersTo = Collections.unmodifiableMap(m_refersTo);
-	}
 
 	/**
 	 * Does a full reference update. Does not sync; assumes that you do it
@@ -211,7 +185,21 @@ public class ReferenceManager extends BasicPageFilter implements
 	 * @throws ProviderException
 	 *             If reading of pages fail.
 	 */
-	public void initialize(Collection pages) throws ProviderException {
+	public void initializePages(Collection pages) throws ProviderException {
+		m_refersTo = new HashMap<String, Collection<String>>();
+		m_referredBy = new HashMap<String, Set<String>>();
+
+		m_matchEnglishPlurals = TextUtil.getBooleanProperty(
+				m_engine.getWikiProperties(), WikiEngine.PROP_MATCHPLURALS,
+				m_matchEnglishPlurals);
+
+		//
+		// Create two maps that contain unmutable versions of the two basic
+		// maps.
+		//
+		m_unmutableReferredBy = Collections.unmodifiableMap(m_referredBy);
+		m_unmutableRefersTo = Collections.unmodifiableMap(m_refersTo);
+		
 		log.debug("Initializing new ReferenceManager with " + pages.size()
 				+ " initial pages.");
 		StopWatch sw = new StopWatch();
@@ -1114,5 +1102,11 @@ public class ReferenceManager extends BasicPageFilter implements
 				pageRemoved(pageName);
 			}
 		}
+	}
+
+	@Override
+	public String getProviderInfo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

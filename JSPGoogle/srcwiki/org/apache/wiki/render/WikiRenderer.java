@@ -37,7 +37,7 @@ import org.apache.wiki.parser.WikiDocument;
  *  
  *  @since  2.4
  */
-public abstract class WikiRenderer
+abstract class WikiRenderer
 {
     protected WikiContext     m_context;
     protected WikiDocument    m_document;

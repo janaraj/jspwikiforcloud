@@ -22,7 +22,6 @@ package org.apache.wiki.auth;
 
 
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -32,18 +31,16 @@ import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
-import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.weakmap.WeakHashMapFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
@@ -94,7 +91,7 @@ import org.freshcookies.security.policy.PolicyException;
  * @see AuthenticationManager
  */
 @SuppressWarnings("serial")
-public final class AuthorizationManager implements Serializable
+public final class AuthorizationManager extends AbstractWikiProvider
 {
     private static final Log log = LogFactory.getLog( AuthorizationManager.class );
     /**
@@ -124,13 +121,6 @@ public final class AuthorizationManager implements Serializable
 //    private LocalPolicy                       m_localPolicy     = null;
 
     private boolean                           m_useJAAS         = true;
-
-    /**
-     * Constructs a new AuthorizationManager instance.
-     */
-    public AuthorizationManager()
-    {
-    }
 
     /**
      * Returns <code>true</code> or <code>false</code>, depending on
@@ -414,7 +404,8 @@ public final class AuthorizationManager implements Serializable
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
     @SuppressWarnings("deprecation")
-    public final void initialize( WikiEngine engine, Properties properties,ServletContext context ) throws WikiException
+    @Override
+    public void initialize( WikiEngine engine, Properties properties) throws WikiException
     {
         m_engine = engine;
 
@@ -426,7 +417,7 @@ public final class AuthorizationManager implements Serializable
         //  JAAS authorization continues
         //
         m_authorizer = getAuthorizerImplementation( properties );
-        m_authorizer.initialize( engine, properties,context );
+        m_authorizer.initialize( engine, properties);
 
         // Initialize local security policy
 //        try
@@ -715,5 +706,11 @@ public final class AuthorizationManager implements Serializable
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,user,permission));
         }
     }
+
+	@Override
+	public String getProviderInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

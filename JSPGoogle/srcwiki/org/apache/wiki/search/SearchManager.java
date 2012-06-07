@@ -21,12 +21,23 @@
 package org.apache.wiki.search;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-
-import org.apache.wiki.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.SearchResult;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -41,321 +52,315 @@ import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.util.ClassUtil;
 
 /**
- *  Manages searching the Wiki.
- *
- *  @since 2.2.21.
+ * Manages searching the Wiki.
+ * 
+ * @since 2.2.21.
  */
 
-public class SearchManager
-    extends BasicPageFilter
-    implements InternalModule, WikiEventListener
-{
-    private static final Log log = LogFactory.getLog(SearchManager.class);
+public class SearchManager extends BasicPageFilter implements InternalModule,
+		WikiEventListener {
+	private static final Log log = LogFactory.getLog(SearchManager.class);
 
-    private static final String DEFAULT_SEARCHPROVIDER  = "org.apache.wiki.search.LuceneSearchProvider";
-    
-    /** Old option, now deprecated. */
-    private static final String PROP_USE_LUCENE        = "jspwiki.useLucene";
-    
-    /**
-     *  Property name for setting the search provider. Value is <tt>{@value}</tt>.
-     */
-    public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
+	private static final String DEFAULT_SEARCHPROVIDER = "org.apache.wiki.search.LuceneSearchProvider";
 
-    private SearchProvider    m_searchProvider = null;
+	/** Old option, now deprecated. */
+	private static final String PROP_USE_LUCENE = "jspwiki.useLucene";
 
-    /**
-     *  The name of the JSON object that manages search.
-     */
-    public static final String JSON_SEARCH = "search";
+	/**
+	 * Property name for setting the search provider. Value is <tt>{@value}</tt>
+	 * .
+	 */
+	public static final String PROP_SEARCHPROVIDER = "jspwiki.searchProvider";
 
-    /**
-     *  Creates a new SearchManager.
-     *  
-     *  @param engine The WikiEngine that owns this SearchManager.
-     *  @param properties The list of Properties.
-     *  @throws WikiException If it cannot be instantiated.
-     */
-    public SearchManager( WikiEngine engine, Properties properties )
-        throws WikiException
-    {
-        initialize( engine, properties );
+	private SearchProvider m_searchProvider = null;
 
-        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
-                                            WikiPageEvent.PAGE_DELETE_REQUEST, this);
+	/**
+	 * The name of the JSON object that manages search.
+	 */
+	public static final String JSON_SEARCH = "search";
 
-        JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
-    }
+	/**
+	 * Creates a new SearchManager.
+	 * 
+	 * @param engine
+	 *            The WikiEngine that owns this SearchManager.
+	 * @param properties
+	 *            The list of Properties.
+	 * @throws WikiException
+	 *             If it cannot be instantiated.
+	 */
+	public void initSearchManager() {
 
-    /**
-     *  Provides a JSON RPC API to the JSPWiki Search Engine.
-     */
-    public class JSONSearch implements RPCCallable
-    {
-        /**
-         *  Provides a list of suggestions to use for a page name.
-         *  Currently the algorithm just looks into the value parameter,
-         *  and returns all page names from that.
-         *
-         *  @param wikiName the page name
-         *  @param maxLength maximum number of suggestions
-         *  @return the suggestions
-         */
-        public List getSuggestions( String wikiName, int maxLength )
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            List<String> list = new ArrayList<String>(maxLength);
+		WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
+				WikiPageEvent.PAGE_DELETE_REQUEST, this);
 
-            if( wikiName.length() > 0 )
-            {
-                
-                // split pagename and attachment filename
-                String filename = "";
-                int pos = wikiName.indexOf("/");
-                if( pos >= 0 ) 
-                {
-                    filename = wikiName.substring( pos ).toLowerCase();
-                    wikiName = wikiName.substring( 0, pos );
-                }
-                
-                String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
+		JSONRPCManager.registerGlobalObject(JSON_SEARCH, new JSONSearch());
+	}
 
-                String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
+	/**
+	 * Provides a JSON RPC API to the JSPWiki Search Engine.
+	 */
+	public class JSONSearch implements RPCCallable {
+		/**
+		 * Provides a list of suggestions to use for a page name. Currently the
+		 * algorithm just looks into the value parameter, and returns all page
+		 * names from that.
+		 * 
+		 * @param wikiName
+		 *            the page name
+		 * @param maxLength
+		 *            maximum number of suggestions
+		 * @return the suggestions
+		 */
+		public List getSuggestions(String wikiName, int maxLength) {
+			StopWatch sw = new StopWatch();
+			sw.start();
+			List<String> list = new ArrayList<String>(maxLength);
 
-                Set allPages = m_engine.getReferenceManager().findCreated();
+			if (wikiName.length() > 0) {
 
-                int counter = 0;
-                for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
-                {
-                    String p = (String) i.next();
-                    String pp = p.toLowerCase();
-                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) )
-                    {
-                        list.add( p );
-                        counter++;
-                    }
-                }
-            }
+				// split pagename and attachment filename
+				String filename = "";
+				int pos = wikiName.indexOf("/");
+				if (pos >= 0) {
+					filename = wikiName.substring(pos).toLowerCase();
+					wikiName = wikiName.substring(0, pos);
+				}
 
-            sw.stop();
-            if( log.isDebugEnabled() ) log.debug("Suggestion request for "+wikiName+" done in "+sw);
-            return list;
-        }
+				String cleanWikiName = MarkupParser.cleanLink(wikiName)
+						.toLowerCase() + filename;
 
-        /**
-         *  Performs a full search of pages.
-         *
-         *  @param searchString The query string
-         *  @param maxLength How many hits to return
-         *  @return the pages found
-         */
-        public List findPages( String searchString, int maxLength )
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
+				String oldStyleName = MarkupParser.wikifyLink(wikiName)
+						.toLowerCase() + filename;
 
-            List<HashMap> list = new ArrayList<HashMap>(maxLength);
+				Set allPages = m_engine.getReferenceManager().findCreated();
 
-            if( searchString.length() > 0 )
-            {
-                try
-                {
-                    Collection c;
+				int counter = 0;
+				for (Iterator i = allPages.iterator(); i.hasNext()
+						&& counter < maxLength;) {
+					String p = (String) i.next();
+					String pp = p.toLowerCase();
+					if (pp.startsWith(cleanWikiName)
+							|| pp.startsWith(oldStyleName)) {
+						list.add(p);
+						counter++;
+					}
+				}
+			}
 
-                    if( m_searchProvider instanceof LuceneSearchProvider )
-                        c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
-                    else
-                        c = m_searchProvider.findPages( searchString );
+			sw.stop();
+			if (log.isDebugEnabled())
+				log.debug("Suggestion request for " + wikiName + " done in "
+						+ sw);
+			return list;
+		}
 
-                    int count = 0;
-                    for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
-                    {
-                        SearchResult sr = (SearchResult)i.next();
-                        HashMap<String,Object> hm = new HashMap<String,Object>();
-                        hm.put( "page", sr.getPage().getName() );
-                        hm.put( "score", sr.getScore() );
-                        list.add( hm );
-                    }
-                }
-                catch(Exception e)
-                {
-                    log.info("AJAX search failed; ",e);
-                }
-            }
+		/**
+		 * Performs a full search of pages.
+		 * 
+		 * @param searchString
+		 *            The query string
+		 * @param maxLength
+		 *            How many hits to return
+		 * @return the pages found
+		 */
+		public List findPages(String searchString, int maxLength) {
+			StopWatch sw = new StopWatch();
+			sw.start();
 
-            sw.stop();
-            if( log.isDebugEnabled() ) log.debug("AJAX search complete in "+sw);
-            return list;
-        }
-    }
+			List<HashMap> list = new ArrayList<HashMap>(maxLength);
 
-    /**
-     *  This particular method starts off indexing and all sorts of various activities,
-     *  so you need to run this last, after things are done.
-     *
-     * @param engine the wiki engine
-     * @param properties the properties used to initialize the wiki engine
-     * @throws FilterException if the search provider failed to initialize
-     */
-    public void initialize(WikiEngine engine, Properties properties)
-        throws FilterException
-    {
-        m_engine = engine;
+			if (searchString.length() > 0) {
+				try {
+					Collection c;
 
-        loadSearchProvider(properties);
+					if (m_searchProvider instanceof LuceneSearchProvider)
+						c = ((LuceneSearchProvider) m_searchProvider)
+								.findPages(searchString, 0);
+					else
+						c = m_searchProvider.findPages(searchString);
 
-        try
-        {
-            m_searchProvider.initialize(engine, properties);
-        }
-        catch (NoRequiredPropertyException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+					int count = 0;
+					for (Iterator i = c.iterator(); i.hasNext()
+							&& count < maxLength; count++) {
+						SearchResult sr = (SearchResult) i.next();
+						HashMap<String, Object> hm = new HashMap<String, Object>();
+						hm.put("page", sr.getPage().getName());
+						hm.put("score", sr.getScore());
+						list.add(hm);
+					}
+				} catch (Exception e) {
+					log.info("AJAX search failed; ", e);
+				}
+			}
 
-    private void loadSearchProvider(Properties properties)
-    {
-        //
-        // See if we're using Lucene, and if so, ensure that its
-        // index directory is up to date.
-        //
-        String useLucene = properties.getProperty(PROP_USE_LUCENE);
+			sw.stop();
+			if (log.isDebugEnabled())
+				log.debug("AJAX search complete in " + sw);
+			return list;
+		}
+	}
 
-        // FIXME: Obsolete, remove, or change logic to first load searchProvder?
-        // If the old jspwiki.useLucene property is set we use that instead of the searchProvider class.
-        if( useLucene != null )
-        {
-            log.info( PROP_USE_LUCENE+" is deprecated; please use "+PROP_SEARCHPROVIDER+"=<your search provider> instead." );
-            if( TextUtil.isPositive( useLucene ) )
-            {
-                m_searchProvider = new LuceneSearchProvider();
-            }
-            else
-            {
-                m_searchProvider = new BasicSearchProvider();
-            }
-            log.debug("useLucene was set, loading search provider " + m_searchProvider);
-            return;
-        }
+	/**
+	 * This particular method starts off indexing and all sorts of various
+	 * activities, so you need to run this last, after things are done.
+	 * 
+	 * @param engine
+	 *            the wiki engine
+	 * @param properties
+	 *            the properties used to initialize the wiki engine
+	 * @throws FilterException
+	 *             if the search provider failed to initialize
+	 */
+	public void initialize(WikiEngine engine, Properties properties)
+			throws FilterException {
+		m_engine = engine;
 
-        String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER,
-                                                           DEFAULT_SEARCHPROVIDER );
+		loadSearchProvider(properties);
 
-        try
-        {
-            Class providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
-            m_searchProvider = (SearchProvider)providerClass.newInstance();
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
-        }
-        catch( InstantiationException e )
-        {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
-        }
-        catch( IllegalAccessException e )
-        {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
-        }
+		try {
+			m_searchProvider.initialize(engine, properties);
+		} catch (WikiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-        if( null == m_searchProvider )
-        {
-            // FIXME: Make a static with the default search provider
-            m_searchProvider = new BasicSearchProvider();
-        }
-        log.debug("Loaded search provider " + m_searchProvider);
-    }
+	private void loadSearchProvider(Properties properties) {
+		//
+		// See if we're using Lucene, and if so, ensure that its
+		// index directory is up to date.
+		//
+		String useLucene = properties.getProperty(PROP_USE_LUCENE);
 
-    /**
-     *  Returns the SearchProvider used.
-     *  
-     *  @return The current SearchProvider.
-     */
-    public SearchProvider getSearchEngine()
-    {
-        return m_searchProvider;
-    }
+		// FIXME: Obsolete, remove, or change logic to first load searchProvder?
+		// If the old jspwiki.useLucene property is set we use that instead of
+		// the searchProvider class.
+		if (useLucene != null) {
+			log.info(PROP_USE_LUCENE + " is deprecated; please use "
+					+ PROP_SEARCHPROVIDER + "=<your search provider> instead.");
+			if (TextUtil.isPositive(useLucene)) {
+				m_searchProvider = new LuceneSearchProvider();
+			} else {
+				m_searchProvider = new BasicSearchProvider();
+			}
+			log.debug("useLucene was set, loading search provider "
+					+ m_searchProvider);
+			return;
+		}
 
-    /**
-     *  Sends a search to the current search provider. The query is is whatever native format
-     *  the query engine wants to use.
-     *
-     * @param query The query.  Null is safe, and is interpreted as an empty query.
-     * @return A collection of WikiPages that matched.
-     * @throws ProviderException If the provider fails and a search cannot be completed.
-     * @throws IOException If something else goes wrong.
-     */
-    public Collection findPages( String query )
-        throws ProviderException, IOException
-    {
-        if( query == null ) query = "";
-        Collection c = m_searchProvider.findPages( query );
+		String providerClassName = properties.getProperty(PROP_SEARCHPROVIDER,
+				DEFAULT_SEARCHPROVIDER);
 
-        return c;
-    }
+		try {
+			Class providerClass = ClassUtil.findClass("org.apache.wiki.search",
+					providerClassName);
+			m_searchProvider = (SearchProvider) providerClass.newInstance();
+		} catch (ClassNotFoundException e) {
+			log.warn(
+					"Failed loading SearchProvider, will use BasicSearchProvider.",
+					e);
+		} catch (InstantiationException e) {
+			log.warn(
+					"Failed loading SearchProvider, will use BasicSearchProvider.",
+					e);
+		} catch (IllegalAccessException e) {
+			log.warn(
+					"Failed loading SearchProvider, will use BasicSearchProvider.",
+					e);
+		}
 
-    /**
-     *  Removes the page from the search cache (if any).
-     *  @param page  The page to remove
-     */
-    public void pageRemoved(WikiPage page)
-    {
-        m_searchProvider.pageRemoved(page);
-    }
+		if (null == m_searchProvider) {
+			// FIXME: Make a static with the default search provider
+			m_searchProvider = new BasicSearchProvider();
+		}
+		log.debug("Loaded search provider " + m_searchProvider);
+	}
 
-    /**
-     *  Reindexes the page.
-     *  
-     *  @param wikiContext {@inheritDoc}
-     *  @param content {@inheritDoc}
-     */
-    @Override
-    public void postSave( WikiContext wikiContext, String content )
-    {
-        //
-        //  Makes sure that we're indexing the latest version of this
-        //  page.
-        //
-        WikiPage p = m_engine.getPage( wikiContext.getPage().getName() );
-        reindexPage( p );
-    }
+	/**
+	 * Returns the SearchProvider used.
+	 * 
+	 * @return The current SearchProvider.
+	 */
+	public SearchProvider getSearchEngine() {
+		return m_searchProvider;
+	}
 
-    /**
-     *   Forces the reindex of the given page.
-     *
-     *   @param page The page.
-     */
-    public void reindexPage(WikiPage page)
-    {
-        m_searchProvider.reindexPage(page);
-    }
+	/**
+	 * Sends a search to the current search provider. The query is is whatever
+	 * native format the query engine wants to use.
+	 * 
+	 * @param query
+	 *            The query. Null is safe, and is interpreted as an empty query.
+	 * @return A collection of WikiPages that matched.
+	 * @throws ProviderException
+	 *             If the provider fails and a search cannot be completed.
+	 * @throws IOException
+	 *             If something else goes wrong.
+	 */
+	public Collection findPages(String query) throws ProviderException,
+			IOException {
+		if (query == null)
+			query = "";
+		Collection c = m_searchProvider.findPages(query);
 
-    /**
-     *  If the page has been deleted, removes it from the index.
-     *  
-     *  @param event {@inheritDoc}
-     */
-    public void actionPerformed(WikiEvent event)
-    {
-        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )
-        {
-            String pageName = ((WikiPageEvent) event).getPageName();
+		return c;
+	}
 
-            WikiPage p = m_engine.getPage( pageName );
-            if( p != null )
-            {
-                pageRemoved( p );
-            }
-        }
-    }
+	/**
+	 * Removes the page from the search cache (if any).
+	 * 
+	 * @param page
+	 *            The page to remove
+	 */
+	public void pageRemoved(WikiPage page) {
+		m_searchProvider.pageRemoved(page);
+	}
+
+	/**
+	 * Reindexes the page.
+	 * 
+	 * @param wikiContext
+	 *            {@inheritDoc}
+	 * @param content
+	 *            {@inheritDoc}
+	 */
+	@Override
+	public void postSave(WikiContext wikiContext, String content) {
+		//
+		// Makes sure that we're indexing the latest version of this
+		// page.
+		//
+		WikiPage p = m_engine.getPage(wikiContext.getPage().getName());
+		reindexPage(p);
+	}
+
+	/**
+	 * Forces the reindex of the given page.
+	 * 
+	 * @param page
+	 *            The page.
+	 */
+	public void reindexPage(WikiPage page) {
+		m_searchProvider.reindexPage(page);
+	}
+
+	/**
+	 * If the page has been deleted, removes it from the index.
+	 * 
+	 * @param event
+	 *            {@inheritDoc}
+	 */
+	public void actionPerformed(WikiEvent event) {
+		if ((event instanceof WikiPageEvent)
+				&& (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST)) {
+			String pageName = ((WikiPageEvent) event).getPageName();
+
+			WikiPage p = m_engine.getPage(pageName);
+			if (p != null) {
+				pageRemoved(p);
+			}
+		}
+	}
 
 }

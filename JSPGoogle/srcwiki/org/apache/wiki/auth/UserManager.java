@@ -33,9 +33,11 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.weakmap.WeakHashMapFactory;
+import org.apache.wiki.AbstractWikiProvider;
+import org.apache.wiki.CreateModuleManager;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -56,7 +58,6 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.ui.InputValidator;
-import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -71,7 +72,7 @@ import org.apache.wiki.workflow.WorkflowBuilder;
  * @since 2.3
  */
 @SuppressWarnings("serial")
-public final class UserManager implements Serializable
+public final class UserManager extends AbstractWikiProvider
 {
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
     private static final String SESSION_MESSAGES = "profile";
@@ -80,8 +81,6 @@ public final class UserManager implements Serializable
     private static final String PARAM_PASSWORD = "password";
     private static final String PARAM_LOGINNAME = "loginname";
     private static final String UNKNOWN_CLASS = "<unknown>";
-
-    private WikiEngine m_engine;
 
     private static Log log = LogFactory.getLog(UserManager.class);
 
@@ -104,16 +103,11 @@ public final class UserManager implements Serializable
 //    		new WeakHashMap<WikiSession,UserProfile>();
 
     /** The user database loads, manages and persists user identities */
-    private UserDatabase     m_database;
+//    private UserDatabase     m_database;
+    
+    private CreateModuleManager cUser;
 
     private boolean          m_useJAAS      = true;
-
-    /**
-     * Constructs a new UserManager instance.
-     */
-    public UserManager()
-    {
-    }
 
     /**
      * Initializes the engine for its nefarious purposes.
@@ -121,15 +115,14 @@ public final class UserManager implements Serializable
      * @param props the wiki engine initialization properties
      */
     @SuppressWarnings("deprecation")
-    public final void initialize( WikiEngine engine, Properties props )
+    @Override
+    public final void initializeProvider()
     {
-        m_engine = engine;
-
-        m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
+        m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( m_properties.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
 
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly
-        addWikiEventListener( engine.getPageManager() );
+        addWikiEventListener( m_engine.getPageManager() );
 
         JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
     }
@@ -145,56 +138,57 @@ public final class UserManager implements Serializable
     public final UserDatabase getUserDatabase()
     {
         // FIXME: Must not throw RuntimeException, but something else.
-        if( m_database != null )
+        if( cUser == null )
         {
-            return m_database;
-        }
 
         if( !m_useJAAS )
         {
-            m_database = new DummyUserDatabase();
-            return m_database;
+            cUser = new CreateModuleManager(m_engine, m_engine.getWikiProperties(),new DummyUserDatabase());
+        }
+        else {
+            cUser = new CreateModuleManager(m_engine, m_engine.getWikiProperties(),"userProvider");
         }
 
-        String dbClassName = UNKNOWN_CLASS;
+//        String dbClassName = UNKNOWN_CLASS;
+//
+//        try
+//        {
+//            dbClassName = WikiEngine.getRequiredProperty( m_engine.getWikiProperties(),
+//                                                          PROP_DATABASE );
+//
+//            log.info("Attempting to load user database class "+dbClassName);
+//            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
+//            m_database = (UserDatabase) dbClass.newInstance();
+//            m_database.initialize( m_engine, m_engine.getWikiProperties() );
+//            log.info("UserDatabase initialized.");
+//        }
+//        catch( NoRequiredPropertyException e )
+//        {
+//            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
+//        }
+//        catch( ClassNotFoundException e )
+//        {
+//            log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
+//        }
+//        catch( InstantiationException e )
+//        {
+//            log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
+//        }
+//        catch( IllegalAccessException e )
+//        {
+//            log.error( "You are not allowed to access this user database class", e );
+//        }
+//        finally
+//        {
+//            if( m_database == null )
+//            {
+//                log.info("I could not create a database object you specified (or didn't specify), so I am falling back to a default.");
+//                m_database = new DummyUserDatabase();
+//            }
+//        }
 
-        try
-        {
-            dbClassName = WikiEngine.getRequiredProperty( m_engine.getWikiProperties(),
-                                                          PROP_DATABASE );
-
-            log.info("Attempting to load user database class "+dbClassName);
-            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
-            m_database = (UserDatabase) dbClass.newInstance();
-            m_database.initialize( m_engine, m_engine.getWikiProperties() );
-            log.info("UserDatabase initialized.");
         }
-        catch( NoRequiredPropertyException e )
-        {
-            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
-        }
-        catch( InstantiationException e )
-        {
-            log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
-        }
-        catch( IllegalAccessException e )
-        {
-            log.error( "You are not allowed to access this user database class", e );
-        }
-        finally
-        {
-            if( m_database == null )
-            {
-                log.info("I could not create a database object you specified (or didn't specify), so I am falling back to a default.");
-                m_database = new DummyUserDatabase();
-            }
-        }
-
-        return m_database;
+        return (UserDatabase) cUser.getBeanObject();
     }
 
     /**
@@ -690,7 +684,7 @@ public final class UserManager implements Serializable
          * @param props the properties used to initialize the wiki engine
          * @throws NoRequiredPropertyException never...
          */
-        public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
+        public void initialize(WikiEngine engine, Properties props)
         {
         }
 
@@ -867,4 +861,10 @@ public final class UserManager implements Serializable
             throw new IllegalStateException("The manager is offline.");
         }
     }
+
+	@Override
+	public String getProviderInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

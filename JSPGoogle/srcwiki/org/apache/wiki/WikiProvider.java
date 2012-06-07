@@ -46,8 +46,7 @@ public interface WikiProvider extends Serializable
      *  @throws IOException If there is an IO problem
      */
     public void initialize( WikiEngine engine, Properties properties ) 
-        throws NoRequiredPropertyException,
-               IOException;
+        throws WikiException;
 
     /**
      *  Return a valid HTML string for information.  May
@@ -57,6 +56,8 @@ public interface WikiProvider extends Serializable
      */
 
     public String getProviderInfo();
+    
+    public void initializeProvider();
 }
 
 

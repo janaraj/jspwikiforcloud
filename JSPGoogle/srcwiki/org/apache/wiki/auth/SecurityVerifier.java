@@ -502,14 +502,14 @@ public final class SecurityVerifier
     {
         GroupManager mgr = m_engine.getGroupManager();
         GroupDatabase db = null;
-        try
-        {
+//        try
+//        {
             db = m_engine.getGroupManager().getGroupDatabase();
-        }
-        catch ( WikiSecurityException e )
-        {
-            m_session.addMessage( ERROR_GROUPS, "Could not retrieve GroupManager: " + e.getMessage() );
-        }
+//        }
+//        catch ( WikiSecurityException e )
+//        {
+//            m_session.addMessage( ERROR_GROUPS, "Could not retrieve GroupManager: " + e.getMessage() );
+//        }
 
         // Check for obvious error conditions
         if ( mgr == null || db == null )

@@ -26,9 +26,10 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.IObjectPersist;
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.providers.jpa.WikiObject;
 
 /**
@@ -37,14 +38,9 @@ import org.apache.wiki.providers.jpa.WikiObject;
  */
 
 @SuppressWarnings("serial")
-public class ObjectGaeProvider implements IObjectPersist {
+public class ObjectGaeProvider extends AbstractWikiProvider implements IObjectPersist {
 
 	private final Log log = LogFactory.getLog(ObjectGaeProvider.class);
-
-	@Override
-	public void initialize(WikiEngine engine, Properties properties)
-			throws NoRequiredPropertyException, IOException {
-	}
 
 	@Override
 	public String getProviderInfo() {

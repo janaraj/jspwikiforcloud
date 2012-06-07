@@ -137,23 +137,6 @@ public class TemplateManager extends ModuleManager {
 	public static final String RESOURCE_HTTPHEADER = "httpheader";
 
 	/**
-	 * Creates a new TemplateManager. There is typically one manager per engine.
-	 * 
-	 * @param engine
-	 *            The owning engine.
-	 * @param properties
-	 *            The property list used to initialize this.
-	 */
-	public TemplateManager(WikiEngine engine, Properties properties) {
-		super(engine);
-
-		//
-		// Uses the unlimited cache.
-		//
-		// m_propertyCache = new Cache( true, false );
-	}
-
-	/**
 	 * Check the existence of a template.
 	 */
 	// FIXME: Does not work yet

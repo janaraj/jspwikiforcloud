@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoSuchVariableException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.PluginManager;
@@ -100,17 +101,15 @@ public class EditorManager extends ModuleManager {
 
 	private static final Log log = LogFactory.getLog(EditorManager.class);
 
-	public EditorManager(WikiEngine engine) {
-		super(engine);
-	}
-
 	/**
 	 * Initializes the EditorManager. It also registers any editors it can find.
 	 * 
 	 * @param props
 	 *            Properties for setup.
 	 */
-	public void initialize(Properties props) {
+	@Override
+	public void initialize(WikiEngine engine, Properties properties)
+			throws WikiException {
 		registerEditors();
 	}
 

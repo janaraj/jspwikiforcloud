@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
@@ -25,14 +24,13 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.QueryItem;
 import org.apache.wiki.SearchMatcher;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.SearchResultComparator;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.jpa.WikiPageEnt;
 
@@ -46,9 +44,8 @@ import org.apache.wiki.providers.jpa.WikiPageEnt;
  * 
  */
 @SuppressWarnings("serial")
-public class WikiGaePageProvider implements WikiPageProvider {
-
-	private WikiEngine m_engine;
+public class WikiGaePageProvider extends AbstractWikiProvider implements
+		WikiPageProvider {
 
 	private final Log log = LogFactory.getLog(WikiGaePageProvider.class);
 
@@ -78,12 +75,6 @@ public class WikiGaePageProvider implements WikiPageProvider {
 				page.setAttribute(WikiPage.CHANGENOTE, ent.getChangeNote());
 			}
 		}
-	}
-
-	@Override
-	public void initialize(WikiEngine engine, Properties properties)
-			throws NoRequiredPropertyException, IOException {
-		m_engine = engine;
 	}
 
 	private void debug(String message) {

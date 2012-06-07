@@ -61,7 +61,9 @@ import org.apache.wiki.tags.WikiTagBase;
  */
 public class WikiServletFilter implements Filter {
 	protected static final Log log = LogFactory.getLog(WikiServletFilter.class);
-	protected WikiEngine m_engine = null;
+	protected ServletContext context;
+
+	// protected WikiEngine m_engine = null;
 
 	/**
 	 * Creates a Wiki Servlet Filter.
@@ -78,8 +80,9 @@ public class WikiServletFilter implements Filter {
 	 * @throws ServletException
 	 *             If a WikiEngine cannot be started.
 	 */
+	@Override
 	public void init(FilterConfig config) throws ServletException {
-		ServletContext context = config.getServletContext();
+		context = config.getServletContext();
 		context.log("Filter 04");
 
 		// TODO REMOVEME when resolving JSPWIKI-129
@@ -87,13 +90,17 @@ public class WikiServletFilter implements Filter {
 			context.log("== JSPWIKI WARNING ==   : This container is running with a security manager. JSPWiki does not yet really support that right now. See issue JSPWIKI-129 for details and information on how to proceed.");
 		}
 
-		m_engine = WikiEngine.getInstance(context, null);
 	}
 
 	/**
 	 * Destroys the WikiServletFilter.
 	 */
 	public void destroy() {
+	}
+	
+	protected WikiEngine getEngine() {
+		WikiEngine m_engine = WikiEngine.getInstance(context, null);
+		return m_engine;		
 	}
 
 	/**
@@ -121,6 +128,9 @@ public class WikiServletFilter implements Filter {
 		// Sanity check; it might be true in some conditions, but we need to
 		// know where.
 		//
+		// If we haven't done so, wrap the request
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		WikiEngine m_engine = getEngine();
 		log.trace(" Entering WikiServlet");
 		if (chain == null) {
 			throw new ServletException(
@@ -144,7 +154,6 @@ public class WikiServletFilter implements Filter {
 		}
 
 		// If we haven't done so, wrap the request
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
 		// Set the character encoding
 		httpRequest.setCharacterEncoding(m_engine.getContentEncoding());
@@ -185,19 +194,19 @@ public class WikiServletFilter implements Filter {
 			}
 		}
 
-//		try {
-			log.debug(m_engine.getApplicationName() + ":"
-					+ httpRequest.getRequestURL());
+		// try {
+		log.debug(m_engine.getApplicationName() + ":"
+				+ httpRequest.getRequestURL());
 
-			log.trace("just before getWriter");
-			response.getWriter();
-			log.trace("chain before");
-			// what's going on here ?
-			chain.doFilter(httpRequest, response);
-			log.trace("chain after");
-			response.getWriter();			
-//		} finally {
-//		}
+		log.trace("just before getWriter");
+		response.getWriter();
+		log.trace("chain before");
+		// what's going on here ?
+		chain.doFilter(httpRequest, response);
+		log.trace("chain after");
+		response.getWriter();
+		// } finally {
+		// }
 
 	}
 

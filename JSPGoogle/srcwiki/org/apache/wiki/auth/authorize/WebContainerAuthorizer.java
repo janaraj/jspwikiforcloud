@@ -32,11 +32,14 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.spring.BeanHolder;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -55,7 +58,7 @@ import org.xml.sax.SAXException;
  * descriptor to determine if the container manages authorization.
  * @since 2.3
  */
-public class WebContainerAuthorizer implements WebAuthorizer
+public class WebContainerAuthorizer extends AbstractWikiProvider implements WebAuthorizer
 {
     private static final String J2EE_SCHEMA_24_NAMESPACE = "http://java.sun.com/xml/ns/j2ee";
 
@@ -94,7 +97,8 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
-    public void initialize( WikiEngine engine, Properties props,ServletContext context )
+    @Override
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
         m_containerAuthorized = false;
@@ -102,7 +106,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
         // FIXME: Error handling here is not very verbose
         try
         {
-            m_webxml = getWebXml(context);
+            m_webxml = getWebXml();
             if ( m_webxml != null )
             {
                 // Add the J2EE 2.4 schema namespace
@@ -370,13 +374,14 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @throws IOException if the deployment descriptor cannot be found or opened
      * @throws JDOMException if the deployment descriptor cannot be parsed correctly
      */
-    protected Document getWebXml(ServletContext context) throws JDOMException, IOException
+    protected Document getWebXml() throws JDOMException, IOException
     {
         URL url;
         SAXBuilder builder = new SAXBuilder();
         builder.setValidation( false );
         builder.setEntityResolver( new LocalEntityResolver() );
         Document doc = null;
+        ServletContext context = BeanHolder.getServletContext();
         if ( context == null )
         {
             ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
@@ -462,5 +467,11 @@ public class WebContainerAuthorizer implements WebAuthorizer
             return null;
         }
     }
+
+	@Override
+	public String getProviderInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

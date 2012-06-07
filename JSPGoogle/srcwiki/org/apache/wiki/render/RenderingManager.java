@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
 
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -61,13 +62,11 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *
  *  @since  2.4
  */
-public class RenderingManager implements WikiEventListener, InternalModule
+public class RenderingManager extends AbstractWikiProvider implements WikiEventListener, InternalModule
 {
     private static Log log = LogFactory.getLog( RenderingManager.class );
 
     private              int    m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
-
-    private          WikiEngine m_engine;
 
     /**
      *  Parameter value for setting the cache size.
@@ -144,10 +143,11 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *  @param properties A list of properties to get parameters from.
      *  @throws WikiException If the manager could not be initialized.
      */
+    @Override
     public void initialize( WikiEngine engine, Properties properties )
         throws WikiException
     {
-        m_engine = engine;
+    	super.initialize(engine, properties);
         int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
 
         if( cacheSize == -1 )

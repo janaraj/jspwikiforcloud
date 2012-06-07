@@ -3,16 +3,14 @@ package org.apache.wiki.providers;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Group;
@@ -20,7 +18,7 @@ import org.apache.wiki.auth.authorize.GroupDatabase;
 import org.apache.wiki.providers.jpa.GroupEnt;
 import org.apache.wiki.providers.jpa.GroupMember;
 
-public class WikiGaeGroupDatabase implements GroupDatabase {
+public class WikiGaeGroupDatabase extends AbstractWikiProvider implements GroupDatabase {
 
 	private final Log log = LogFactory.getLog(WikiGaeGroupDatabase.class);
 
@@ -70,13 +68,6 @@ public class WikiGaeGroupDatabase implements GroupDatabase {
 		log.debug("Delete group " + group.getName());
 		DeleteCommand command = new DeleteCommand(group.getName());
 		command.runCommand();
-	}
-
-	@Override
-	public void initialize(WikiEngine engine, Properties props)
-			throws NoRequiredPropertyException, WikiSecurityException {
-		wikiName = engine.getApplicationName();
-
 	}
 
 	private class SaveCommand extends FindGroup {
@@ -178,5 +169,11 @@ public class WikiGaeGroupDatabase implements GroupDatabase {
 			gList[i++] = gr;
 		}
 		return gList;
+	}
+
+	@Override
+	public String getProviderInfo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -221,10 +221,7 @@ public class WikiGaeUserDatabase extends AbstractUserDatabase {
 	}
 
 	@Override
-	public void initialize(WikiEngine engine, Properties props)
-			throws NoRequiredPropertyException {
-		// TODO Auto-generated method stub
-
+	public void initialize(WikiEngine engine, Properties props) {
 	}
 
 	private class SaveCommand extends FindUserByLoginName {

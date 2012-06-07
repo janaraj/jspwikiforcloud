@@ -29,14 +29,6 @@
     UserManager userMgr = wiki.getUserManager();
     WikiSession wikiSession = wikiContext.getWikiSession();
 
-/* FIXME: Obsoslete 
-    if( request.getParameter(EditorManager.PARA_EDITOR) != null )
-    {
-    	String editor = request.getParameter(EditorManager.PARA_EDITOR);
-    	session.setAttribute(EditorManager.PARA_EDITOR,editor);
-    }
-*/
-
     // Are we saving the profile?
     if( "saveProfile".equals(request.getParameter("action")) )
     {
@@ -113,5 +105,5 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" />
-
+%>
+<wiki:Include page="<%=contentPage%>" />

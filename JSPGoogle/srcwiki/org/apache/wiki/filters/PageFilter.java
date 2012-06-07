@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.modules.InternalModule;
 
 /**
  *  Provides a definition for a page filter.  A page filter is a class
@@ -43,20 +44,8 @@ import org.apache.wiki.WikiEngine;
  *  As of 2.5.30, initialize() gains access to the WikiEngine.
  *
  */
-public interface PageFilter
+public interface PageFilter extends InternalModule
 {
-    /**
-     *  Is called whenever the a new PageFilter is instantiated and
-     *  reset.
-     *  
-     *  @param engine The WikiEngine whic owns this PageFilter
-     *  @param properties The properties ripped from filters.xml.
-     *  @throws FilterException If the filter could not be initialized. If this is thrown,
-     *                          the filter is not added to the internal queues.
-     */
-    public void initialize( WikiEngine engine, Properties properties )
-        throws FilterException;
-
     /**
      *  This method is called whenever a page has been loaded from the provider,
      *  but not yet been sent through the markup-translation process.  Note that you cannot

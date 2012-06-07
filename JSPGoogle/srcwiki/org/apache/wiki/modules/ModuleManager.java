@@ -20,64 +20,53 @@
  */
 package org.apache.wiki.modules;
 
-import java.io.Serializable;
 import java.util.Collection;
 
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.Release;
-import org.apache.wiki.WikiEngine;
 
 /**
- *  Superclass for all JSPWiki managers for modules (plugins, etc).
+ * Superclass for all JSPWiki managers for modules (plugins, etc).
  */
 @SuppressWarnings("serial")
-public abstract class ModuleManager implements Serializable
-{
+public abstract class ModuleManager extends AbstractWikiProvider {
 
-    /**
-     * Location of the property-files of plugins.
-     *  (Each plugin should include this property-file in its jar-file)
-     */
-    public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
-        
-    protected WikiEngine m_engine;
-    
-    private boolean m_loadIncompatibleModules = false;
-    
-    /**
-     *  Constructs the ModuleManager.
-     *  
-     *  @param engine The WikiEngine which owns this manager.
-     */
-    public ModuleManager( WikiEngine engine )
-    {
-        m_engine = engine;
-    }
-    
-    /**
-     *  Returns true, if the given module is compatible with this version of JSPWiki.
-     *  
-     *  @param info The module to check
-     *  @return True, if the module is compatible.
-     */
-    public boolean checkCompatibility( WikiModuleInfo info )
-    {
-        if( !m_loadIncompatibleModules )
-        {
-            String minVersion = info.getMinVersion();
-            String maxVersion = info.getMaxVersion();
-            
-            return Release.isNewerOrEqual( minVersion ) && Release.isOlderOrEqual( maxVersion );
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Returns a collection of modules currently managed by this ModuleManager.  Each
-     * entry is an instance of the WikiModuleInfo class.  This method should return something
-     * which is safe to iterate over, even if the underlying collection changes.
-     * 
-     * @return A Collection of WikiModuleInfo instances.
-     */
-    public abstract Collection modules();
+	/**
+	 * Location of the property-files of plugins. (Each plugin should include
+	 * this property-file in its jar-file)
+	 */
+	public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
+
+	private boolean m_loadIncompatibleModules = false;
+
+	/**
+	 * Returns true, if the given module is compatible with this version of
+	 * JSPWiki.
+	 * 
+	 * @param info
+	 *            The module to check
+	 * @return True, if the module is compatible.
+	 */
+	public boolean checkCompatibility(WikiModuleInfo info) {
+		if (!m_loadIncompatibleModules) {
+			String minVersion = info.getMinVersion();
+			String maxVersion = info.getMaxVersion();
+
+			return Release.isNewerOrEqual(minVersion)
+					&& Release.isOlderOrEqual(maxVersion);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns a collection of modules currently managed by this ModuleManager.
+	 * Each entry is an instance of the WikiModuleInfo class. This method should
+	 * return something which is safe to iterate over, even if the underlying
+	 * collection changes.
+	 * 
+	 * @return A Collection of WikiModuleInfo instances.
+	 */
+	public abstract Collection modules();
+
 }

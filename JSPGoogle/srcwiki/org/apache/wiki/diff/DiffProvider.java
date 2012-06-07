@@ -20,12 +20,12 @@
  */
 package org.apache.wiki.diff;
 
-import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiProvider;
 
 /**
@@ -47,7 +47,7 @@ public interface DiffProvider extends WikiProvider
     /**
      *  If there is no diff provider set, this provider will work instead.
      */
-    public static class NullDiffProvider implements DiffProvider
+    public static class NullDiffProvider extends AbstractWikiProvider implements DiffProvider
     {
         /**
          *  {@inheritDoc}
@@ -55,14 +55,6 @@ public interface DiffProvider extends WikiProvider
         public String makeDiffHtml(WikiContext ctx, String oldWikiText, String newWikiText)
         {
             return "You are using the NullDiffProvider, check your properties file.";
-        }
-
-        /**
-         *  {@inheritDoc}
-         */
-        public void initialize(WikiEngine engine, Properties properties) 
-            throws NoRequiredPropertyException, IOException
-        {
         }
 
         /**

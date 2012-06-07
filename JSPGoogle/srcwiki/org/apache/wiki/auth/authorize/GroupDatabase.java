@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 
@@ -33,7 +34,7 @@ import org.apache.wiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing wiki groups.
  * @since 2.4.22
  */
-public interface GroupDatabase extends Serializable
+public interface GroupDatabase extends WikiProvider,Serializable
 {
     /**
      * Looks up and deletes a {@link Group} from the group database. If the
@@ -46,15 +47,6 @@ public interface GroupDatabase extends Serializable
      * the commit did not succeed
      */
     public void delete( Group group ) throws WikiSecurityException;
-
-    /**
-     * Initializes the group database based on values from a Properties object.
-     * @param engine the wiki engine
-     * @param props the properties used to initialize the group database
-     * @throws WikiSecurityException if the database could not be initialized successfully
-     * @throws NoRequiredPropertyException if a required property is not present
-     */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Saves a Group to the group database. Note that this method <em>must</em>

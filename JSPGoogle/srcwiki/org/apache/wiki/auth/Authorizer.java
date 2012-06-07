@@ -20,13 +20,13 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 
 /**
@@ -48,7 +48,7 @@ import org.apache.wiki.WikiSession;
  * 
  * @since 2.3
  */
-public interface Authorizer extends Serializable
+public interface Authorizer extends WikiProvider
 {
 
     /**
@@ -71,15 +71,6 @@ public interface Authorizer extends Serializable
      * @return the role Principal
      */
     public Principal findRole( String role );
-
-    /**
-     * Initializes the authorizer.
-     * 
-     * @param engine the current wiki engine
-     * @param props the wiki engine initialization properties
-     * @throws WikiSecurityException if the Authorizer could not be initialized
-     */
-    public void initialize( WikiEngine engine, Properties props,ServletContext context ) throws WikiSecurityException;
 
     /**
      * Determines whether the Subject associated with a WikiSession is in a

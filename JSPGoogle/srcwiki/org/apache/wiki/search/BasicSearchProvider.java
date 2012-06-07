@@ -27,14 +27,15 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-
-import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.QueryItem;
 import org.apache.wiki.SearchMatcher;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.SearchResultComparator;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.ProviderException;
@@ -45,20 +46,10 @@ import org.apache.wiki.providers.WikiPageProvider;
  *
  *  @since 2.2.21.
  */
-public class BasicSearchProvider implements SearchProvider
+public class BasicSearchProvider extends AbstractWikiProvider implements SearchProvider
 {
     private static final Log log = LogFactory.getLog(BasicSearchProvider.class);
 
-    private WikiEngine m_engine;
-
-    /**
-     *  {@inheritDoc}
-     */
-    public void initialize(WikiEngine engine, Properties props)
-            throws NoRequiredPropertyException, IOException
-    {
-        m_engine = engine;
-    }
 
     /**
      *  {@inheritDoc}

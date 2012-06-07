@@ -12,24 +12,49 @@
  */
 package org.apache.wiki.spring;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.IObjectPersist;
+import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.security.WikiSubject;
-import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 public class BeanHolder {
 
 	private BeanHolder() {
 	}
-	
+
 	private static Log log = LogFactory.getLog(BeanHolder.class);
 
-	public static WikiSubject getSubject() {
-		ApplicationContext apx = ApplicationContextHolder.getContext();
-		log.trace("get subject context : " + apx + " long=" + apx.getStartupDate());
-		WikiSubject su = (WikiSubject) apx.getBean("wikiuser");
-		log.trace("get Subject wikiuser : " + su);  
-     	return su;
+	public static Object getObject(String name) {
+		WebApplicationContext apx = ApplicationContextHolder.getContext();
+		log.trace("get subject context : " + apx + " long="
+				+ apx.getStartupDate());
+		return apx.getBean(name);
 	}
+	
+	public static ServletContext getServletContext() {
+		WebApplicationContext apx = ApplicationContextHolder.getContext();
+		return apx.getServletContext();		
+	}
+
+	public static WikiSubject getSubject() {
+		WikiSubject su = (WikiSubject) getObject("wikiuser");
+		log.trace("get Subject wikiuser : " + su);
+		return su;
+	}
+
+	public static IObjectPersist getObjectPersist() {
+		Object o = getObject("objectProvider");
+		return (IObjectPersist) o;
+	}
+	
+	public static  WikiPageProvider getPageProvider() {
+		Object o = getObject("pageProvider");
+		return (WikiPageProvider) o;
+	}
+
 
 }

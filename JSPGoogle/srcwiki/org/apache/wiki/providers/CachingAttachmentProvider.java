@@ -49,7 +49,7 @@ import com.opensymphony.oscache.base.events.*;
 // FIXME: Does not yet react well to external cache changes.  Should really use custom
 //        EntryRefreshPolicy for that.
 
-public class CachingAttachmentProvider
+public class CachingAttachmentProvider extends AbstractWikiProvider
     implements WikiAttachmentProvider
 {
     private static final Log log = LogFactory.getLog(CachingAttachmentProvider.class);
@@ -86,10 +86,11 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize( WikiEngine engine, Properties properties )
-        throws NoRequiredPropertyException,
-               IOException
+        throws WikiException
     {
+    	super.initialize(engine, properties);
         log.info("Initing CachingAttachmentProvider");
 
         //
