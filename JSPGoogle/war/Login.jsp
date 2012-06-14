@@ -8,6 +8,7 @@
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page import="org.apache.wiki.tags.WikiTagBase" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -17,7 +18,7 @@
 <%
     response.getWriter();
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    AuthenticationManager mgr = wiki.getAuthenticationManager();
+    AuthenticationManager mgr = BeanHolder.getAuthenticationManager();
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -42,7 +43,7 @@
     // Are we saving the profile?
     if( "saveProfile".equals(request.getParameter("action")) )
     {
-        UserManager userMgr = wiki.getUserManager();
+        UserManager userMgr = BeanHolder.getUserManager();
         UserProfile profile = userMgr.parseProfile( wikiContext );
          
         // Validate the profile

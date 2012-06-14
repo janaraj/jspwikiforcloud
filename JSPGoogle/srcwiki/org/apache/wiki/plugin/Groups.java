@@ -29,6 +29,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  <p>Prints the groups managed by this wiki, separated by commas.
@@ -53,7 +54,9 @@ public class Groups
     {
         // Retrieve groups, and sort by name
         WikiEngine engine = context.getEngine();
-        GroupManager groupMgr = engine.getGroupManager();
+//        GroupManager groupMgr = engine.getGroupManager();
+		GroupManager groupMgr = BeanHolder.getGroupManager();
+
         Principal[] groups = groupMgr.getRoles();
         Arrays.sort( groups, COMPARATOR );
 

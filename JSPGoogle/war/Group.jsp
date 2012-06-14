@@ -4,6 +4,7 @@
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
@@ -18,7 +19,7 @@
     
     // Extract the current user, group name, members
     WikiSession wikiSession = wikiContext.getWikiSession();
-    GroupManager groupMgr = wiki.getGroupManager();
+    GroupManager groupMgr = BeanHolder.getGroupManager();
     Group group = null;
     try 
     {

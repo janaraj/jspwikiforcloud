@@ -56,6 +56,7 @@ import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.security.WikiAccessController;
 import org.apache.wiki.security.WikiSubject;
+import org.apache.wiki.spring.BeanHolder;
 import org.freshcookies.security.policy.PolicyReader;
 import org.jdom.JDOMException;
 
@@ -500,11 +501,13 @@ public final class SecurityVerifier
      */
     private final void verifyGroupDatabase()
     {
-        GroupManager mgr = m_engine.getGroupManager();
+//        GroupManager mgr = m_engine.getGroupManager();
+		GroupManager mgr = BeanHolder.getGroupManager();
+
         GroupDatabase db = null;
 //        try
 //        {
-            db = m_engine.getGroupManager().getGroupDatabase();
+            db = mgr.getGroupDatabase();
 //        }
 //        catch ( WikiSecurityException e )
 //        {
@@ -837,7 +840,8 @@ public final class SecurityVerifier
      */
     private final void verifyUserDatabase()
     {
-        UserDatabase db = m_engine.getUserManager().getUserDatabase();
+		UserManager userMgr = BeanHolder.getUserManager();
+        UserDatabase db = userMgr.getUserDatabase();
 
         // Check for obvious error conditions
         if ( db == null )

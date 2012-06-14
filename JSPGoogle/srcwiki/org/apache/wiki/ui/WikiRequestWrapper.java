@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * Servlet request wrapper that encapsulates an incoming HTTP request and
@@ -54,7 +54,8 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
         super(request);
 
         // Get and stash a reference to the current WikiSession
-        m_session = SessionMonitor.getInstance(engine).find(request.getSession());
+//        m_session = SessionMonitor.getInstance(engine).find(request.getSession());
+        m_session = BeanHolder.getWikiSession();
     }
 
     /**

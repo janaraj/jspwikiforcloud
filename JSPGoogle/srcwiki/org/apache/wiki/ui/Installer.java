@@ -38,6 +38,7 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.CommentedProperties;
 
 /**
@@ -71,7 +72,8 @@ public class Installer
     {
         // Get wiki session for this user
         m_engine = WikiEngine.getInstance( config );
-        m_session = WikiSession.getWikiSession( m_engine, request );
+//        m_session = WikiSession.getWikiSession( m_engine, request );
+        m_session = BeanHolder.getWikiSession();
         
         // Get the servlet context, and file for properties
         ServletContext context = config.getServletContext();
@@ -92,7 +94,8 @@ public class Installer
     public boolean adminExists()
     {
         // See if the admin user exists already
-        UserManager userMgr = m_engine.getUserManager();
+//        UserManager userMgr = m_engine.getUserManager();
+		UserManager userMgr = BeanHolder.getUserManager();
         UserDatabase userDb = userMgr.getUserDatabase();
         
         try
@@ -125,7 +128,8 @@ public class Installer
         }
         
         // See if the admin user exists already
-        UserManager userMgr = m_engine.getUserManager();
+//        UserManager userMgr = m_engine.getUserManager();
+		UserManager userMgr = BeanHolder.getUserManager();
         UserDatabase userDb = userMgr.getUserDatabase();
         String password = null;
         
@@ -145,7 +149,7 @@ public class Installer
         }
         
         // Create a new admin group
-        GroupManager groupMgr = m_engine.getGroupManager();
+        GroupManager groupMgr = BeanHolder.getGroupManager();
         Group group = null;
         try
         {

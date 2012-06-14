@@ -12,6 +12,7 @@
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.preferences.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -26,7 +27,8 @@
     if(!wikiContext.hasAccess( response )) return;
     
     // Extract the user profile and action attributes
-    UserManager userMgr = wiki.getUserManager();
+//    UserManager userMgr = wiki.getUserManager();
+    UserManager userMgr = BeanHolder.getUserManager();
     WikiSession wikiSession = wikiContext.getWikiSession();
 
     // Are we saving the profile?

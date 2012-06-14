@@ -30,6 +30,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Returns the current user name, or empty, if the user has not been
@@ -50,7 +51,8 @@ public class UserNameTag extends WikiTagBase
     public final int doWikiStartTag() throws IOException
     {
         WikiEngine engine = this.m_wikiContext.getEngine();
-        WikiSession wikiSession = WikiSession.getWikiSession(engine, (HttpServletRequest) pageContext.getRequest());
+//        WikiSession wikiSession = WikiSession.getWikiSession(engine, (HttpServletRequest) pageContext.getRequest());
+        WikiSession wikiSession = BeanHolder.getWikiSession();
         Principal user = wikiSession.getUserPrincipal();
 
         if (user != null)

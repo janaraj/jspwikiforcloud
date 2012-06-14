@@ -3,6 +3,7 @@
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.user.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
@@ -11,7 +12,7 @@
 <%
   /* dateformatting not yet supported by wiki:UserProfile tag - diy */
   WikiContext wikiContext = WikiContext.findContext(pageContext);
-  UserManager manager = wikiContext.getEngine().getUserManager();
+  UserManager manager = BeanHolder.getUserManager();
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
 <form action="<wiki:CheckRequestContext 

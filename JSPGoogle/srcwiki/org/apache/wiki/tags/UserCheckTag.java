@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Includes the content if an user check validates.  This has
@@ -142,7 +143,8 @@ public class UserCheckTag
     {
         WikiSession session = m_wikiContext.getWikiSession();
         String status = session.getStatus();
-        AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
+//        AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
+		AuthenticationManager mgr = BeanHolder.getAuthenticationManager();
         boolean containerAuth = mgr.isContainerAuthenticated();
         boolean cookieAssertions = mgr.allowsCookieAssertions();
         log.debug("doWikiStartTag m_status=" + m_status + " session status = " + status);

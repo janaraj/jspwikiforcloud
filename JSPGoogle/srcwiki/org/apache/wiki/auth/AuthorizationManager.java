@@ -45,6 +45,7 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
+import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -54,6 +55,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.security.WikiAccessController;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
@@ -638,7 +640,8 @@ public final class AuthorizationManager extends AbstractWikiProvider
         }
 
         // Check Groups
-        principal = m_engine.getGroupManager().findRole( name );
+		GroupManager manager = BeanHolder.getGroupManager();
+        principal = manager.findRole( name );
         if ( principal != null )
         {
             return principal;
@@ -647,7 +650,8 @@ public final class AuthorizationManager extends AbstractWikiProvider
         // Ok, no luck---this must be a user principal
         Principal[] principals = null;
         UserProfile profile = null;
-        UserDatabase db = m_engine.getUserManager().getUserDatabase();
+		UserManager userMgr = BeanHolder.getUserManager();
+        UserDatabase db = userMgr.getUserDatabase();
         try
         {
             profile = db.find( name );

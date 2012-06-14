@@ -39,8 +39,8 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
-import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.tags.WikiTagBase;
 
 /**
@@ -180,9 +180,11 @@ public class WikiServletFilter implements Filter {
 			// Prepare the WikiSession
 			try {
 				log.trace("before m_enging getAuthentication");
-				m_engine.getAuthenticationManager().login(httpRequest);
-				WikiSession wikiSession = SessionMonitor.getInstance(m_engine)
-						.find(httpRequest.getSession());
+				AuthenticationManager auth = BeanHolder.getAuthenticationManager();
+				auth.login(httpRequest);
+//				WikiSession wikiSession = SessionMonitor.getInstance(m_engine)
+//						.find(httpRequest.getSession());
+				WikiSession wikiSession = BeanHolder.getWikiSession();
 				httpRequest = new WikiRequestWrapper(m_engine, httpRequest);
 				if (log.isDebugEnabled()) {
 					log.debug("Executed security filters for user="

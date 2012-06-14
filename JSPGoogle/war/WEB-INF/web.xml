@@ -108,9 +108,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
    <!--
        HttpSessionListener used for managing WikiSession's.
      -->
+<!--      
    <listener>
       <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
    </listener>
+-->   
    
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to

@@ -2,6 +2,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -11,7 +12,7 @@
 <%
     String postURL = "";
     WikiContext ctx = WikiContext.findContext( pageContext );
-    AuthenticationManager mgr = ctx.getEngine().getAuthenticationManager();
+    AuthenticationManager mgr = BeanHolder.getAuthenticationManager();
 
     if( mgr.isContainerAuthenticated() )
     {

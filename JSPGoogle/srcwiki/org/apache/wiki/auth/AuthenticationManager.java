@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
@@ -41,8 +40,9 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -61,6 +61,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.security.WikiLoginModule;
 import org.apache.wiki.security.WikiSubject;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.TimedCounterList;
 
 /**
@@ -77,7 +78,7 @@ import org.apache.wiki.util.TimedCounterList;
  * @since 2.3
  */
 @SuppressWarnings("serial")
-public final class AuthenticationManager implements Serializable
+public final class AuthenticationManager extends AbstractWikiProvider
 {
     /** How many milliseconds the logins are stored before they're cleaned away. */
     private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
@@ -172,6 +173,10 @@ public final class AuthenticationManager implements Serializable
     
     private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
     
+    public AuthenticationManager(WikiEngine engine) throws WikiException {
+    	initialize(engine,engine.getWikiProperties());
+    }
+    
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -181,9 +186,12 @@ public final class AuthenticationManager implements Serializable
      * @throws WikiException if the AuthenticationManager cannot be initialized
      */
     @SuppressWarnings("unchecked")
+    @Override
     public final void initialize( WikiEngine engine, Properties props ) throws WikiException
-    {
+    {    	
         m_engine = engine;
+        WikiSession session = BeanHolder.getWikiSession();
+		addWikiEventListener(session);
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
         // Should J2SE policies be used for authorization?
@@ -288,8 +296,9 @@ public final class AuthenticationManager implements Serializable
         if( !m_useJAAS ) { return true; }
         log.trace("entering login HttpServletEquest");
         HttpSession httpSession = request.getSession();
-        WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
-        AuthenticationManager authenticationMgr = m_engine.getAuthenticationManager();
+//        WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
+        WikiSession session = BeanHolder.getWikiSession();
+//        AuthenticationManager authenticationMgr = m_engine.getAuthenticationManager();
         AuthorizationManager authorizationMgr = m_engine.getAuthorizationManager();
         CallbackHandler handler = null;
         Map<String,String> options = EMPTY_MAP;
@@ -306,9 +315,9 @@ public final class AuthenticationManager implements Serializable
 //            Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
             // do not user WebContainerLoginModule
             Set<Principal> principals = new HashSet<Principal>();
-            if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
+            if ( principals.size() == 0 && allowsCookieAuthentication() )
             {
-                principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
+                principals = doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
             }
             
             // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
@@ -326,10 +335,10 @@ public final class AuthenticationManager implements Serializable
         }
 
         // If user still not authenticated, check if assertion cookie was supplied
-        if ( !session.isAuthenticated() && authenticationMgr.allowsCookieAssertions() )
+        if ( !session.isAuthenticated() && allowsCookieAssertions() )
         {
             // Execute the cookie assertion login module
-            Set<Principal> principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
+            Set<Principal> principals = doJAASLogin( CookieAssertionLoginModule.class, handler, options );
             if ( principals.size() > 0 )
             {
                 fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
@@ -339,7 +348,7 @@ public final class AuthenticationManager implements Serializable
         // If user still anonymous, use the remote address
         if (session.isAnonymous() )
         {
-            Set<Principal> principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
+            Set<Principal> principals = doJAASLogin( AnonymousLoginModule.class, handler, options );
             if ( principals.size() > 0 )
             {
                 fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
@@ -481,7 +490,8 @@ public final class AuthenticationManager implements Serializable
             log.debug( "Invalidating WikiSession for session ID=" + sid );
         }
         // Retrieve the associated WikiSession and clear the Principal set
-        WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
+//        WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
+        WikiSession wikiSession = BeanHolder.getWikiSession();
         Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
 

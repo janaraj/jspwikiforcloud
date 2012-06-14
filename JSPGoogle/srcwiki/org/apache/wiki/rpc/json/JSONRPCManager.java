@@ -37,6 +37,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.RPCManager;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.TemplateManager;
 import com.metaparadigm.jsonrpc.InvocationCallback;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
@@ -208,7 +209,8 @@ public final class JSONRPCManager extends RPCManager
                     
                     if( cc.m_object == instance )
                     {
-                        canDo = e.getAuthorizationManager().checkPermission( WikiSession.getWikiSession(e, req), 
+                    	WikiSession session = BeanHolder.getWikiSession();
+                        canDo = e.getAuthorizationManager().checkPermission( session, 
                                                                              cc.m_permission );
 
                         break;

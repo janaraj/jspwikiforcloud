@@ -12,6 +12,8 @@
  */
 package org.apache.wiki.spring;
 
+import java.util.Locale;
+
 import org.springframework.web.context.WebApplicationContext;
 
 public class ApplicationContextHolder {
@@ -20,6 +22,7 @@ public class ApplicationContextHolder {
 	 * ApplicationContext holder by means of ThreadLocal
 	 */
 	private static final ThreadLocal<WebApplicationContext> contextSession = new ThreadLocal<WebApplicationContext>();
+	private static final ThreadLocal<Locale> locale = new ThreadLocal<Locale>();
 
 	private ApplicationContextHolder() {
 	}
@@ -35,4 +38,11 @@ public class ApplicationContextHolder {
 		contextSession.set(atx);
 	}
 
+	static Locale getLocale() {
+		return locale.get();
+	}
+
+	static void setLocale(Locale value) {
+		locale.set(value);
+	}
 }

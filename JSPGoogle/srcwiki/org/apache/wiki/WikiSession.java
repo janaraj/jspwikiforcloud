@@ -32,16 +32,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-// import javax.security.auth.Subject;
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
-import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Group;
@@ -127,14 +125,15 @@ public final class WikiSession implements WikiEventListener {
 
 	private static final String ALL = "*";
 
-	private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<WikiSession>();
+	// private static final ThreadLocal<WikiSession> c_guestSession = new
+	// ThreadLocal<WikiSession>();
 
-//	private final WikiSubject getSubject() = new WikiSubject();
+	private final WikiSubject userSubject = new WikiSubject();
 
 	private final Map<String, Set<String>> m_messages = new HashMap<String, Set<String>>();
 
 	/** The WikiEngine that created this session. */
-	private WikiEngine m_engine = null;
+	// private WikiEngine m_engine = null;
 
 	private String m_status = ANONYMOUS;
 
@@ -142,7 +141,11 @@ public final class WikiSession implements WikiEventListener {
 
 	private Principal m_loginPrincipal = WikiPrincipal.GUEST;
 
-	private Locale m_cachedLocale = Locale.getDefault();
+	// private Locale m_cachedLocale = Locale.getDefault();
+
+	public WikiSubject getWikiSubject() {
+		return userSubject;
+	}
 
 	/**
 	 * Returns <code>true</code> if one of this WikiSession's user Principals
@@ -162,16 +165,9 @@ public final class WikiSession implements WikiEventListener {
 		return false;
 	}
 
-	/**
-	 * Private constructor to prevent WikiSession from being instantiated
-	 * directly.
-	 */
-	private WikiSession() {
-	}
-	
-	
-	private WikiSubject getSubject() {
-		return BeanHolder.getSubject();
+	public WikiSession() {
+		log.trace("New WikiSession");
+		makeGuestUser();
 	}
 
 	/**
@@ -182,7 +178,17 @@ public final class WikiSession implements WikiEventListener {
 	 * @return Returns <code>true</code> if the user is asserted
 	 */
 	private final boolean isAsserted() {
-		return getSubject().getPrincipals().contains(Role.ASSERTED);
+		return userSubject.getPrincipals().contains(Role.ASSERTED);
+	}
+
+	private static WikiEngine getEngine() {
+		return BeanHolder.getWikiEngine();
+	}
+
+	private boolean useJAAS() {
+		AuthenticationManager auth = BeanHolder.getAuthenticationManager();
+		return auth.isM_useJAAS();
+//		return getEngine().getAuthenticationManager().isM_useJAAS();
 	}
 
 	/**
@@ -195,10 +201,12 @@ public final class WikiSession implements WikiEventListener {
 	 * @return Returns <code>true</code> if the user is authenticated
 	 */
 	public final boolean isAuthenticated() {
-		if (!m_engine.getAuthenticationManager().isM_useJAAS()) { return true; }
+		if (!useJAAS()) {
+			return true;
+		}
 		log.debug("Test : isAuthenticated");
 		// If Role.AUTHENTICATED is in principals set, always return true.
-		if (getSubject().getPrincipals().contains(Role.AUTHENTICATED)) {
+		if (userSubject.getPrincipals().contains(Role.AUTHENTICATED)) {
 			log.debug("OK. is Authenticated");
 			return true;
 		}
@@ -209,7 +217,7 @@ public final class WikiSession implements WikiEventListener {
 		if (!isAnonymous() && !isAsserted()) {
 			// Inject AUTHENTICATED role
 			log.debug("Not autheticated and not asserted");
-			getSubject().getPrincipals().add(Role.AUTHENTICATED);
+			userSubject.getPrincipals().add(Role.AUTHENTICATED);
 			return true;
 		}
 		log.debug("Aautheticated or Asserted");
@@ -230,16 +238,20 @@ public final class WikiSession implements WikiEventListener {
 	 * IP address.</li>
 	 * </ul>
 	 * <p>
-	 * The criteria above are listed in the order in which they are evalPrincipal* </p>
+	 * The criteria above are listed in the order in which they are
+	 * evalPrincipal*
+	 * </p>
 	 * 
 	 * @return whether the current user's identity is equivalent to an IP
 	 *         address
 	 */
 	public final boolean isAnonymous() {
-		
-		if (!m_engine.getAuthenticationManager().isM_useJAAS()) { return true; }
-		
-		Set<Principal> principals = getSubject().getPrincipals();
+
+		if (!useJAAS()) {
+			return true;
+		}
+
+		Set<Principal> principals = userSubject.getPrincipals();
 		return principals.contains(Role.ANONYMOUS)
 				|| principals.contains(WikiPrincipal.GUEST)
 				|| isIPV4Address(getUserPrincipal().getName());
@@ -297,7 +309,12 @@ public final class WikiSession implements WikiEventListener {
 	 * @since 2.5.96
 	 */
 	public final Locale getLocale() {
-		return m_cachedLocale;
+		// return m_cachedLocale;
+		Locale lo = BeanHolder.getLocale();
+		if (lo == null) {
+			return Locale.getDefault();
+		}
+		return lo;
 	}
 
 	/**
@@ -398,7 +415,7 @@ public final class WikiSession implements WikiEventListener {
 		ArrayList<Principal> principals = new ArrayList<Principal>();
 
 		// Take the first non Role as the main Principal
-		for (Principal principal : getSubject().getPrincipals()) {
+		for (Principal principal : userSubject.getPrincipals()) {
 			if (AuthenticationManager.isUserPrincipal(principal)) {
 				principals.add(principal);
 			}
@@ -425,10 +442,10 @@ public final class WikiSession implements WikiEventListener {
 		Set<Principal> roles = new HashSet<Principal>();
 
 		// Add all of the Roles possessed by the Subject directly
-		roles.addAll(getSubject().getPrincipals(Role.class));
+		roles.addAll(userSubject.getPrincipals(Role.class));
 
 		// Add all of the GroupPrincipals possessed by the Subject directly
-		roles.addAll(getSubject().getPrincipals(GroupPrincipal.class));
+		roles.addAll(userSubject.getPrincipals(GroupPrincipal.class));
 
 		// Return a defensive copy
 		Principal[] roleArray = roles.toArray(new Principal[roles.size()]);
@@ -447,12 +464,13 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	public static final void removeWikiSession(WikiEngine engine,
 			HttpServletRequest request) {
-		if (engine == null || request == null) {
-			throw new IllegalArgumentException(
-					"Request or engine cannot be null.");
-		}
-		SessionMonitor monitor = SessionMonitor.getInstance(engine);
-		monitor.remove(request.getSession());
+		// if (engine == null || request == null) {
+		// throw new IllegalArgumentException(
+		// "Request or engine cannot be null.");
+		// }
+		// SessionMonitor monitor = SessionMonitor.getInstance(engine);
+		// monitor.remove(request.getSession());
+
 	}
 
 	/**
@@ -465,7 +483,7 @@ public final class WikiSession implements WikiEventListener {
 	 * @return the result
 	 */
 	public final boolean hasPrincipal(Principal principal) {
-		return getSubject().getPrincipals().contains(principal);
+		return userSubject.getPrincipals().contains(principal);
 
 	}
 
@@ -485,21 +503,22 @@ public final class WikiSession implements WikiEventListener {
 				case WikiSecurityEvent.GROUP_ADD: {
 					Group group = (Group) e.getTarget();
 					if (isInGroup(group)) {
-						getSubject().getPrincipals().add(group.getPrincipal());
+						userSubject.getPrincipals().add(group.getPrincipal());
 					}
 					break;
 				}
 				case WikiSecurityEvent.GROUP_REMOVE: {
 					Group group = (Group) e.getTarget();
-					if (getSubject().getPrincipals()
-							.contains(group.getPrincipal())) {
-						getSubject().getPrincipals().remove(group.getPrincipal());
+					if (userSubject.getPrincipals().contains(
+							group.getPrincipal())) {
+						userSubject.getPrincipals()
+								.remove(group.getPrincipal());
 					}
 					break;
 				}
 				case WikiSecurityEvent.GROUP_CLEAR_GROUPS: {
-					getSubject().getPrincipals().removeAll(
-							getSubject().getPrincipals(GroupPrincipal.class));
+					userSubject.getPrincipals().removeAll(
+							userSubject.getPrincipals(GroupPrincipal.class));
 					break;
 				}
 				case WikiSecurityEvent.LOGIN_INITIATED: {
@@ -508,7 +527,7 @@ public final class WikiSession implements WikiEventListener {
 				case WikiSecurityEvent.PRINCIPAL_ADD: {
 					WikiSession target = (WikiSession) e.getTarget();
 					if (this.equals(target) && m_status == AUTHENTICATED) {
-						Set<Principal> principals = getSubject().getPrincipals();
+						Set<Principal> principals = userSubject.getPrincipals();
 						principals.add((Principal) e.getPrincipal());
 					}
 					break;
@@ -519,7 +538,7 @@ public final class WikiSession implements WikiEventListener {
 						m_status = ANONYMOUS;
 
 						// Set the login/user principals and login status
-						Set<Principal> principals = getSubject().getPrincipals();
+						Set<Principal> principals = userSubject.getPrincipals();
 						m_loginPrincipal = (Principal) e.getPrincipal();
 						m_userPrincipal = m_loginPrincipal;
 
@@ -539,7 +558,7 @@ public final class WikiSession implements WikiEventListener {
 						m_status = ASSERTED;
 
 						// Set the login/user principals and login status
-						Set<Principal> principals = getSubject().getPrincipals();
+						Set<Principal> principals = userSubject.getPrincipals();
 						m_loginPrincipal = (Principal) e.getPrincipal();
 						m_userPrincipal = m_loginPrincipal;
 
@@ -560,7 +579,7 @@ public final class WikiSession implements WikiEventListener {
 						m_status = AUTHENTICATED;
 
 						// Set the login/user principals and login status
-						Set<Principal> principals = getSubject().getPrincipals();
+						Set<Principal> principals = userSubject.getPrincipals();
 						m_loginPrincipal = (Principal) e.getPrincipal();
 						m_userPrincipal = m_loginPrincipal;
 
@@ -602,7 +621,7 @@ public final class WikiSession implements WikiEventListener {
 									"User profile FullName cannot be null.");
 						}
 
-						Set<Principal> principals = getSubject().getPrincipals();
+						Set<Principal> principals = userSubject.getPrincipals();
 						m_loginPrincipal = new WikiPrincipal(
 								newProfile.getLoginName());
 
@@ -631,20 +650,24 @@ public final class WikiSession implements WikiEventListener {
 		}
 	}
 
+	private void makeGuestUser() {
+		userSubject.getPrincipals().clear();
+		userSubject.getPrincipals().add(WikiPrincipal.GUEST);
+		userSubject.getPrincipals().add(Role.ANONYMOUS);
+		userSubject.getPrincipals().add(Role.ALL);
+		m_userPrincipal = WikiPrincipal.GUEST;
+		m_loginPrincipal = WikiPrincipal.GUEST;
+	}
+
 	/**
 	 * Invalidates the WikiSession and resets its Subject's Principals to the
 	 * equivalent of a "guest session".
 	 */
 	public final void invalidate() {
-		if (!m_engine.getAuthenticationManager().isM_useJAAS()) {
+		if (!useJAAS()) {
 			return;
 		}
-		getSubject().getPrincipals().clear();
-		getSubject().getPrincipals().add(WikiPrincipal.GUEST);
-		getSubject().getPrincipals().add(Role.ANONYMOUS);
-		getSubject().getPrincipals().add(Role.ALL);
-		m_userPrincipal = WikiPrincipal.GUEST;
-		m_loginPrincipal = WikiPrincipal.GUEST;
+		makeGuestUser();
 	}
 
 	/**
@@ -662,14 +685,15 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	protected final void injectGroupPrincipals() {
 		// Flush the existing GroupPrincipals
-		getSubject().getPrincipals().removeAll(
-				getSubject().getPrincipals(GroupPrincipal.class));
+		userSubject.getPrincipals().removeAll(
+				userSubject.getPrincipals(GroupPrincipal.class));
 
 		// Get the GroupManager and test for each Group
-		GroupManager manager = m_engine.getGroupManager();
+//		GroupManager manager = getEngine().getGroupManager();
+		GroupManager manager = BeanHolder.getGroupManager();
 		for (Principal group : manager.getRoles()) {
 			if (manager.isUserInRole(this, group)) {
-				getSubject().getPrincipals().add(group);
+				userSubject.getPrincipals().add(group);
 			}
 		}
 	}
@@ -691,7 +715,8 @@ public final class WikiSession implements WikiEventListener {
 		}
 
 		// Look up the user and go get the new Principals
-		UserDatabase database = m_engine.getUserManager().getUserDatabase();
+		UserManager userMgr = BeanHolder.getUserManager();
+		UserDatabase database = userMgr.getUserDatabase();
 		if (database == null) {
 			throw new IllegalStateException("User database cannot be null.");
 		}
@@ -701,7 +726,7 @@ public final class WikiSession implements WikiEventListener {
 					.getLoginName());
 			for (Principal principal : principals) {
 				// Add the Principal to the Subject
-				getSubject().getPrincipals().add(principal);
+				userSubject.getPrincipals().add(principal);
 
 				// Set the user principal if needed; we prefer FullName, but the
 				// WikiName will also work
@@ -762,29 +787,32 @@ public final class WikiSession implements WikiEventListener {
 	 *            the servlet request object
 	 * @return the existing (or newly created) wiki session
 	 */
-	public static final WikiSession getWikiSession(WikiEngine engine,
-			HttpServletRequest request) {
-		// If request is null, return guest session
-		if (request == null) {
-			if (log.isDebugEnabled()) {
-				log.debug("Looking up WikiSession for NULL HttpRequest: returning guestSession()");
-			}
-			return staticGuestSession(engine);
-		}
-
-		// Look for a WikiSession associated with the user's Http Session
-		// and create one if it isn't there yet.
-		HttpSession session = request.getSession();
-		SessionMonitor monitor = SessionMonitor.getInstance(engine);
-		WikiSession wikiSession = monitor.find(session);
-
-		// Attach reference to wiki engine
-		wikiSession.m_engine = engine;
-
-		wikiSession.m_cachedLocale = request.getLocale();
-
-		return wikiSession;
-	}
+	// public static final WikiSession getWikiSession(WikiEngine engine,
+	// HttpServletRequest request) {
+	// // If request is null, return guest session
+	// if (request == null) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Looking up WikiSession for NULL HttpRequest: returning guestSession()");
+	// }
+	// return staticGuestSession(engine);
+	// }
+	//
+	// // Look for a WikiSession associated with the user's Http Session
+	// // and create one if it isn't there yet.
+	// HttpSession session = request.getSession();
+	// SessionMonitor monitor = SessionMonitor.getInstance(engine);
+	// WikiSession wikiSession = monitor.find(session);
+	//
+	// // ServletContext co;
+	// // co.
+	//
+	// // Attach reference to wiki engine
+	// wikiSession.m_engine = engine;
+	//
+	// wikiSession.m_cachedLocale = request.getLocale();
+	//
+	// return wikiSession;
+	// }
 
 	/**
 	 * Static factory method that creates a new "guest" session containing a
@@ -797,21 +825,36 @@ public final class WikiSession implements WikiEventListener {
 	 *            the wiki engine
 	 * @return the guest wiki session
 	 */
-	public static final WikiSession guestSession(WikiEngine engine) {
+	public static final WikiSession guestSession() {
 		WikiSession session = new WikiSession();
-		session.m_engine = engine;
+//		WikiEngine engine = getEngine();
 		session.invalidate();
 
 		// Add the session as listener for GroupManager, AuthManager,
 		// UserManager events
-		GroupManager groupMgr = engine.getGroupManager();
-		AuthenticationManager authMgr = engine.getAuthenticationManager();
-		UserManager userMgr = engine.getUserManager();
-		groupMgr.addWikiEventListener(session);
-		authMgr.addWikiEventListener(session);
-		userMgr.addWikiEventListener(session);
+//		GroupManager groupMgr = engine.getGroupManager();
+//		AuthenticationManager authMgr = engine.getAuthenticationManager();
+//		UserManager userMgr = engine.getUserManager();
+//		groupMgr.addWikiEventListener(session);
+//		authMgr.addWikiEventListener(session);
+//		userMgr.addWikiEventListener(session);
+		session.addListeners();
 
 		return session;
+	}
+
+	public void addListeners() {
+//		WikiEngine engine = getEngine();
+//		GroupManager groupMgr = engine.getGroupManager();
+//		GroupManager groupMgr = BeanHolder.getGroupManager();
+//		AuthenticationManager authMgr = engine.getAuthenticationManager();
+//		UserManager userMgr = BeanHolder.getUserManager();
+
+//		UserManager userMgr = engine.getUserManager();
+//		groupMgr.addWikiEventListener(this);
+//		authMgr.addWikiEventListener(this);
+//		userMgr.addWikiEventListener(this);
+
 	}
 
 	/**
@@ -826,46 +869,18 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	// FIXME: Should really use WeakReferences to clean away unused sessions.
 
-	private static WikiSession staticGuestSession(WikiEngine engine) {
-		WikiSession session = c_guestSession.get();
+	// private static WikiSession staticGuestSession(WikiEngine engine) {
+	// WikiSession session = c_guestSession.get();
 
-		if (session == null) {
-			session = guestSession(engine);
+	// if (session == null) {
+	// session = guestSession(engine);
 
-			c_guestSession.set(session);
-		}
+	// c_guestSession.set(session);
+	// }
 
-		return session;
-	}
-
-	/**
-	 * Returns the total number of active wiki sessions for a particular wiki.
-	 * This method delegates to the wiki's {@link SessionMonitor#sessions()}
-	 * method.
-	 * 
-	 * @param engine
-	 *            the wiki session
-	 * @return the number of sessions
-	 */
-	public static final int sessions(WikiEngine engine) {
-		SessionMonitor monitor = SessionMonitor.getInstance(engine);
-		return monitor.sessions();
-	}
-
-	/**
-	 * Returns Principals representing the current users known to a particular
-	 * wiki. Each Principal will correspond to the value returned by each
-	 * WikiSession's {@link #getUserPrincipal()} method. This method delegates
-	 * to {@link SessionMonitor#userPrincipals()}.
-	 * 
-	 * @param engine
-	 *            the wiki engine
-	 * @return an array of Principal objects, sorted by name
-	 */
-	public static final Principal[] userPrincipals(WikiEngine engine) {
-		SessionMonitor monitor = SessionMonitor.getInstance(engine);
-		return monitor.userPrincipals();
-	}
+	// return session;
+	// return guestSession();
+	// }
 
 	/**
 	 * Wrapper for
@@ -885,9 +900,9 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	public static final Object doPrivileged(WikiSession session,
 			PrivilegedAction<?> action) throws AccessControlException {
-		return WikiSubject.doAsPrivileged(session.getSubject(), action);
+		return WikiSubject.doAsPrivileged(session.userSubject, action);
 	}
-	
+
 	/**
 	 * Verifies whether a String represents an IPv4 address. The algorithm is
 	 * extremely efficient and does not allocate any objects.

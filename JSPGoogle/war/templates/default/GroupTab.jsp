@@ -9,6 +9,7 @@
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.commons.logging.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -147,7 +148,7 @@
     if ( roles[i] instanceof GroupPrincipal ) /* bugfix */
     {
       String name = roles[i].getName();
-      Group group = c.getEngine().getGroupManager().getGroup( name );
+      Group group = BeanHolder.getGroupManager().getGroup( name );
 
       %><%= printWikiGroupPutGroup( group, name, name.equals( groupname ), pageContext )  %><%
     }

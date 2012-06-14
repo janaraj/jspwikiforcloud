@@ -39,6 +39,7 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).
@@ -409,7 +410,8 @@ public class RSSGenerator implements Serializable
 
         Collection changed = m_engine.getRecentChanges();
 
-        WikiSession session = WikiSession.guestSession( m_engine );
+//        WikiSession session = WikiSession.guestSession( m_engine );
+        WikiSession session = BeanHolder.getWikiSession();
         int items = 0;
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {

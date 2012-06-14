@@ -39,6 +39,7 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Provides handlers for all RPC routines of the MetaWeblog API.
@@ -84,7 +85,9 @@ public class MetaWeblogHandler
     {
         try
         {
-            AuthenticationManager amm = m_context.getEngine().getAuthenticationManager();
+//            AuthenticationManager amm = m_context.getEngine().getAuthenticationManager();
+    		AuthenticationManager amm = BeanHolder.getAuthenticationManager();
+
             AuthorizationManager mgr = m_context.getEngine().getAuthorizationManager();
         
             if( amm.login( m_context.getWikiSession(), m_context.getHttpRequest(), username, password ) )

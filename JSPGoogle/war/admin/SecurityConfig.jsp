@@ -3,6 +3,7 @@
 <%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%! 
   public void jspInit()
@@ -96,7 +97,7 @@ in your jspwiki.properties.
 -->
 <h3>Container-Managed Authentication</h3>
 <%
-  boolean isContainerAuth = wiki.getAuthenticationManager().isContainerAuthenticated();
+  boolean isContainerAuth = BeanHolder.getAuthenticationManager().isContainerAuthenticated();
   AuthorizationManager authorizationManager = wiki.getAuthorizationManager();
   if ( isContainerAuth )
   {

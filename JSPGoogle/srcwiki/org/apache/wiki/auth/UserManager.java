@@ -57,6 +57,7 @@ import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.json.JSONRPCManager;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.workflow.Decision;
@@ -108,6 +109,11 @@ public final class UserManager extends AbstractWikiProvider
     private CreateModuleManager cUser;
 
     private boolean          m_useJAAS      = true;
+    
+	public UserManager(WikiEngine engine) throws WikiException {
+		initialize(engine,null);
+	}
+
 
     /**
      * Initializes the engine for its nefarious purposes.
@@ -118,6 +124,9 @@ public final class UserManager extends AbstractWikiProvider
     @Override
     public final void initializeProvider()
     {
+    	WikiSession session = BeanHolder.getWikiSession();
+		addWikiEventListener(session);
+
         m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( m_properties.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
 
         // Attach the PageManager as a listener
@@ -372,7 +381,8 @@ public final class UserManager extends AbstractWikiProvider
 
             try
             {
-                AuthenticationManager mgr = m_engine.getAuthenticationManager();
+//                AuthenticationManager mgr = m_engine.getAuthenticationManager();
+        		AuthenticationManager mgr = BeanHolder.getAuthenticationManager();
                 if ( newProfile && !mgr.isContainerAuthenticated() )
                 {
                     mgr.login( session, profile.getLoginName(), profile.getPassword() );
@@ -453,7 +463,8 @@ public final class UserManager extends AbstractWikiProvider
         email = InputValidator.isBlank( email ) ? null : email;
 
         // A special case if we have container authentication
-        if ( m_engine.getAuthenticationManager().isContainerAuthenticated() )
+		AuthenticationManager auth = BeanHolder.getAuthenticationManager();
+        if ( auth.isContainerAuthenticated() )
         {
             // If authenticated, login name is always taken from container
             if ( context.getWikiSession().isAuthenticated() )
@@ -509,7 +520,8 @@ public final class UserManager extends AbstractWikiProvider
         }
         
         // If container-managed auth and user not logged in, throw an error
-        if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
+		AuthenticationManager auth = BeanHolder.getAuthenticationManager();
+        if ( auth.isContainerAuthenticated()
              && !context.getWikiSession().isAuthenticated() )
         {
             session.addMessage( SESSION_MESSAGES, rb.getString("security.error.createprofilebeforelogin") );
@@ -520,7 +532,7 @@ public final class UserManager extends AbstractWikiProvider
         validator.validate( profile.getEmail(), rb.getString("security.user.email"), InputValidator.EMAIL );
 
         // If new profile, passwords must match and can't be null
-        if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
+        if ( !auth.isContainerAuthenticated() )
         {
             String password = profile.getPassword();
             if ( password == null )
@@ -734,7 +746,8 @@ public final class UserManager extends AbstractWikiProvider
         {
             super( SAVE_TASK_MESSAGE_KEY );
             m_engine = engine;
-            m_db = engine.getUserManager().getUserDatabase();
+			UserManager userMgr = BeanHolder.getUserManager();
+            m_db = userMgr.getUserDatabase();
         }
 
         /**

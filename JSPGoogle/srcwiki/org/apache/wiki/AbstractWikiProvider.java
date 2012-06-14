@@ -14,7 +14,12 @@ public abstract class AbstractWikiProvider implements WikiProvider {
 	public void initialize(WikiEngine engine, Properties properties)
 			throws WikiException {
 		this.m_engine = engine;
-		this.m_properties = properties;
+		if (properties == null) {
+			this.m_properties = engine.getWikiProperties();
+		}
+		else {
+		  this.m_properties = properties;
+		}
 	}
 
 	@Override

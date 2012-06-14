@@ -111,7 +111,8 @@ import org.apache.wiki.workflow.WorkflowManager;
  */
 @SuppressWarnings("serial")
 public class WikiEngine implements Serializable {
-//	private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
+	// private static final String ATTR_WIKIENGINE =
+	// "org.apache.wiki.WikiEngine";
 
 	private static final Log log = LogFactory.getLog(WikiEngine.class);
 
@@ -215,7 +216,7 @@ public class WikiEngine implements Serializable {
 	private CreateModuleManager rManager = null;
 
 	/** Stores the Plugin manager */
-//	private PluginManager m_pluginManager;
+	// private PluginManager m_pluginManager;
 	private CreateProviderManager<PluginManager> mPlugin;
 
 	/** Stores the Variable manager */
@@ -226,15 +227,14 @@ public class WikiEngine implements Serializable {
 
 	/** Stores the Page manager */
 	// private PageManager getPageManager() = null;
-//	private CreateModuleManager pManager;
+	// private CreateModuleManager pManager;
 	private CreateProviderManager<PageManager> pManager;
-
 
 	/** Stores the authorization manager */
 	private AuthorizationManager m_authorizationManager = null;
 
 	/** Stores the authentication manager. */
-	private AuthenticationManager m_authenticationManager = null;
+///	private AuthenticationManager m_authenticationManager = null;
 
 	/** Stores the ACL manager. */
 	private AclManager m_aclManager = null;
@@ -242,7 +242,7 @@ public class WikiEngine implements Serializable {
 	/** Resolves wiki actions, JSPs and special pages. */
 	private CommandResolver m_commandResolver = null;
 
-//	private TemplateManager m_templateManager = null;
+	// private TemplateManager m_templateManager = null;
 	private CreateProviderManager<TemplateManager> mTemplate;
 
 	/** Does all our diffs for us. */
@@ -258,11 +258,11 @@ public class WikiEngine implements Serializable {
 
 	/** Facade for managing users */
 	// private UserManager m_userManager = null;
-	private CreateModuleManager mUser = null;
+//	private CreateModuleManager mUser = null;
 
 	/** Facade for managing users */
-//	private GroupManager m_groupManager = null;
-	private CreateModuleManager mGroup = null;
+	// private GroupManager m_groupManager = null;
+//	private CreateModuleManager mGroup = null;
 
 	// private RenderingManager m_renderingManager;
 	private CreateModuleManager cRender;
@@ -314,9 +314,9 @@ public class WikiEngine implements Serializable {
 	/** Stores wikiengine attributes. */
 	private Map<String, Object> m_attributes = Collections
 			.synchronizedMap(new HashMap<String, Object>());
-	
+
 	private boolean isInitialized() {
-		return mGroup != null;
+		return fFilter != null;
 	}
 
 	// private IObjectPersist m_objectPersist = null;
@@ -389,8 +389,10 @@ public class WikiEngine implements Serializable {
 	public static synchronized WikiEngine getInstance(ServletContext context,
 			Properties props) throws InternalWikiException {
 		WikiSetContext.setContext(context, "WikiEngine");
-//		WikiEngine engine = (WikiEngine) context.getAttribute(ATTR_WIKIENGINE);
-		WikiEngine engine = (WikiEngine) BeanHolder.getObject("wikiEngine");
+		// WikiEngine engine = (WikiEngine)
+		// context.getAttribute(ATTR_WIKIENGINE);
+		// WikiEngine engine = (WikiEngine) BeanHolder.getObject("wikiEngine");
+		WikiEngine engine = BeanHolder.getWikiEngine();
 		if (!engine.isInitialized()) {
 			String appid = Integer.toString(context.hashCode()); // FIXME:
 																	// Kludge,
@@ -403,9 +405,9 @@ public class WikiEngine implements Serializable {
 					props = PropertyReader.loadWebAppProps(context);
 				}
 
-//				engine = new WikiEngine(context, appid, props);
+				// engine = new WikiEngine(context, appid, props);
 				engine.initializeWikiEngine(context, appid, props);
-//				context.setAttribute(ATTR_WIKIENGINE, engine);
+				// context.setAttribute(ATTR_WIKIENGINE, engine);
 			} catch (Exception e) {
 				context.log("ERROR: Failed to create a Wiki engine: "
 						+ e.getMessage());
@@ -429,9 +431,9 @@ public class WikiEngine implements Serializable {
 	 * @throws WikiException
 	 *             If the initialization fails.
 	 */
-//	public WikiEngine(Properties properties) throws WikiException {
-//		initialize(properties, null);
-//	}
+	// public WikiEngine(Properties properties) throws WikiException {
+	// initialize(properties, null);
+	// }
 
 	/**
 	 * Instantiate using this method when you're running as a servlet and
@@ -448,15 +450,15 @@ public class WikiEngine implements Serializable {
 	 * @throws WikiException
 	 *             If the WikiEngine construction fails.
 	 */
-	private void initializeWikiEngine(ServletContext context, String appid, Properties props)
-			throws WikiException {
-//		super();
+	private void initializeWikiEngine(ServletContext context, String appid,
+			Properties props) throws WikiException {
+		// super();
 		// m_servletContext = context;
 		m_appid = appid;
 
 		// Stash the WikiEngine in the servlet context
 		if (context != null) {
-//			context.setAttribute(ATTR_WIKIENGINE, this);
+			// context.setAttribute(ATTR_WIKIENGINE, this);
 			m_rootPath = context.getRealPath("/");
 		}
 
@@ -503,7 +505,8 @@ public class WikiEngine implements Serializable {
 		log.info(Release.APPNAME + " " + Release.getVersionString()
 				+ " starting. Whee!");
 
-		fireEvent(WikiEngineEvent.INITIALIZING); // begin initialization
+// TODO: just remove for a moment		
+//		fireEvent(WikiEngineEvent.INITIALIZING); // begin initialization
 
 		log.debug("Java version: " + System.getProperty("java.runtime.version"));
 		log.debug("Java vendor: " + System.getProperty("java.vm.vendor"));
@@ -617,11 +620,13 @@ public class WikiEngine implements Serializable {
 			// getPageManager() = (PageManager) ClassUtil.getMappedObject(
 			// PageManager.class.getName());
 			// getPageManager().initialize(this, props);
-//			pManager = new CreateModuleManager(this, props, "pageManager");
-			pManager = new CreateProviderManager<PageManager>(this,props,"pageManager");
-//			m_pluginManager = (PluginManager) ClassUtil.getMappedObject(
-//					PluginManager.class.getName(), this, props);
-			mPlugin = new CreateProviderManager<PluginManager>(this,props,"pluginManager");
+			// pManager = new CreateModuleManager(this, props, "pageManager");
+			pManager = new CreateProviderManager<PageManager>(this, props,
+					"pageManager");
+			// m_pluginManager = (PluginManager) ClassUtil.getMappedObject(
+			// PluginManager.class.getName(), this, props);
+			mPlugin = new CreateProviderManager<PluginManager>(this, props,
+					"pluginManager");
 			m_differenceManager = (DifferenceManager) ClassUtil
 					.getMappedObject(DifferenceManager.class.getName(), this,
 							props);
@@ -640,16 +645,16 @@ public class WikiEngine implements Serializable {
 			// SearchManager.class.getName(), this, props);
 			mSearch = new CreateModuleManager(this, props, "searchManager");
 
-			m_authenticationManager = (AuthenticationManager) ClassUtil
-					.getMappedObject(AuthenticationManager.class.getName());
+//			m_authenticationManager = (AuthenticationManager) ClassUtil
+//					.getMappedObject(AuthenticationManager.class.getName());
 			m_authorizationManager = (AuthorizationManager) ClassUtil
 					.getMappedObject(AuthorizationManager.class.getName());
 			// m_userManager = (UserManager) ClassUtil
 			// .getMappedObject(UserManager.class.getName());
-			mUser = new CreateModuleManager(this, props, "userManager");
-//			m_groupManager = (GroupManager) ClassUtil
-//					.getMappedObject(GroupManager.class.getName());
-			mGroup = new CreateModuleManager(this, props, "groupManager");
+//			mUser = new CreateModuleManager(this, props, "userManager");
+			// m_groupManager = (GroupManager) ClassUtil
+			// .getMappedObject(GroupManager.class.getName());
+			// mGroup = new CreateModuleManager(this, props, "groupManager");
 
 			m_editorManager = (EditorManager) ClassUtil
 					.getMappedObject(EditorManager.class.getName());
@@ -660,10 +665,10 @@ public class WikiEngine implements Serializable {
 			// Initialize the authentication, authorization, user and acl
 			// managers
 
-			m_authenticationManager.initialize(this, props);
+//			m_authenticationManager.initialize(this, props);
 			m_authorizationManager.initialize(this, props);
 			// m_userManager.initialize(this, props);
-//			m_groupManager.initialize(this, props);
+			// m_groupManager.initialize(this, props);
 			m_aclManager = getAclManager();
 
 			// Start the Workflow manager
@@ -675,10 +680,10 @@ public class WikiEngine implements Serializable {
 					.getMappedObject(
 							InternationalizationManager.class.getName(), this);
 
-//			m_templateManager = (TemplateManager) ClassUtil.getMappedObject(
-//					TemplateManager.class.getName(), this, props);
-			mTemplate = new CreateProviderManager<TemplateManager>(this,props,"templateManager");
-
+			// m_templateManager = (TemplateManager) ClassUtil.getMappedObject(
+			// TemplateManager.class.getName(), this, props);
+			mTemplate = new CreateProviderManager<TemplateManager>(this, props,
+					"templateManager");
 
 			// Since we want to use a page filters initilize() method
 			// as a engine startup listener where we can initialize global event
@@ -784,7 +789,8 @@ public class WikiEngine implements Serializable {
 			rssThread.start();
 		}
 
-		fireEvent(WikiEngineEvent.INITIALIZED); // initialization complete
+		// TODO: disable for e moment
+		// fireEvent(WikiEngineEvent.INITIALIZED); // initialization complete
 
 		log.info("WikiEngine configured.");
 		m_isConfigured = true;
@@ -2158,9 +2164,9 @@ public class WikiEngine implements Serializable {
 	 * 
 	 * @return The current AuthenticationManager instance.
 	 */
-	public AuthenticationManager getAuthenticationManager() {
-		return m_authenticationManager;
-	}
+//	public AuthenticationManager getAuthenticationManager() {
+//		return m_authenticationManager;
+//	}
 
 	/**
 	 * Returns the manager responsible for the filters.
@@ -2386,15 +2392,15 @@ public class WikiEngine implements Serializable {
 	 * @since 2.3
 	 * @return The current UserManager instance.
 	 */
-	public UserManager getUserManager() {
-		// return m_userManager;
-		UserManager ma = (UserManager) mUser.getBeanObject();
-		if (!mUser.isInitialized()) {
-			ma.initializeProvider();
-			mUser.setInitialized(true);
-		}
-		return ma;
-	}
+//	public UserManager getUserManager() {
+//		// return m_userManager;
+//		UserManager ma = (UserManager) mUser.getBeanObject();
+//		if (!mUser.isInitialized()) {
+//			ma.initializeProvider();
+//			mUser.setInitialized(true);
+//		}
+//		return ma;
+//	}
 
 	/**
 	 * Returns the GroupManager employed by this WikiEngine.
@@ -2402,14 +2408,14 @@ public class WikiEngine implements Serializable {
 	 * @since 2.3
 	 * @return The current GroupManager instance
 	 */
-	public GroupManager getGroupManager() {
-		GroupManager ma = (GroupManager) mGroup.getBeanObject();
-		if (!mGroup.isInitialized()) {
-			ma.initializeProvider();
-			mGroup.setInitialized(true);
-		}
-		return ma;
-	}
+//	public GroupManager getGroupManager() {
+//		GroupManager ma = (GroupManager) mGroup.getBeanObject();
+//		if (!mGroup.isInitialized()) {
+//			ma.initializeProvider();
+//			mGroup.setInitialized(true);
+//		}
+//		return ma;
+//	}
 
 	/**
 	 * Returns the AclManager employed by this WikiEngine. The AclManager is

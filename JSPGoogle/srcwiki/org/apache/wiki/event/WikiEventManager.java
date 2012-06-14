@@ -33,8 +33,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent
@@ -168,18 +170,20 @@ public final class WikiEventManager
     /* The Vector containing any preloaded WikiEventDelegates. */
     private final Vector<WikiEventDelegate> m_preloadCache = new Vector<WikiEventDelegate>();
 
-    /* Singleton instance of the WikiEventManager. */
-    private static WikiEventManager c_instance = null;
 
-    // ............
 
     /**
      *  Constructor for a WikiEventManager.
      */
-    private WikiEventManager()
+    public WikiEventManager()
     {
-        c_instance = this;
         log.debug("instantiated WikiEventManager");
+    }
+    
+    public void init() {
+    	log.debug("initMethod");
+    	WikiSession se = BeanHolder.getWikiSession();
+    	se.addListeners();
     }
 
     /**
@@ -191,16 +195,7 @@ public final class WikiEventManager
      */
     public static WikiEventManager getInstance()
     {
-        if( c_instance == null )
-        {
-            synchronized( WikiEventManager.class )
-            {
-                WikiEventManager mgr = new WikiEventManager();
-                // start up any post-instantiation services here
-                return mgr;
-            }
-        }
-        return c_instance;
+    	return BeanHolder.getWikiManager();
     }
 
 
@@ -229,7 +224,7 @@ public final class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was added (i.e., it was not already in the list and was added)
      */
-    public static final boolean addWikiEventListener(
+    public final static boolean addWikiEventListener(
             Object client, WikiEventListener listener )
     {
         if ( client == WikiEventManager.class )

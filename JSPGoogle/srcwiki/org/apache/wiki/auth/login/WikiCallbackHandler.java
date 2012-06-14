@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * Handles logins made from inside the wiki application, rather than via the web
@@ -83,7 +85,8 @@ public class WikiCallbackHandler implements CallbackHandler
             }
             else if ( callback instanceof UserDatabaseCallback )
             {
-                ( (UserDatabaseCallback) callback ).setUserDatabase( m_engine.getUserManager().getUserDatabase() );
+				UserManager userMgr = BeanHolder.getUserManager();
+                ( (UserDatabaseCallback) callback ).setUserDatabase( userMgr.getUserDatabase() );
             }
             else if ( callback instanceof NameCallback )
             {

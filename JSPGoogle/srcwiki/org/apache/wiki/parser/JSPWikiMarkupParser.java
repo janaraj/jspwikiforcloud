@@ -62,6 +62,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -71,6 +72,7 @@ import org.apache.wiki.plugin.WikiPlugin;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.spring.BeanHolder;
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Element;
@@ -382,7 +384,8 @@ public class JSPWikiMarkupParser
                                                          PROP_USERELNOFOLLOW,
                                                          m_useRelNofollow );
 
-        if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
+		UserManager userMgr = BeanHolder.getUserManager();
+        if( userMgr.getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
             disableAccessRules();
         }

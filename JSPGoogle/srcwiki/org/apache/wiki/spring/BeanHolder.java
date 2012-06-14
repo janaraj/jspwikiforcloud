@@ -12,12 +12,19 @@
  */
 package org.apache.wiki.spring;
 
+import java.util.Locale;
+
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.IObjectPersist;
-import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.security.WikiSubject;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -34,27 +41,57 @@ public class BeanHolder {
 				+ apx.getStartupDate());
 		return apx.getBean(name);
 	}
-	
+
 	public static ServletContext getServletContext() {
 		WebApplicationContext apx = ApplicationContextHolder.getContext();
-		return apx.getServletContext();		
+		return apx.getServletContext();
 	}
 
 	public static WikiSubject getSubject() {
-		WikiSubject su = (WikiSubject) getObject("wikiuser");
-		log.trace("get Subject wikiuser : " + su);
-		return su;
+		WikiSession se = getWikiSession();
+		log.trace("getSubject = " + se.getWikiSubject());
+		return se.getWikiSubject();
 	}
 
 	public static IObjectPersist getObjectPersist() {
 		Object o = getObject("objectProvider");
 		return (IObjectPersist) o;
 	}
-	
-	public static  WikiPageProvider getPageProvider() {
-		Object o = getObject("pageProvider");
-		return (WikiPageProvider) o;
+
+	public static WikiEngine getWikiEngine() {
+		WikiEngine engine = (WikiEngine) BeanHolder.getObject("wikiEngine");
+		return engine;
 	}
 
+	public static Locale getLocale() {
+		return ApplicationContextHolder.getLocale();
+	}
+
+	public static WikiSession getWikiSession() {
+		WikiSession se = (WikiSession) BeanHolder.getObject("wikiSession");
+		return se;
+	}
+
+	public static WikiEventManager getWikiManager() {
+		WikiEventManager se = (WikiEventManager) BeanHolder
+				.getObject("wikiEventManager");
+		return se;
+	}
+
+	public static GroupManager getGroupManager() {
+		GroupManager ge = (GroupManager) BeanHolder.getObject("groupManager");
+		return ge;
+	}
+
+	public static UserManager getUserManager() {
+		UserManager ge = (UserManager) BeanHolder.getObject("userManager");
+		return ge;
+	}
+
+	public static AuthenticationManager getAuthenticationManager() {
+		AuthenticationManager ge = (AuthenticationManager) BeanHolder
+				.getObject("authenticationManager");
+		return ge;
+	}
 
 }

@@ -39,6 +39,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * <p>
@@ -121,9 +122,11 @@ public class UserProfileTag extends WikiTagBase
 
     public final int doWikiStartTag() throws IOException, WikiSecurityException
     {
-        UserManager manager = m_wikiContext.getEngine().getUserManager();
+		UserManager manager = BeanHolder.getUserManager();
+//        UserManager manager = m_wikiContext.getEngine().getUserManager();
         UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
+		AuthenticationManager authMgr = BeanHolder.getAuthenticationManager();
 
         if ( EXISTS.equals( m_prop ) || NOT_NEW.equals( m_prop ) )
         {
@@ -172,7 +175,8 @@ public class UserProfileTag extends WikiTagBase
                 //  Default back to the declared user name
                 //
                 WikiEngine engine = this.m_wikiContext.getEngine();
-                WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
+//                WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
+                WikiSession wikiSession = BeanHolder.getWikiSession();              
                 Principal user = wikiSession.getUserPrincipal();
 
                 if( user != null )
@@ -183,7 +187,7 @@ public class UserProfileTag extends WikiTagBase
         }
         else if ( CHANGE_PASSWORD.equals( m_prop ) || CHANGE_LOGIN_NAME.equals( m_prop ) )
         {
-            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
+//            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
             if ( !authMgr.isContainerAuthenticated() )
             {
                 return EVAL_BODY_INCLUDE;
@@ -191,7 +195,7 @@ public class UserProfileTag extends WikiTagBase
         }
         else if ( NOT_CHANGE_PASSWORD.equals( m_prop ) || NOT_CHANGE_LOGIN_NAME.equals( m_prop ) )
         {
-            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
+//            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
             if ( authMgr.isContainerAuthenticated() )
             {
                 return EVAL_BODY_INCLUDE;

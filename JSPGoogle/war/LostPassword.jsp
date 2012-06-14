@@ -10,6 +10,7 @@
 <%@ page errorPage="/Error.jsp"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="org.apache.wiki.tags.WikiTagBase"%>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport"%>
 <%!Log log = LogFactory.getLog( "JSPWiki" );
 
@@ -19,7 +20,7 @@
     {
         // Reset pw for account name
         String name = request.getParameter( "name" );
-        UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
+        UserDatabase userDatabase = BeanHolder.getUserManager().getUserDatabase();
         boolean success = false;
 
         try

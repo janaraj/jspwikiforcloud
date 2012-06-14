@@ -43,6 +43,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.user.UserProfile;
@@ -50,6 +51,7 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.InputValidator;
 
 /**
@@ -86,6 +88,10 @@ public final class GroupManager extends AbstractWikiProvider implements
 	/** Map with GroupPrincipals as keys, and Groups as values */
 	private final Map<Principal, Group> m_groups = new HashMap<Principal, Group>();
 
+	public GroupManager(WikiEngine engine) throws WikiException {
+		initialize(engine,null);
+	}
+	
 	/**
 	 * <p>
 	 * Returns a GroupPrincipal matching a given name. If a group cannot be
@@ -238,6 +244,10 @@ public final class GroupManager extends AbstractWikiProvider implements
 		// }
 
 		// Load all groups from the database into the cache
+		
+		WikiSession session = BeanHolder.getWikiSession();
+		addWikiEventListener(session);
+
 		Group[] groups = null;
 		try {
 			groups = getGroupDatabase().groups();
@@ -254,7 +264,8 @@ public final class GroupManager extends AbstractWikiProvider implements
 
 		// Make the GroupManager listen for WikiEvents (WikiSecurityEvents for
 		// changed user profiles)
-		m_engine.getUserManager().addWikiEventListener(this);
+		UserManager userMgr = BeanHolder.getUserManager();
+		userMgr.addWikiEventListener(this);
 
 		// Success!
 		log.info("Authorizer GroupManager initialized successfully; loaded "

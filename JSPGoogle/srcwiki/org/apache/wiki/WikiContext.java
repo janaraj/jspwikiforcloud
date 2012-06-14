@@ -45,6 +45,7 @@ import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
@@ -246,7 +247,8 @@ public class WikiContext implements Cloneable, Command {
 
 		m_engine = engine;
 		m_request = request;
-		m_session = WikiSession.getWikiSession(engine, request);
+//		m_session = WikiSession.getWikiSession(engine, request);
+		m_session = BeanHolder.getWikiSession();
 		m_command = command;
 
 		// If PageCommand, get the WikiPage
@@ -759,7 +761,8 @@ public class WikiContext implements Cloneable, Command {
 			// See if admin users exists
 			boolean adminExists = false;
 			try {
-				UserManager userMgr = m_engine.getUserManager();
+//				UserManager userMgr = m_engine.getUserManager();
+				UserManager userMgr = BeanHolder.getUserManager();
 				UserDatabase userDb = userMgr.getUserDatabase();
 				userDb.findByLoginName(Installer.ADMIN_ID);
 				adminExists = true;

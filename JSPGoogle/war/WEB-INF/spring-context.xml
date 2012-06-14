@@ -8,11 +8,11 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="org.apache.wiki.spring" />
-
-	<bean id="wikiuser" class="org.apache.wiki.security.WikiSubject"
+	
+	<bean id="wikiSession" class="org.apache.wiki.WikiSession"
 		scope="session">
 	</bean>
-
+	
 	<bean id="objectProvider" class="org.apache.wiki.providers.ObjectGaeProvider"
 		scope="request">
 	</bean>
@@ -48,11 +48,15 @@
 	</bean>
 
 	<bean id="userManager" class="org.apache.wiki.auth.UserManager"
+	    init-method="initializeProvider"
 		scope="request">
+		<constructor-arg><ref bean="wikiEngine"/></constructor-arg>
 	</bean>
 
 	<bean id="groupManager" class="org.apache.wiki.auth.authorize.GroupManager"
+	    init-method="initializeProvider"
 		scope="request">
+		<constructor-arg><ref bean="wikiEngine"/></constructor-arg>
 	</bean>
 	
 	<bean id="wikiEngine" class="org.apache.wiki.WikiEngine"
@@ -66,6 +70,16 @@
    <bean id="templateManager" class="org.apache.wiki.ui.TemplateManager"
 		scope="request">
 	</bean>
+
+   <bean id="wikiEventManager" class="org.apache.wiki.event.WikiEventManager"
+		init-method="init" scope="request">
+	</bean>
 	
+	<bean id="authenticationManager" class="org.apache.wiki.auth.AuthenticationManager"
+	    init-method="initializeProvider"
+		scope="request">
+		<constructor-arg><ref bean="wikiEngine"/></constructor-arg>
+	</bean>
 	
+		
 </beans>

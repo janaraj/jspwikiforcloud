@@ -62,6 +62,7 @@ import org.apache.wiki.dav.methods.PropFindMethod;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.util.HttpUtil;
 
@@ -481,7 +482,8 @@ public class AttachmentServlet
         }
         catch( RedirectException e )
         {
-            WikiSession session = WikiSession.getWikiSession( m_engine, req );
+//            WikiSession session = WikiSession.getWikiSession( m_engine, req );
+        	WikiSession session = BeanHolder.getWikiSession();
             session.addMessage( e.getMessage() );
 
             req.getSession().setAttribute("msg", e.getMessage());

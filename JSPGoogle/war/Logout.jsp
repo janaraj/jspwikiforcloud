@@ -1,9 +1,10 @@
 <%@page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule"%>
 <%@page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%
   WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-  wiki.getAuthenticationManager().logout( request );
+  BeanHolder.getAuthenticationManager().logout( request );
 
   // Clear the user cookie
   CookieAssertionLoginModule.clearUserCookie( response );

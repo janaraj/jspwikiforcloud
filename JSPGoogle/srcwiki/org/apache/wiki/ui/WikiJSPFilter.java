@@ -99,7 +99,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 			FilterChain chain) throws ServletException, IOException {
 		log.trace("entering doFilter");
 		HttpServletRequest re = (HttpServletRequest) request;
-		WikiSetContext.setContext(re.getSession(), "WikiJSPFilter");
+		WikiSetContext.setContext(re, "WikiJSPFilter");
 		log.trace("after set Context");
 
 		WikiEngine m_engine = getEngine();
