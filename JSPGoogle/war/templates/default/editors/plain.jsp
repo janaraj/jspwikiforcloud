@@ -6,6 +6,7 @@
 <%@ page import="org.apache.wiki.tags.*" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="org.apache.wiki.rpc.*" %>
 <%@ page import="org.apache.wiki.rpc.json.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -33,7 +34,8 @@
     WikiPage p = engine.getPage( clone );
     if( p != null )
     {
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+//        AuthorizationManager mgr = engine.getAuthorizationManager();
+        AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try

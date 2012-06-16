@@ -31,6 +31,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Provides definitions for RPC handler routines.
@@ -110,7 +111,8 @@ public abstract class AbstractRPCHandler
      */
     protected void checkPermission( Permission perm )
     {
-        AuthorizationManager mgr = m_engine.getAuthorizationManager();
+    	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+//        AuthorizationManager mgr = m_engine.getAuthorizationManager();
         
         if( mgr.checkPermission( m_context.getWikiSession(), perm ) )
             return;

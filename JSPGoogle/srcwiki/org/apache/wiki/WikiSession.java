@@ -683,7 +683,7 @@ public final class WikiSession implements WikiEventListener {
 	 * saved. If the wiki session is null, or there is no matching user profile,
 	 * the method returns silently.
 	 */
-	protected final void injectGroupPrincipals() {
+	private final void injectGroupPrincipals() {
 		// Flush the existing GroupPrincipals
 		userSubject.getPrincipals().removeAll(
 				userSubject.getPrincipals(GroupPrincipal.class));

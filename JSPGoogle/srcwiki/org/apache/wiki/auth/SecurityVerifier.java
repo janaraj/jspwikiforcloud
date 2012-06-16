@@ -37,7 +37,7 @@ import java.util.Set;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
@@ -358,7 +358,9 @@ public final class SecurityVerifier
     public final String containerRoleTable() throws WikiException
     {
 
-        AuthorizationManager authorizationManager = m_engine.getAuthorizationManager();
+//        AuthorizationManager authorizationManager = m_engine.getAuthorizationManager();
+		AuthorizationManager authorizationManager = BeanHolder.getAuthorizationManager();
+
         Authorizer authorizer = authorizationManager.getAuthorizer();
 
         // If authorizer not WebContainerAuthorizer, print error message
@@ -458,7 +460,8 @@ public final class SecurityVerifier
      */
     public final Principal[] webContainerRoles() throws WikiException
     {
-        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+    	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+        Authorizer authorizer = mgr.getAuthorizer();
         if ( authorizer instanceof WebContainerAuthorizer )
         {
             return ( (WebContainerAuthorizer) authorizer ).getRoles();
@@ -473,7 +476,8 @@ public final class SecurityVerifier
      */
     protected final void verifyPolicyAndContainerRoles() throws WikiException
     {
-        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+    	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+        Authorizer authorizer = mgr.getAuthorizer();
         Principal[] containerRoles = authorizer.getRoles();
         boolean missing = false;
         for( Principal principal : m_policyPrincipals )
@@ -604,7 +608,8 @@ public final class SecurityVerifier
     protected final void verifyJaas()
     {
         // See if JAAS is on
-        AuthorizationManager authMgr = m_engine.getAuthorizationManager();
+    	AuthorizationManager authMgr = BeanHolder.getAuthorizationManager();
+//        AuthorizationManager authMgr = m_engine.getAuthorizationManager();
         if ( !authMgr.isJAASAuthorized() )
         {
             m_session.addMessage( ERROR_JAAS, "JSPWiki's JAAS-based authentication " +
@@ -726,7 +731,8 @@ public final class SecurityVerifier
     protected final void verifyPolicy()
     {
         // Look up the policy file and set the status text.
-        URL policyURL = AuthenticationManager.findConfigFile( m_engine, AuthorizationManager.DEFAULT_POLICY );
+//        URL policyURL = AuthenticationManager.findConfigFile( m_engine, AuthorizationManager.DEFAULT_POLICY );
+    	URL policyURL = LocalPolicyProvider.getPolicyURL(m_engine);
         String path = policyURL.getPath();
         if ( path.startsWith("file:") )
         {
@@ -831,7 +837,8 @@ public final class SecurityVerifier
 
         // Check local policy
         Principal[] principals = new Principal[]{ principal };
-        return m_engine.getAuthorizationManager().allowedByLocalPolicy( principals, permission );
+    	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+        return mgr.allowedByLocalPolicy( principals, permission );
     }
 
     /**

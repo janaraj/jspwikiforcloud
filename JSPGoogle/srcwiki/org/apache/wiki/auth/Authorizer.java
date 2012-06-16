@@ -21,11 +21,7 @@
 package org.apache.wiki.auth;
 
 import java.security.Principal;
-import java.util.Properties;
 
-import javax.servlet.ServletContext;
-
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 

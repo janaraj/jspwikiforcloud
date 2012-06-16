@@ -28,11 +28,13 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.rpc.RPCCallable;
@@ -43,266 +45,273 @@ import com.metaparadigm.jsonrpc.InvocationCallback;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
 
 /**
- *  Provides an easy-to-use interface for different modules to AJAX-enable
- *  themselves.  This class is a static class, so it cannot be instantiated,
- *  but it easily available from anywhere (including JSP pages).
- *  <p>
- *  Any object which wants to expose its methods through JSON calls, needs
- *  to implement the RPCCallable interface.  JSONRPCManager will expose
- *  <i>all</i> methods, so be careful which you want to expose.
- *  <p>
- *  Due to some limitations of the JSON-RPC library, we do not use the
- *  Global bridge object. 
- *  @see org.apache.wiki.rpc.RPCCallable
- *  @since 2.5.4
+ * Provides an easy-to-use interface for different modules to AJAX-enable
+ * themselves. This class is a static class, so it cannot be instantiated, but
+ * it easily available from anywhere (including JSP pages).
+ * <p>
+ * Any object which wants to expose its methods through JSON calls, needs to
+ * implement the RPCCallable interface. JSONRPCManager will expose <i>all</i>
+ * methods, so be careful which you want to expose.
+ * <p>
+ * Due to some limitations of the JSON-RPC library, we do not use the Global
+ * bridge object.
+ * 
+ * @see org.apache.wiki.rpc.RPCCallable
+ * @since 2.5.4
  */
 // FIXME: Must be mootool-ified.
-public final class JSONRPCManager extends RPCManager
-{
-    private static final String JSONRPCBRIDGE = "JSONRPCBridge";
-    private static HashMap<String, CallbackContainer> c_globalObjects = new HashMap<String, CallbackContainer>();
-    
-    /** Prevent instantiation */
-    private JSONRPCManager()
-    {
-        super();
-    }
-    
-    /**
-     *  Emits JavaScript to do a JSON RPC Call.  You would use this method e.g.
-     *  in your plugin generation code to embed an AJAX call to your object.
-     *  
-     *  @param context The Wiki Context
-     *  @param c An RPCCallable object
-     *  @param function Name of the method to call
-     *  @param params Parameters to pass to the method
-     *  @return generated JavasSript code snippet that calls the method
-     */
-    public static String emitJSONCall( WikiContext context, RPCCallable c, String function, String params )
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<script>");
-        sb.append("var result = jsonrpc."+getId(c)+"."+function+"("+params+");\r\n");
-        sb.append("document.write(result);\r\n");
-        sb.append("</script>");
-        
-        return sb.toString();        
-    }
-    
-    /**
-     *  Finds this user's personal RPC Bridge.  If it does not exist, will
-     *  create one and put it in the context.  If there is no HTTP Request included,
-     *  returns the global bridge.
-     *  
-     *  @param context WikiContext to find the bridge in
-     *  @return A JSON RPC Bridge
-     */
-    // FIXME: Is returning the global bridge a potential security threat?
-    private static JSONRPCBridge getBridge( WikiContext context )
-    {
-        JSONRPCBridge bridge = null;
-        HttpServletRequest req = context.getHttpRequest();
-        
-        if( req != null )
-        {
-            HttpSession hs = req.getSession();
-            
-            if( hs != null )
-            {
-                bridge = (JSONRPCBridge)hs.getAttribute(JSONRPCBRIDGE);
-                
-                if( bridge == null )
-                {
-                    bridge = new JSONRPCBridge();
-                
-                    hs.setAttribute(JSONRPCBRIDGE, bridge);
-                }
-            }
-        }
-        
-        if( bridge == null) bridge = JSONRPCBridge.getGlobalBridge();
-        bridge.setDebug(false);
-        
-        return bridge;
-    }
-    
-    /**
-     *  Registers a callable to JSON global bridge and requests JSON libraries to be added
-     *  to the page.  
-     *  
-     *  @param context The WikiContext.
-     *  @param c The RPCCallable to register
-     *  @return the ID of the registered callable object
-     */
-    public static String registerJSONObject( WikiContext context, RPCCallable c )
-    {
-        String id = getId(c);
-        getBridge(context).registerObject( id, c );
+public final class JSONRPCManager extends RPCManager {
+	private static final String JSONRPCBRIDGE = "JSONRPCBridge";
+	private static HashMap<String, CallbackContainer> c_globalObjects = new HashMap<String, CallbackContainer>();
 
-        requestJSON( context );
-        return id;
-    }
-    
-    /**
-     *  Requests the JSON Javascript and object to be generated in the HTML.
-     *  @param context The WikiContext.
-     */
-    public static void requestJSON( WikiContext context )
-    {
-        TemplateManager.addResourceRequest(context, 
-                                           TemplateManager.RESOURCE_SCRIPT, 
-                                           context.getURL(WikiContext.NONE,"scripts/json-rpc/jsonrpc.js"));        
-        
-        String jsonurl = context.getURL( WikiContext.NONE, "JSON-RPC" );
-        TemplateManager.addResourceRequest(context, 
-                                           TemplateManager.RESOURCE_JSFUNCTION, 
-                                           "jsonrpc = new JSONRpcClient(\""+jsonurl+"\");");
-        
-        getBridge(context).registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
-    }
-    
-    /**
-     *  Provides access control to the JSON calls.  Rather private.
-     *  Unfortunately we have to check the permission every single time, because
-     *  the user can log in and we would need to reset the permissions at that time.
-     *  Note that this is an obvious optimization piece if this becomes
-     *  a bottleneck.
-     *  
-     */
-    static class WikiJSONAccessor implements InvocationCallback
-    {
-        private static final long serialVersionUID = 1L;
-        private static final Log log = LogFactory.getLog( WikiJSONAccessor.class );
-        
-        /**
-         *  Create an accessor.
-         */
-        public WikiJSONAccessor()
-        {}
-        
-        /**
-         *  Does not do anything.
-         * 
-         *  {@inheritDoc}
-         */
-        public void postInvoke(Object context, Object instance, Method method, Object result) throws Exception
-        {
-        }
+	/** Prevent instantiation */
+	private JSONRPCManager() {
+		super();
+	}
 
-        /**
-         *  Checks access against the permission given.
-         *  
-         *  {@inheritDoc}
-         */
-        public void preInvoke(Object context, Object instance, Method method, Object[] arguments) throws Exception
-        {
-            if( context instanceof HttpServletRequest )
-            {
-                boolean canDo = false;
-                HttpServletRequest req = (HttpServletRequest) context;
-                
-                WikiEngine e = WikiEngine.getInstance( req.getSession().getServletContext(), null );
-               
-                for( Iterator i = c_globalObjects.values().iterator(); i.hasNext(); )
-                {
-                    CallbackContainer cc = (CallbackContainer) i.next();
-                    
-                    if( cc.m_object == instance )
-                    {
-                    	WikiSession session = BeanHolder.getWikiSession();
-                        canDo = e.getAuthorizationManager().checkPermission( session, 
-                                                                             cc.m_permission );
+	/**
+	 * Emits JavaScript to do a JSON RPC Call. You would use this method e.g. in
+	 * your plugin generation code to embed an AJAX call to your object.
+	 * 
+	 * @param context
+	 *            The Wiki Context
+	 * @param c
+	 *            An RPCCallable object
+	 * @param function
+	 *            Name of the method to call
+	 * @param params
+	 *            Parameters to pass to the method
+	 * @return generated JavasSript code snippet that calls the method
+	 */
+	public static String emitJSONCall(WikiContext context, RPCCallable c,
+			String function, String params) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<script>");
+		sb.append("var result = jsonrpc." + getId(c) + "." + function + "("
+				+ params + ");\r\n");
+		sb.append("document.write(result);\r\n");
+		sb.append("</script>");
 
-                        break;
-                    }
-                }
-                                    
-                if( canDo )
-                {
-                    return;
-                }
-            }
+		return sb.toString();
+	}
 
-            log.debug("Failed JSON permission check: "+instance);
-            throw new WikiSecurityException("No permission to access this AJAX method!");
-        }
-        
-    }
+	/**
+	 * Finds this user's personal RPC Bridge. If it does not exist, will create
+	 * one and put it in the context. If there is no HTTP Request included,
+	 * returns the global bridge.
+	 * 
+	 * @param context
+	 *            WikiContext to find the bridge in
+	 * @return A JSON RPC Bridge
+	 */
+	// FIXME: Is returning the global bridge a potential security threat?
+	private static JSONRPCBridge getBridge(WikiContext context) {
+		JSONRPCBridge bridge = null;
+		HttpServletRequest req = context.getHttpRequest();
 
-    /**
-     *  Registers a global object (i.e. something which can be called by any
-     *  JSP page).  Typical examples is e.g. "search".  By default, the RPCCallable
-     *  shall need a "view" permission to access.
-     *  
-     *  @param id     The name under which this shall be registered (e.g. "search")
-     *  @param object The RPCCallable which shall be associated to this id.
-     */
-    public static void registerGlobalObject(String id, RPCCallable object)
-    {
-        registerGlobalObject(id, object, PagePermission.VIEW);    
-    }
-    
-    /**
-     *  Registers a global object (i.e. something which can be called by any
-     *  JSP page) with a specific permission.  
-     *  
-     *  @param id     The name under which this shall be registered (e.g. "search")
-     *  @param object The RPCCallable which shall be associated to this id.
-     *  @param perm   The permission which is required to access this object.
-     */
-    public static void registerGlobalObject(String id, RPCCallable object, Permission perm )
-    {
-        CallbackContainer cc = new CallbackContainer();
-        cc.m_permission = perm;
-        cc.m_id = id;
-        cc.m_object = object;
-        
-        c_globalObjects.put( id, cc );
-    }
+		if (req != null) {
+			HttpSession hs = req.getSession();
 
-    /**
-     *  Is called whenever a session is created.  This method creates a new JSONRPCBridge
-     *  and adds it to the user session.  This is done because the global JSONRPCBridge
-     *  InvocationCallbacks are not called; only session locals.  This may be a bug
-     *  in JSON-RPC, or it may be a design feature...
-     *  <p>
-     *  The JSONRPCBridge object will go away once the session expires.
-     *  
-     *  @param session The HttpSession which was created.
-     */
-    public static void sessionCreated( HttpSession session )
-    {
-        JSONRPCBridge bridge = (JSONRPCBridge)session.getAttribute(JSONRPCBRIDGE);
-        
-        if( bridge == null )
-        {
-            bridge = new JSONRPCBridge();
-        
-            session.setAttribute( JSONRPCBRIDGE, bridge );
-        }
+			if (hs != null) {
+				bridge = (JSONRPCBridge) hs.getAttribute(JSONRPCBRIDGE);
 
-        WikiJSONAccessor acc = new WikiJSONAccessor();
-        
-        bridge.registerCallback( acc, HttpServletRequest.class );
-        
-        for( Iterator i = c_globalObjects.values().iterator(); i.hasNext(); )
-        {
-            CallbackContainer cc = (CallbackContainer) i.next();
-       
-            bridge.registerObject( cc.m_id, cc.m_object );
-        }
+				if (bridge == null) {
+					bridge = new JSONRPCBridge();
 
-    }
-     
-    /**
-     *  Just stores the registered global method.
-     *  
-     *
-     */
-    private static class CallbackContainer
-    {
-        String m_id;
-        RPCCallable m_object;
-        Permission m_permission;
-    }
+					hs.setAttribute(JSONRPCBRIDGE, bridge);
+				}
+			}
+		}
+
+		if (bridge == null)
+			bridge = JSONRPCBridge.getGlobalBridge();
+		bridge.setDebug(false);
+
+		return bridge;
+	}
+
+	/**
+	 * Registers a callable to JSON global bridge and requests JSON libraries to
+	 * be added to the page.
+	 * 
+	 * @param context
+	 *            The WikiContext.
+	 * @param c
+	 *            The RPCCallable to register
+	 * @return the ID of the registered callable object
+	 */
+	public static String registerJSONObject(WikiContext context, RPCCallable c) {
+		String id = getId(c);
+		getBridge(context).registerObject(id, c);
+
+		requestJSON(context);
+		return id;
+	}
+
+	/**
+	 * Requests the JSON Javascript and object to be generated in the HTML.
+	 * 
+	 * @param context
+	 *            The WikiContext.
+	 */
+	public static void requestJSON(WikiContext context) {
+		TemplateManager
+				.addResourceRequest(context, TemplateManager.RESOURCE_SCRIPT,
+						context.getURL(WikiContext.NONE,
+								"scripts/json-rpc/jsonrpc.js"));
+
+		String jsonurl = context.getURL(WikiContext.NONE, "JSON-RPC");
+		TemplateManager.addResourceRequest(context,
+				TemplateManager.RESOURCE_JSFUNCTION,
+				"jsonrpc = new JSONRpcClient(\"" + jsonurl + "\");");
+
+		getBridge(context).registerCallback(new WikiJSONAccessor(),
+				HttpServletRequest.class);
+	}
+
+	/**
+	 * Provides access control to the JSON calls. Rather private. Unfortunately
+	 * we have to check the permission every single time, because the user can
+	 * log in and we would need to reset the permissions at that time. Note that
+	 * this is an obvious optimization piece if this becomes a bottleneck.
+	 * 
+	 */
+	static class WikiJSONAccessor implements InvocationCallback {
+		private static final long serialVersionUID = 1L;
+		private static final Log log = LogFactory
+				.getLog(WikiJSONAccessor.class);
+
+		/**
+		 * Create an accessor.
+		 */
+		public WikiJSONAccessor() {
+		}
+
+		/**
+		 * Does not do anything.
+		 * 
+		 * {@inheritDoc}
+		 */
+		public void postInvoke(Object context, Object instance, Method method,
+				Object result) throws Exception {
+		}
+
+		/**
+		 * Checks access against the permission given.
+		 * 
+		 * {@inheritDoc}
+		 */
+		public void preInvoke(Object context, Object instance, Method method,
+				Object[] arguments) throws Exception {
+			if (context instanceof HttpServletRequest) {
+				boolean canDo = false;
+				HttpServletRequest req = (HttpServletRequest) context;
+
+				WikiEngine e = WikiEngine.getInstance(req.getSession()
+						.getServletContext(), null);
+
+				for (Iterator i = c_globalObjects.values().iterator(); i
+						.hasNext();) {
+					CallbackContainer cc = (CallbackContainer) i.next();
+
+					if (cc.m_object == instance) {
+						WikiSession session = BeanHolder.getWikiSession();
+						AuthorizationManager mgr = BeanHolder
+								.getAuthorizationManager();
+						canDo = mgr.checkPermission(session, cc.m_permission);
+
+						break;
+					}
+				}
+
+				if (canDo) {
+					return;
+				}
+			}
+
+			log.debug("Failed JSON permission check: " + instance);
+			throw new WikiSecurityException(
+					"No permission to access this AJAX method!");
+		}
+
+	}
+
+	/**
+	 * Registers a global object (i.e. something which can be called by any JSP
+	 * page). Typical examples is e.g. "search". By default, the RPCCallable
+	 * shall need a "view" permission to access.
+	 * 
+	 * @param id
+	 *            The name under which this shall be registered (e.g. "search")
+	 * @param object
+	 *            The RPCCallable which shall be associated to this id.
+	 */
+	public static void registerGlobalObject(String id, RPCCallable object) {
+		registerGlobalObject(id, object, PagePermission.VIEW);
+	}
+
+	/**
+	 * Registers a global object (i.e. something which can be called by any JSP
+	 * page) with a specific permission.
+	 * 
+	 * @param id
+	 *            The name under which this shall be registered (e.g. "search")
+	 * @param object
+	 *            The RPCCallable which shall be associated to this id.
+	 * @param perm
+	 *            The permission which is required to access this object.
+	 */
+	public static void registerGlobalObject(String id, RPCCallable object,
+			Permission perm) {
+		CallbackContainer cc = new CallbackContainer();
+		cc.m_permission = perm;
+		cc.m_id = id;
+		cc.m_object = object;
+
+		c_globalObjects.put(id, cc);
+	}
+
+	/**
+	 * Is called whenever a session is created. This method creates a new
+	 * JSONRPCBridge and adds it to the user session. This is done because the
+	 * global JSONRPCBridge InvocationCallbacks are not called; only session
+	 * locals. This may be a bug in JSON-RPC, or it may be a design feature...
+	 * <p>
+	 * The JSONRPCBridge object will go away once the session expires.
+	 * 
+	 * @param session
+	 *            The HttpSession which was created.
+	 */
+	public static void sessionCreated(HttpSession session) {
+		JSONRPCBridge bridge = (JSONRPCBridge) session
+				.getAttribute(JSONRPCBRIDGE);
+
+		if (bridge == null) {
+			bridge = new JSONRPCBridge();
+
+			session.setAttribute(JSONRPCBRIDGE, bridge);
+		}
+
+		WikiJSONAccessor acc = new WikiJSONAccessor();
+
+		bridge.registerCallback(acc, HttpServletRequest.class);
+
+		for (Iterator i = c_globalObjects.values().iterator(); i.hasNext();) {
+			CallbackContainer cc = (CallbackContainer) i.next();
+
+			bridge.registerObject(cc.m_id, cc.m_object);
+		}
+
+	}
+
+	/**
+	 * Just stores the registered global method.
+	 * 
+	 * 
+	 */
+	private static class CallbackContainer {
+		String m_id;
+		RPCCallable m_object;
+		Permission m_permission;
+	}
 }

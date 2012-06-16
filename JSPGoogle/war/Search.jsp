@@ -2,6 +2,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -33,7 +34,7 @@
             //
             //  Filter down to only those that we actually have a permission to view
             //
-            AuthorizationManager mgr = wiki.getAuthorizationManager();
+            AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
         
             ArrayList filteredList = new ArrayList();
             

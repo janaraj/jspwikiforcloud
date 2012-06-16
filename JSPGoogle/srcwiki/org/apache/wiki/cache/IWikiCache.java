@@ -10,31 +10,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-package org.apache.wiki.providers.jpa;
+package org.apache.wiki.cache;
 
-import java.io.Serializable;
-import java.util.Date;
-
-public class GroupMember implements Serializable {
+public interface IWikiCache {
 	
-	private String memberName;
-	
-	private Date addDate;
+	Object getObject(String key);
 
-	public String getMemberName() {
-		return memberName;
-	}
+	void setObject(String key, Object o);
 
-	public void setMemberName(String memberName) {
-		this.memberName = memberName;
-	}
-
-	public Date getAddDate() {
-		return addDate;
-	}
-
-	public void setAddDate(Date addDate) {
-		this.addDate = addDate;
-	}		
 }
-

@@ -247,7 +247,7 @@ public class WikiContext implements Cloneable, Command {
 
 		m_engine = engine;
 		m_request = request;
-//		m_session = WikiSession.getWikiSession(engine, request);
+		// m_session = WikiSession.getWikiSession(engine, request);
 		m_session = BeanHolder.getWikiSession();
 		m_command = command;
 
@@ -761,7 +761,7 @@ public class WikiContext implements Cloneable, Command {
 			// See if admin users exists
 			boolean adminExists = false;
 			try {
-//				UserManager userMgr = m_engine.getUserManager();
+				// UserManager userMgr = m_engine.getUserManager();
 				UserManager userMgr = BeanHolder.getUserManager();
 				UserDatabase userDb = userMgr.getUserDatabase();
 				userDb.findByLoginName(Installer.ADMIN_ID);
@@ -842,7 +842,8 @@ public class WikiContext implements Cloneable, Command {
 	 */
 	public boolean hasAccess(HttpServletResponse response, boolean redirect)
 			throws IOException {
-		AuthorizationManager mgr = m_engine.getAuthorizationManager();
+		// AuthorizationManager mgr = m_engine.getAuthorizationManager();
+		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
 		boolean allowed = mgr.checkPermission(m_session, requiredPermission());
 		ResourceBundle rb = getBundle(InternationalizationManager.CORE_BUNDLE);
 
@@ -891,10 +892,9 @@ public class WikiContext implements Cloneable, Command {
 	 */
 	public boolean hasAdminPermissions() {
 		boolean admin = false;
-
-		admin = m_engine.getAuthorizationManager().checkPermission(
-				getWikiSession(),
-				new AllPermission(m_engine.getApplicationName()));
+		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+		admin = mgr.checkPermission(getWikiSession(), new AllPermission(
+				m_engine.getApplicationName()));
 
 		return admin;
 	}

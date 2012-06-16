@@ -1,5 +1,22 @@
+/*
+ * Copyright 2012 stanislawbartkowski@gmail.com 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ */
 package org.apache.wiki.providers;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +35,8 @@ import org.apache.wiki.auth.authorize.GroupDatabase;
 import org.apache.wiki.providers.jpa.GroupEnt;
 import org.apache.wiki.providers.jpa.GroupMember;
 
-public class WikiGaeGroupDatabase extends AbstractWikiProvider implements GroupDatabase {
+public class WikiGaeGroupDatabase extends AbstractWikiProvider implements
+		GroupDatabase {
 
 	private final Log log = LogFactory.getLog(WikiGaeGroupDatabase.class);
 
@@ -70,6 +88,15 @@ public class WikiGaeGroupDatabase extends AbstractWikiProvider implements GroupD
 		command.runCommand();
 	}
 
+	@SuppressWarnings("unchecked")
+	private Collection<GroupMember> getGroupMembers(GroupEnt g)
+			throws IOException, ClassNotFoundException {
+		ByteArrayInputStream in = new ByteArrayInputStream(g.getMemberList());
+		ObjectInputStream i = new ObjectInputStream(in);
+		Collection<GroupMember> c = (Collection<GroupMember>) i.readObject();
+		return c;
+	}
+
 	private class SaveCommand extends FindGroup {
 
 		private final Group g;
@@ -83,22 +110,51 @@ public class WikiGaeGroupDatabase extends AbstractWikiProvider implements GroupD
 
 		@Override
 		protected void runCommand(EntityManager eF) {
+			try {
+				prunCommand(eF);
+			} catch (IOException e) {
+				log.error(e);
+			} catch (ClassNotFoundException e) {
+				log.error(e);
+			}
+		}
+
+		private void prunCommand(EntityManager eF) throws IOException,
+				ClassNotFoundException {
 			GroupEnt ge = findGroup(eF);
+			Collection<GroupMember> c;
 			if (ge == null) {
 				ge = new GroupEnt();
 				ge.setCreated(getToday());
 				ge.setCreator(modifier.getName());
 				ge.setName(g.getName());
+				c = new ArrayList<GroupMember>();
+			} else {
+				c = getGroupMembers(ge);
 			}
 			ge.setModifier(modifier.getName());
 			ge.setModified(getToday());
-			Collection<GroupMember> mList = new ArrayList<GroupMember>();
 			for (Principal p : g.members()) {
-				GroupMember me = new GroupMember();
-				me.setMemberName(p.getName());
-				mList.add(me);
-			}
-			ge.setMemberList(mList);
+				String na = p.getName();
+				boolean found = false;
+				for (GroupMember g : c) {
+					if (g.getMemberName().equals(na)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					GroupMember me = new GroupMember();
+					me.setMemberName(p.getName());
+					me.setAddDate(getToday());
+					c.add(me);
+				}
+			} // for
+			ByteArrayOutputStream ou = new ByteArrayOutputStream();
+			ObjectOutputStream o = new ObjectOutputStream(ou);
+			o.writeObject(c);
+			o.flush();
+			ge.setMemberList(ou.toByteArray());
 			eF.persist(ge);
 		}
 
@@ -161,12 +217,23 @@ public class WikiGaeGroupDatabase extends AbstractWikiProvider implements GroupD
 			gr.setCreator(g.getCreator());
 			gr.setLastModified(g.getModified());
 			gr.setModifier(g.getModifier());
-			if (g.getMemberList() != null)
-				for (GroupMember me : g.getMemberList()) {
+			if (g.getMemberList() != null) {
+				Collection<GroupMember> c;
+				try {
+					c = getGroupMembers(g);
+				} catch (IOException e) {
+					throw new WikiSecurityException(
+							"Cannot read group memebers", e);
+				} catch (ClassNotFoundException e) {
+					throw new WikiSecurityException(
+							"Cannot read group memebers", e);
+				}
+				for (GroupMember me : c) {
 					Principal member = new WikiPrincipal(me.getMemberName());
 					gr.add(member);
 				}
-			gList[i++] = gr;
+				gList[i++] = gr;
+			}
 		}
 		return gList;
 	}

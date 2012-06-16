@@ -49,6 +49,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
@@ -86,7 +87,8 @@ public class DefaultAclManager implements AclManager
      */
     public void initialize( WikiEngine engine, Properties props )
     {
-        m_auth = engine.getAuthorizationManager();
+//        m_auth = engine.getAuthorizationManager();
+    	m_auth = BeanHolder.getAuthorizationManager();
         m_engine = engine;
     }
 

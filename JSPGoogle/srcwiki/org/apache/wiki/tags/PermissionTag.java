@@ -34,6 +34,7 @@ import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.GroupCommand;
 
@@ -110,8 +111,10 @@ public class PermissionTag extends WikiTagBase {
 	private boolean checkPermission(String permission) {
 		WikiSession session = m_wikiContext.getWikiSession();
 		WikiPage page = m_wikiContext.getPage();
-		AuthorizationManager mgr = m_wikiContext.getEngine()
-				.getAuthorizationManager();
+		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+		//
+		// AuthorizationManager mgr = m_wikiContext.getEngine()
+		// .getAuthorizationManager();
 		boolean gotPermission = false;
 
 		if (CREATE_GROUPS.equals(permission) || CREATE_PAGES.equals(permission)

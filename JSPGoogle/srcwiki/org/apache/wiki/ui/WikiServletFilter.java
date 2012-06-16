@@ -83,7 +83,6 @@ public class WikiServletFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		context = config.getServletContext();
-		context.log("Filter 04");
 
 		// TODO REMOVEME when resolving JSPWIKI-129
 		if (System.getSecurityManager() != null) {
@@ -97,10 +96,10 @@ public class WikiServletFilter implements Filter {
 	 */
 	public void destroy() {
 	}
-	
+
 	protected WikiEngine getEngine() {
 		WikiEngine m_engine = WikiEngine.getInstance(context, null);
-		return m_engine;		
+		return m_engine;
 	}
 
 	/**
@@ -180,10 +179,12 @@ public class WikiServletFilter implements Filter {
 			// Prepare the WikiSession
 			try {
 				log.trace("before m_enging getAuthentication");
-				AuthenticationManager auth = BeanHolder.getAuthenticationManager();
+				AuthenticationManager auth = BeanHolder
+						.getAuthenticationManager();
 				auth.login(httpRequest);
-//				WikiSession wikiSession = SessionMonitor.getInstance(m_engine)
-//						.find(httpRequest.getSession());
+				// WikiSession wikiSession =
+				// SessionMonitor.getInstance(m_engine)
+				// .find(httpRequest.getSession());
 				WikiSession wikiSession = BeanHolder.getWikiSession();
 				httpRequest = new WikiRequestWrapper(m_engine, httpRequest);
 				if (log.isDebugEnabled()) {
@@ -196,19 +197,13 @@ public class WikiServletFilter implements Filter {
 			}
 		}
 
-		// try {
 		log.debug(m_engine.getApplicationName() + ":"
 				+ httpRequest.getRequestURL());
 
-		log.trace("just before getWriter");
-		response.getWriter();
 		log.trace("chain before");
 		// what's going on here ?
 		chain.doFilter(httpRequest, response);
 		log.trace("chain after");
-		response.getWriter();
-		// } finally {
-		// }
 
 	}
 

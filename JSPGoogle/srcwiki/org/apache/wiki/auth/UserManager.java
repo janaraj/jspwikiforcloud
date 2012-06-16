@@ -303,7 +303,8 @@ public final class UserManager extends AbstractWikiProvider
     {
         // Verify user is allowed to save profile!
         Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
-        if ( !m_engine.getAuthorizationManager().checkPermission( session, p ) )
+    	AuthorizationManager mgrA = BeanHolder.getAuthorizationManager();
+        if ( !mgrA.checkPermission( session, p ) )
         {
             throw new WikiSecurityException( "You are not allowed to save wiki profiles." );
         }

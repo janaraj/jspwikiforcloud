@@ -8,11 +8,10 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="org.apache.wiki.spring" />
-	
-	<bean id="wikiSession" class="org.apache.wiki.WikiSession"
-		scope="session">
+
+	<bean id="wikiSession" class="org.apache.wiki.WikiSession" scope="session">
 	</bean>
-	
+
 	<bean id="objectProvider" class="org.apache.wiki.providers.ObjectGaeProvider"
 		scope="request">
 	</bean>
@@ -48,38 +47,63 @@
 	</bean>
 
 	<bean id="userManager" class="org.apache.wiki.auth.UserManager"
-	    init-method="initializeProvider"
-		scope="request">
-		<constructor-arg><ref bean="wikiEngine"/></constructor-arg>
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
 	</bean>
 
 	<bean id="groupManager" class="org.apache.wiki.auth.authorize.GroupManager"
-	    init-method="initializeProvider"
-		scope="request">
-		<constructor-arg><ref bean="wikiEngine"/></constructor-arg>
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
 	</bean>
-	
-	<bean id="wikiEngine" class="org.apache.wiki.WikiEngine"
-		scope="request">
+
+	<bean id="wikiEngine" class="org.apache.wiki.WikiEngine" scope="request">
 	</bean>
-	
-   <bean id="pluginManager" class="org.apache.wiki.plugin.PluginManager"
-		scope="request">
-	</bean>
-	
-   <bean id="templateManager" class="org.apache.wiki.ui.TemplateManager"
+
+	<bean id="pluginManager" class="org.apache.wiki.plugin.PluginManager"
 		scope="request">
 	</bean>
 
-   <bean id="wikiEventManager" class="org.apache.wiki.event.WikiEventManager"
+	<bean id="templateManager" class="org.apache.wiki.ui.TemplateManager"
+		scope="request">
+	</bean>
+
+	<bean id="wikiEventManager" class="org.apache.wiki.event.WikiEventManager"
 		init-method="init" scope="request">
 	</bean>
-	
-	<bean id="authenticationManager" class="org.apache.wiki.auth.AuthenticationManager"
-	    init-method="initializeProvider"
+
+	<bean id="wikiCache" class="org.apache.wiki.cache.WikiCacheImplementation"
 		scope="request">
-		<constructor-arg><ref bean="wikiEngine"/></constructor-arg>
 	</bean>
 	
-		
+	<bean id="localPolicyProvider" class="org.apache.wiki.auth.LocalPolicyProvider"
+		init-method="initializeProvider"  scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
+	</bean>
+	
+
+	<bean id="authenticationManager" class="org.apache.wiki.auth.AuthenticationManager"
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="authorizationManager" class="org.apache.wiki.auth.AuthorizationManager"
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="localPolicyProvider" />
+		</constructor-arg>
+	</bean>
+	
+
+
 </beans>

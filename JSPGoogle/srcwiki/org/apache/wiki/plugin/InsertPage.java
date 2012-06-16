@@ -24,6 +24,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.auth.*;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 import java.util.*;
 
@@ -136,7 +137,9 @@ public class InsertPage
                 //
                 // Check for permissions
                 //
-                AuthorizationManager mgr = engine.getAuthorizationManager();
+//                AuthorizationManager mgr = engine.getAuthorizationManager();
+            	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+
 
                 if( !mgr.checkPermission( context.getWikiSession(),
                                           PermissionFactory.getPagePermission( page, "view") ) )

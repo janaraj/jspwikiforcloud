@@ -44,6 +44,7 @@ import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  <p>Builds a simple weblog.
@@ -160,7 +161,8 @@ public class WeblogPlugin
         Calendar   stopTime;
         int        numDays = DEFAULT_DAYS;
         WikiEngine engine = context.getEngine();
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+    	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+//        AuthorizationManager mgr = engine.getAuthorizationManager();
         
         //
         //  Parse parameters.

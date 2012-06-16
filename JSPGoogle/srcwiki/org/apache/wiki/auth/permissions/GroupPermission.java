@@ -21,17 +21,11 @@
 package org.apache.wiki.auth.permissions;
 
 import java.io.Serializable;
-//import java.security.AccessControlContext;
-//port java.security.AccessController;
-//import java.security.DomainCombiner;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Set;
 
-//import javax.security.auth.SubjectDomainCombiner;
-
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.security.WikiSubject;
 import org.apache.wiki.spring.BeanHolder;

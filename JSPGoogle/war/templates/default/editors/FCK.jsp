@@ -9,6 +9,7 @@
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -37,7 +38,7 @@
     WikiPage p = engine.getPage( clone );
     if( p != null )
     {
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+        AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try

@@ -98,7 +98,7 @@ in your jspwiki.properties.
 <h3>Container-Managed Authentication</h3>
 <%
   boolean isContainerAuth = BeanHolder.getAuthenticationManager().isContainerAuthenticated();
-  AuthorizationManager authorizationManager = wiki.getAuthorizationManager();
+  AuthorizationManager authorizationManager = BeanHolder.getAuthorizationManager();
   if ( isContainerAuth )
   {
 %>

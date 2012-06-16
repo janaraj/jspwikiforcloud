@@ -127,14 +127,11 @@ public class WikiJSPFilter extends WikiServletFilter {
 			}
 
 			// fire PAGE_REQUESTED event
-			response.getWriter();
 			String pagename = DefaultURLConstructor.parsePageFromURL(
 					(HttpServletRequest) request,
 					response.getCharacterEncoding());
 			log.trace("Before fireEvent");
-			response.getWriter();
 			fireEvent(WikiPageEvent.PAGE_REQUESTED, pagename);
-			response.getWriter();
 			log.trace("After file event");
 
 			// after using responseWrapper does not work in development mode
@@ -142,9 +139,6 @@ public class WikiJSPFilter extends WikiServletFilter {
 			super.doFilter(request, responseWrapper, chain);
 			if (!response.isCommitted()) {
 				log.trace("Is commited");
-				response.getWriter();
-
-				log.trace("after super.doFilter");
 
 				// The response is now complete. Lets replace the markers now.
 
@@ -153,11 +147,8 @@ public class WikiJSPFilter extends WikiServletFilter {
 
 				try {
 					w.enterState("Delivering response", 30);
-					response.getWriter();
 					WikiContext wikiContext = getWikiContext(request);
-					response.getWriter();
 					String r = filter(wikiContext, responseWrapper);
-					response.getWriter();
 
 					// String encoding = "UTF-8";
 					// if( wikiContext != null ) encoding =

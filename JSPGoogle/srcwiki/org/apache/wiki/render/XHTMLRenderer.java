@@ -30,47 +30,44 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;
 
 /**
- *  Implements a WikiRendered that outputs XHTML.  Because the internal DOM
- *  representation is in XHTML already, this just basically dumps out everything
- *  out in a non-prettyprinted format.
- *  
- *  @since  2.4
+ * Implements a WikiRendered that outputs XHTML. Because the internal DOM
+ * representation is in XHTML already, this just basically dumps out everything
+ * out in a non-prettyprinted format.
+ * 
+ * @since 2.4
  */
-public class XHTMLRenderer
-    extends WikiRenderer 
-{
-    private static final String LINEBREAK = "\n";
+public class XHTMLRenderer extends WikiRenderer {
+	private static final String LINEBREAK = "\n";
 
-    /**
-     *  Creates an XHTML 1.0 renderer.
-     *  
-     *  @param context {@inheritDoc}
-     *  @param doc {@inheritDoc}
-     */
-    public XHTMLRenderer( WikiContext context, WikiDocument doc )
-    {
-        super( context, doc );
-    }
-    
-    /**
-     *  {@inheritDoc}
-     */
-    public String getString()
-        throws IOException
-    {
-        m_document.setContext( m_context );
+	/**
+	 * Creates an XHTML 1.0 renderer.
+	 * 
+	 * @param context
+	 *            {@inheritDoc}
+	 * @param doc
+	 *            {@inheritDoc}
+	 */
+	public XHTMLRenderer(WikiContext context, WikiDocument doc) {
+		super(context, doc);
+	}
 
-        XMLOutputter output = new XMLOutputter();
-        
-        StringWriter out = new StringWriter();
-        
-        Format fmt = Format.getRawFormat();
-        fmt.setExpandEmptyElements( false );
-        fmt.setLineSeparator( LINEBREAK );
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getString() throws IOException {
+		m_document.setContext(m_context);
 
-        output.setFormat( fmt );
-        output.outputElementContent( m_document.getRootElement(), out );
-        
-        return out.toString();
-    }
+		XMLOutputter output = new XMLOutputter();
+
+		StringWriter out = new StringWriter();
+
+		Format fmt = Format.getRawFormat();
+		fmt.setExpandEmptyElements(false);
+		fmt.setLineSeparator(LINEBREAK);
+
+		output.setFormat(fmt);
+		output.outputElementContent(m_document.getRootElement(), out);
+
+		return out.toString();
+	}
 }

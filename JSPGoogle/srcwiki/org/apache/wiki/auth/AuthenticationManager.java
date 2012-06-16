@@ -243,7 +243,8 @@ public final class AuthenticationManager extends AbstractWikiProvider
 
         try
         {
-            Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+    		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+            Authorizer authorizer = mgr.getAuthorizer();
             if ( authorizer instanceof WebContainerAuthorizer )
             {
                  return ( ( WebContainerAuthorizer )authorizer ).isContainerAuthorized();
@@ -299,7 +300,7 @@ public final class AuthenticationManager extends AbstractWikiProvider
 //        WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
         WikiSession session = BeanHolder.getWikiSession();
 //        AuthenticationManager authenticationMgr = m_engine.getAuthenticationManager();
-        AuthorizationManager authorizationMgr = m_engine.getAuthorizationManager();
+        AuthorizationManager authorizationMgr = BeanHolder.getAuthorizationManager();
         CallbackHandler handler = null;
         Map<String,String> options = EMPTY_MAP;
 
@@ -431,7 +432,8 @@ public final class AuthenticationManager extends AbstractWikiProvider
             }
             
             // Add all appropriate Authorizer roles
-            injectAuthorizerRoles( session, m_engine.getAuthorizationManager().getAuthorizer(), null );
+    		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+            injectAuthorizerRoles( session, mgr.getAuthorizer(), null );
             
             return true;
         }
@@ -619,76 +621,6 @@ public final class AuthenticationManager extends AbstractWikiProvider
             return subject.getPrincipals();
         }
         return NO_PRINCIPALS;
-    }
-
-    /**
-     * Looks up and obtains a configuration file inside the WEB-INF folder of a
-     * wiki webapp.
-     * @param engine the wiki engine
-     * @param name the file to obtain, <em>e.g.</em>, <code>jspwiki.policy</code>
-     * @return the URL to the file
-     */
-    protected static final URL findConfigFile( WikiEngine engine, String name )
-    {
-        // Try creating an absolute path first
-        File defaultFile = null;
-        if( engine.getRootPath() != null )
-        {
-            defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + name );
-        }
-        if ( defaultFile != null && defaultFile.exists() )
-        {
-            try
-            {
-                return defaultFile.toURI().toURL();
-            }
-            catch ( MalformedURLException e)
-            {
-                // Shouldn't happen, but log it if it does
-                log.warn( "Malformed URL: " + e.getMessage() );
-            }
-
-        }
-
-        // Ok, the absolute path didn't work; try other methods
-
-        URL path = null;
-        
-        if( engine.getServletContext() != null )
-        {
-            try
-            {
-                //  create a tmp file of the policy loaded as an InputStream and return the URL to it
-                //  
-                InputStream is = engine.getServletContext().getResourceAsStream( name );
-                File tmpFile = File.createTempFile( "temp." + name, "" );
-                tmpFile.deleteOnExit();
-
-                OutputStream os = new xjava.io.FileOutputStream (tmpFile);
-
-                byte[] buff = new byte[1024];
-
-                while (is.read(buff) != -1)
-                {
-                    os.write(buff);
-                }
-
-                os.close();
-
-                path = tmpFile.toURI().toURL();
-
-            }
-            catch( MalformedURLException e )
-            {
-                // This should never happen unless I screw up
-                log.fatal("Your code is b0rked.  You are a bad person.");
-            }
-            catch (IOException e)
-            {
-               log.error("failed to load security policy from " + name + ",stacktrace follows", e);
-            }
-        }
-        return path;
     }
 
     /**

@@ -62,6 +62,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
@@ -385,7 +386,8 @@ public class JSPWikiMarkupParser
                                                          m_useRelNofollow );
 
 		UserManager userMgr = BeanHolder.getUserManager();
-        if( userMgr.getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
+    	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+        if( userMgr.getUserDatabase() == null || mgr == null )
         {
             disableAccessRules();
         }

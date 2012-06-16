@@ -231,7 +231,7 @@ public class WikiEngine implements Serializable {
 	private CreateProviderManager<PageManager> pManager;
 
 	/** Stores the authorization manager */
-	private AuthorizationManager m_authorizationManager = null;
+//	private AuthorizationManager m_authorizationManager = null;
 
 	/** Stores the authentication manager. */
 ///	private AuthenticationManager m_authenticationManager = null;
@@ -647,8 +647,8 @@ public class WikiEngine implements Serializable {
 
 //			m_authenticationManager = (AuthenticationManager) ClassUtil
 //					.getMappedObject(AuthenticationManager.class.getName());
-			m_authorizationManager = (AuthorizationManager) ClassUtil
-					.getMappedObject(AuthorizationManager.class.getName());
+//			m_authorizationManager = (AuthorizationManager) ClassUtil
+//					.getMappedObject(AuthorizationManager.class.getName());
 			// m_userManager = (UserManager) ClassUtil
 			// .getMappedObject(UserManager.class.getName());
 //			mUser = new CreateModuleManager(this, props, "userManager");
@@ -666,7 +666,7 @@ public class WikiEngine implements Serializable {
 			// managers
 
 //			m_authenticationManager.initialize(this, props);
-			m_authorizationManager.initialize(this, props);
+//			m_authorizationManager.initialize(this, props);
 			// m_userManager.initialize(this, props);
 			// m_groupManager.initialize(this, props);
 			m_aclManager = getAclManager();
@@ -2155,9 +2155,9 @@ public class WikiEngine implements Serializable {
 	 * 
 	 * @return The current AuthorizationManager instance
 	 */
-	public AuthorizationManager getAuthorizationManager() {
-		return m_authorizationManager;
-	}
+//	public AuthorizationManager getAuthorizationManager() {
+//		return m_authorizationManager;
+//	}
 
 	/**
 	 * Returns the currently used authentication manager.

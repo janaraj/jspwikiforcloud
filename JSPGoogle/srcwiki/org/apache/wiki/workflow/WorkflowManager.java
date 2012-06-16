@@ -35,10 +35,12 @@ import java.util.Set;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * <p>
@@ -190,7 +192,8 @@ public class WorkflowManager implements WikiEventListener
         if ( approver instanceof UnresolvedPrincipal )
         {
             String name = approver.getName();
-            approver = m_engine.getAuthorizationManager().resolvePrincipal( name );
+        	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+            approver = mgr.resolvePrincipal( name );
 
             // If still unresolved, throw exception; otherwise, freshen our
             // cache

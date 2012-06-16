@@ -22,6 +22,7 @@ import org.apache.wiki.IObjectPersist;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.event.WikiEventManager;
@@ -91,6 +92,12 @@ public class BeanHolder {
 	public static AuthenticationManager getAuthenticationManager() {
 		AuthenticationManager ge = (AuthenticationManager) BeanHolder
 				.getObject("authenticationManager");
+		return ge;
+	}
+	
+	public static AuthorizationManager getAuthorizationManager() {
+		AuthorizationManager ge = (AuthorizationManager) BeanHolder
+				.getObject("authorizationManager");
 		return ge;
 	}
 

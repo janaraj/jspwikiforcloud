@@ -88,7 +88,9 @@ public class MetaWeblogHandler
 //            AuthenticationManager amm = m_context.getEngine().getAuthenticationManager();
     		AuthenticationManager amm = BeanHolder.getAuthenticationManager();
 
-            AuthorizationManager mgr = m_context.getEngine().getAuthorizationManager();
+//            AuthorizationManager mgr = m_context.getEngine().getAuthorizationManager();
+        	AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+
         
             if( amm.login( m_context.getWikiSession(), m_context.getHttpRequest(), username, password ) )
             {

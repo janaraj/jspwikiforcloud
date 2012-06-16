@@ -16,7 +16,6 @@
     Log log = LogFactory.getLog("JSPWiki");
 %>
 <%
-    response.getWriter();
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     AuthenticationManager mgr = BeanHolder.getAuthenticationManager();
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
@@ -24,16 +23,12 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
-    response.getWriter();
     ResourceBundle rb = wikiContext.getBundle("CoreResources");
-    response.getWriter();
 
     // Set the redirect-page variable if one was passed as a parameter
     if( request.getParameter( "redirect" ) != null )
     {
-        response.getWriter();
         wikiContext.setVariable( "redirect", request.getParameter( "redirect" ) );
-        response.getWriter();
     }
     else
     {
@@ -84,7 +79,6 @@
 
     // If NOT using container auth, perform all of the access control logic here...
     // (Note: if using the container for auth, it will handle all of this for us.)
-    response.getWriter();
     if( !mgr.isContainerAuthenticated() )
     {
         // If user got here and is already authenticated, it means
@@ -110,7 +104,6 @@
             response.getWriter();
             if ( mgr.login( wikiSession, request, uid, passwd ) )
             {
-                response.getWriter();            	 
                 log.info( "Successfully authenticated user " + uid + " (custom auth)" );
             }
             else
@@ -150,7 +143,6 @@
     // was called without parameters, this will be the front page. Otherwise,
     // there's probably a 'redirect' parameter telling us where to go.
 
-    response.getWriter();
     if( wikiSession.isAuthenticated() )
     {
         String rember = request.getParameter( "j_remember" );
@@ -182,8 +174,6 @@
     // So, find the login form and include it. This should be in the same directory
     // as this page. We don't need to use the wiki:Include tag.
 
-    response.getWriter();
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    response.getWriter();
 
 %><jsp:include page="LoginForm.jsp" />

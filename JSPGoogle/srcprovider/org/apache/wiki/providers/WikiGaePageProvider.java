@@ -172,12 +172,7 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 				} else {
 					page.setVersion(page.getVersion() + 1);
 				}
-				if (page.getLastModified() != null) {
-					page.setLastModified(page.getLastModified());
-				} else {
-					page.setLastModified(getToday());
-				}
-
+				page.setLastModified(getToday());
 				debug("Create page version: " + page);
 				// Insert the version into database
 				ret.ent = new WikiPageEnt();
@@ -188,6 +183,7 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 				ret.ent.setChangetime(getToday());
 				ret.ent.setVersion(version);
 			}
+			ret.ent.setChangetime(getToday());
 			ret.ent.setName(page.getName());
 			ret.ent.setChangeBy(page.getAuthor());
 			log.debug("Store text, size =" + text.length());

@@ -22,68 +22,57 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.ProviderException;
 
 /**
- *  Includes the body in case there is no such page available.
- *
- *  @since 2.0
+ * Includes the body in case there is no such page available.
+ * 
+ * @since 2.0
  */
-public class NoSuchPageTag
-    extends WikiTagBase
-{
-    private static final long serialVersionUID = 0L;
-    
-    private static Log log = LogFactory.getLog( NoSuchPageTag.class );
+public class NoSuchPageTag extends WikiTagBase {
+	private static final long serialVersionUID = 0L;
 
-    
-    private String m_pageName;
+	private static Log log = LogFactory.getLog(NoSuchPageTag.class);
 
-    public void initTag()
-    {
-        super.initTag();
-        m_pageName = null;
-    }
+	private String m_pageName;
 
-    public void setPage( String name )
-    {
-        m_pageName = name;
-    }
+	public void initTag() {
+		super.initTag();
+		m_pageName = null;
+	}
 
-    public String getPage()
-    {
-        return m_pageName;
-    }
+	public void setPage(String name) {
+		m_pageName = name;
+	}
 
-    public int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
-        
-        log.debug("NoSuchPageTage pagename = " + m_pageName);
+	public String getPage() {
+		return m_pageName;
+	}
 
-        if( m_pageName == null )
-        {
-            page = m_wikiContext.getPage();
-        }
-        else
-        {
-            page = engine.getPage( m_pageName );
-        }
+	public int doWikiStartTag() throws IOException, ProviderException {
+		WikiEngine engine = m_wikiContext.getEngine();
+		WikiPage page;
 
-        // System.out.println("Checking "+page);
+		log.debug("NoSuchPageTage pagename = " + m_pageName);
 
-        if( page != null && engine.pageExists( page.getName(), page.getVersion() ) )
-        {
-            log.debug("NoSuchPageTage pagename SKIP_BODY");
-            return SKIP_BODY;
-        }
-        log.debug("NoSuchPageTage pagename BODY_INCLUDE");
-        return EVAL_BODY_INCLUDE;
-    }
+		if (m_pageName == null) {
+			page = m_wikiContext.getPage();
+		} else {
+			page = engine.getPage(m_pageName);
+		}
+
+		// System.out.println("Checking "+page);
+
+		if (page != null
+				&& engine.pageExists(page.getName(), page.getVersion())) {
+			log.debug("NoSuchPageTage pagename SKIP_BODY");
+			return SKIP_BODY;
+		}
+		log.debug("NoSuchPageTage pagename BODY_INCLUDE");
+		return EVAL_BODY_INCLUDE;
+	}
 }

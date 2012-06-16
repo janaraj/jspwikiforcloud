@@ -11,6 +11,7 @@
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
@@ -38,7 +39,7 @@
       Collection list = wiki.findPages( query );
 
       //  Filter down to only those that we actually have a permission to view
-      AuthorizationManager mgr = wiki.getAuthorizationManager();
+      AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
   
       ArrayList items = new ArrayList();
       
