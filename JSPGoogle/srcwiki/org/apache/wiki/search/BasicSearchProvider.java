@@ -23,7 +23,6 @@ package org.apache.wiki.search;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
@@ -34,12 +33,11 @@ import org.apache.wiki.QueryItem;
 import org.apache.wiki.SearchMatcher;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.SearchResultComparator;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
@@ -150,7 +148,7 @@ public class BasicSearchProvider extends AbstractWikiProvider implements SearchP
         Collection allPages = null;
         try
         {
-            allPages = m_engine.getPageManager().getAllPages();
+            allPages = BeanHolder.getPageManager().getAllPages();
         }
         catch( ProviderException pe )
         {
@@ -167,7 +165,7 @@ public class BasicSearchProvider extends AbstractWikiProvider implements SearchP
                 if (page != null)
                 {
                     String pageName = page.getName();
-                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
+                    String pageContent = BeanHolder.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
                                          attachmentNames(page, " ");
                     SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
 

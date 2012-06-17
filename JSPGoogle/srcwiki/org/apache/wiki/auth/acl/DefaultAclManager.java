@@ -226,7 +226,7 @@ public class DefaultAclManager implements AclManager
      */
     public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException
     {
-        PageManager pageManager = m_engine.getPageManager();
+        PageManager pageManager = BeanHolder.getPageManager();
 
         // Forcibly expire any page locks
         PageLock lock = pageManager.getCurrentLock( page );

@@ -50,6 +50,7 @@ import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.WikiBackgroundThread;
 import org.apache.wiki.workflow.Outcome;
@@ -150,6 +151,11 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 	// private LockReaper m_reaper = null;
 
 	private CreateModuleManager cBean;
+	
+	public PageManager(WikiEngine engine) throws WikiException {
+		log.trace("Contructor for PageManager");
+	    initialize(engine,null);
+	}
 
 	/**
 	 * Creates a new PageManager.
@@ -299,15 +305,6 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 		}
 
 		return text;
-	}
-
-	/**
-	 * Returns the WikiEngine to which this PageManager belongs to.
-	 * 
-	 * @return The WikiEngine object.
-	 */
-	public WikiEngine getEngine() {
-		return m_engine;
 	}
 
 	/**
@@ -753,7 +750,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 			WikiPage page = context.getPage();
 
 			// Let the rest of the engine handle actual saving.
-			engine.getPageManager().putPageText(page, proposedText);
+			BeanHolder.getPageManager().putPageText(page, proposedText);
 
 			// Refresh the context for post save filtering.
 			engine.getPage(page.getName());

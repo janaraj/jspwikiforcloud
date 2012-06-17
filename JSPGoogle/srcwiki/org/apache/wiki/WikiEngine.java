@@ -226,9 +226,9 @@ public class WikiEngine implements Serializable {
 	private AttachmentManager m_attachmentManager = null;
 
 	/** Stores the Page manager */
-	// private PageManager getPageManager() = null;
+	// private PageManager BeanHolder.getPageManager() = null;
 	// private CreateModuleManager pManager;
-	private CreateProviderManager<PageManager> pManager;
+//	private CreateProviderManager<PageManager> pManager;
 
 	/** Stores the authorization manager */
 //	private AuthorizationManager m_authorizationManager = null;
@@ -617,12 +617,12 @@ public class WikiEngine implements Serializable {
 			m_urlConstructor = (URLConstructor) urlclass.newInstance();
 			m_urlConstructor.initialize(this, props);
 
-			// getPageManager() = (PageManager) ClassUtil.getMappedObject(
+			// BeanHolder.getPageManager() = (PageManager) ClassUtil.getMappedObject(
 			// PageManager.class.getName());
-			// getPageManager().initialize(this, props);
+			// BeanHolder.getPageManager().initialize(this, props);
 			// pManager = new CreateModuleManager(this, props, "pageManager");
-			pManager = new CreateProviderManager<PageManager>(this, props,
-					"pageManager");
+//			pManager = new CreateProviderManager<PageManager>(this, props,
+//					"pageManager");
 			// m_pluginManager = (PluginManager) ClassUtil.getMappedObject(
 			// PluginManager.class.getName(), this, props);
 			mPlugin = new CreateProviderManager<PluginManager>(this, props,
@@ -807,7 +807,7 @@ public class WikiEngine implements Serializable {
 	private void initReferenceManager() throws WikiException {
 		// try {
 		// ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
-		// pages.addAll(getPageManager().getAllPages());
+		// pages.addAll(BeanHolder.getPageManager().getAllPages());
 		// pages.addAll(m_attachmentManager.getAllAttachments());
 
 		// Build a new manager with default key lists.
@@ -1293,7 +1293,7 @@ public class WikiEngine implements Serializable {
 			// Go and check if this particular version of this page
 			// exists.
 			//
-			isThere = getPageManager().pageExists(finalName, version);
+			isThere = BeanHolder.getPageManager().pageExists(finalName, version);
 		}
 
 		if (isThere == false) {
@@ -1491,7 +1491,7 @@ public class WikiEngine implements Serializable {
 		String result = null;
 
 		try {
-			result = getPageManager().getPageText(page, version);
+			result = BeanHolder.getPageManager().getPageText(page, version);
 		} catch (ProviderException e) {
 			// FIXME
 		} finally {
@@ -1856,7 +1856,7 @@ public class WikiEngine implements Serializable {
 	 * @return The total number of pages.
 	 */
 	public int getPageCount() {
-		return getPageManager().getTotalPageCount();
+		return BeanHolder.getPageManager().getTotalPageCount();
 	}
 
 	/**
@@ -1866,7 +1866,7 @@ public class WikiEngine implements Serializable {
 	 */
 
 	public String getCurrentProvider() {
-		return getPageManager().getProvider().getClass().getName();
+		return BeanHolder.getPageManager().getProvider().getClass().getName();
 	}
 
 	/**
@@ -1878,7 +1878,7 @@ public class WikiEngine implements Serializable {
 	 * @since 1.6.4
 	 */
 	public String getCurrentProviderInfo() {
-		return getPageManager().getProviderDescription();
+		return BeanHolder.getPageManager().getProviderDescription();
 	}
 
 	/**
@@ -1896,7 +1896,7 @@ public class WikiEngine implements Serializable {
 	@SuppressWarnings("unchecked")
 	public Collection getRecentChanges() {
 		try {
-			Collection<WikiPage> pages = getPageManager().getAllPages();
+			Collection<WikiPage> pages = BeanHolder.getPageManager().getAllPages();
 			Collection<Attachment> atts = m_attachmentManager
 					.getAllAttachments();
 
@@ -1971,7 +1971,7 @@ public class WikiEngine implements Serializable {
 
 	public WikiPage getPage(String pagereq, int version) {
 		try {
-			WikiPage p = getPageManager().getPageInfo(pagereq, version);
+			WikiPage p = BeanHolder.getPageManager().getPageInfo(pagereq, version);
 
 			if (p == null) {
 				p = m_attachmentManager.getAttachmentInfo((WikiContext) null,
@@ -1999,7 +1999,7 @@ public class WikiEngine implements Serializable {
 		List c = null;
 
 		try {
-			c = getPageManager().getVersionHistory(page);
+			c = BeanHolder.getPageManager().getVersionHistory(page);
 
 			if (c == null) {
 				c = m_attachmentManager.getVersionHistory(page);
@@ -2056,7 +2056,7 @@ public class WikiEngine implements Serializable {
 		if (!rManager.isInitialized()) {
 			ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
 			try {
-				pages.addAll(getPageManager().getAllPages());
+				pages.addAll(BeanHolder.getPageManager().getAllPages());
 				pages.addAll(m_attachmentManager.getAllAttachments());
 				re.initializePages(pages);
 				pages.addAll(m_attachmentManager.getAllAttachments());
@@ -2126,9 +2126,9 @@ public class WikiEngine implements Serializable {
 	 * 
 	 * @return The current PageManager instance.
 	 */
-	public PageManager getPageManager() {
-		return pManager.getManager();
-	}
+//	public PageManager BeanHolder.getPageManager() {
+//		return pManager.getManager();
+//	}
 
 	/**
 	 * Returns the CommandResolver for this wiki engine.
@@ -2282,7 +2282,7 @@ public class WikiEngine implements Serializable {
 								.next()));
 					}
 				}
-				getPageManager().deletePage(p);
+				BeanHolder.getPageManager().deletePage(p);
 			}
 		}
 	}
@@ -2299,7 +2299,7 @@ public class WikiEngine implements Serializable {
 		if (page instanceof Attachment) {
 			m_attachmentManager.deleteVersion((Attachment) page);
 		} else {
-			getPageManager().deleteVersion(page);
+			BeanHolder.getPageManager().deleteVersion(page);
 		}
 	}
 

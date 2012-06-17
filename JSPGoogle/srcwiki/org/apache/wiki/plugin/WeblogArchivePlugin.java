@@ -20,12 +20,25 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.providers.ProviderException;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Creates a list of all weblog entries on a monthly basis.
@@ -132,7 +145,7 @@ public class WeblogArchivePlugin implements WikiPlugin
 
         WeblogPlugin pl = new WeblogPlugin();
 
-        List blogEntries = pl.findBlogEntries( engine.getPageManager(),
+        List blogEntries = pl.findBlogEntries( BeanHolder.getPageManager(),
                                                page, new Date(0L), new Date() );
         
         for( Iterator i = blogEntries.iterator(); i.hasNext(); )

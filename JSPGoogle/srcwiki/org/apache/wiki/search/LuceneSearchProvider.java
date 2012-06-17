@@ -20,8 +20,18 @@
  */
 package org.apache.wiki.search;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -46,13 +56,21 @@ import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-
-import org.apache.wiki.*;
+import org.apache.wiki.AbstractWikiProvider;
+import org.apache.wiki.FileUtil;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.SearchResult;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.WatchDog;
 import org.apache.wiki.util.WikiBackgroundThread;
@@ -211,7 +229,7 @@ public class LuceneSearchProvider extends AbstractWikiProvider implements Search
 				try {
 					writer = new IndexWriter(m_luceneDirectory,
 							getLuceneAnalyzer(), true);
-					Collection allPages = m_engine.getPageManager()
+					Collection allPages = BeanHolder.getPageManager()
 							.getAllPages();
 
 					for (Iterator iterator = allPages.iterator(); iterator
@@ -219,7 +237,7 @@ public class LuceneSearchProvider extends AbstractWikiProvider implements Search
 						WikiPage page = (WikiPage) iterator.next();
 
 						try {
-							String text = m_engine.getPageManager()
+							String text = BeanHolder.getPageManager()
 									.getPageText(page.getName(),
 											WikiProvider.LATEST_VERSION);
 							luceneIndexPage(page, text, writer);

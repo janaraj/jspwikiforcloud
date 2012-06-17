@@ -20,12 +20,22 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.providers.ProviderException;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.PageLock;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Builds a simple weblog.
@@ -70,7 +80,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
         String today = fmt.format( new Date() );
             
-        int entryNum = findFreeEntry( engine.getPageManager(),
+        int entryNum = findFreeEntry( BeanHolder.getPageManager(),
                                       blogName,
                                       today );
 
@@ -151,7 +161,8 @@ public class WeblogEntryPlugin implements WikiPlugin
 
         while( idx < MAX_BLOG_ENTRIES )
         {
-            WikiPage page = new WikiPage( mgr.getEngine(),
+        	WikiEngine en = BeanHolder.getWikiEngine();
+            WikiPage page = new WikiPage( en,
                                           WeblogPlugin.makeEntryPage( baseName, 
                                                                       date, 
                                                                       Integer.toString(idx) ) );

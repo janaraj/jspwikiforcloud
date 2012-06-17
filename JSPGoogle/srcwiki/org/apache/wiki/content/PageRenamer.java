@@ -27,7 +27,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.TextUtil;
@@ -41,6 +41,7 @@ import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Provides page renaming functionality.  Note that there used to be
@@ -129,7 +130,7 @@ public class PageRenamer implements Serializable
         //  all of the attachments
         //
         
-        engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
+        BeanHolder.getPageManager().getProvider().movePage( renameFrom, renameToClean );
         
         if( engine.getAttachmentManager().attachmentsEnabled() )
         {
@@ -148,7 +149,7 @@ public class PageRenamer implements Serializable
         toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
         
-        engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
+        BeanHolder.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
 
         //
         //  Update the references
@@ -225,7 +226,7 @@ public class PageRenamer implements Serializable
          
                 try
                 {
-                    engine.getPageManager().putPageText( p, newText );
+                	BeanHolder.getPageManager().putPageText( p, newText );
                     engine.updateReferences( p );
                 }
                 catch( ProviderException e )

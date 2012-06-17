@@ -39,7 +39,11 @@
 		scope="request">
 	</bean>
 
-	<bean id="pageManager" class="org.apache.wiki.PageManager" scope="request">
+	<bean id="pageManager" class="org.apache.wiki.PageManager"
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
 	</bean>
 
 	<bean id="searchManager" class="org.apache.wiki.search.SearchManager"

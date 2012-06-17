@@ -5,6 +5,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="com.opensymphony.oscache.base.*" %>
 
 <%!
@@ -73,7 +74,7 @@
     if( mode.equals("blog") )
     {
         org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
-        changed = plug.findBlogEntries(wiki.getPageManager(), 
+        changed = plug.findBlogEntries(BeanHolder.getPageManager(), 
                                        wikipage.getName(),
                                        new Date(0L),
                                        new Date());

@@ -39,7 +39,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
@@ -50,6 +50,7 @@ import org.apache.wiki.filters.BasicPageFilter;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.spring.BeanHolder;
 
 /*
  BUGS
@@ -157,7 +158,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
 	 */
 	@SuppressWarnings("unchecked")
 	private void updatePageReferences(WikiPage page) throws ProviderException {
-		String content = m_engine.getPageManager().getPageText(page.getName(),
+		String content = BeanHolder.getPageManager().getPageText(page.getName(),
 				WikiPageProvider.LATEST_VERSION);
 
 		TreeSet<String> res = new TreeSet<String>();
@@ -282,7 +283,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
 		sw.stop();
 		log.info("Cross reference scan done in " + sw);
 
-		WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
+		WikiEventUtils.addWikiEventListener(BeanHolder.getPageManager(),
 				WikiPageEvent.PAGE_DELETED, this);
 	}
 

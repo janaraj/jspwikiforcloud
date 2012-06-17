@@ -2,6 +2,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
@@ -10,6 +11,7 @@
 
 <%!
     Log log = LogFactory.getLog("JSPWiki");
+    PageManager pManager = BeanHolder.getPageManager();
 
     String findParam( PageContext ctx, String key )
     {
@@ -122,8 +124,8 @@
         //  We expire ALL locks at this moment, simply because someone has
         //  already broken it.
         //
-        PageLock lock = wiki.getPageManager().getCurrentLock( wikipage );
-        wiki.getPageManager().unlockPage( lock );
+        PageLock lock = pManager.getCurrentLock( wikipage );
+        pManager.unlockPage( lock );
         session.removeAttribute( "lock-"+pagereq );
 
         //
@@ -229,7 +231,7 @@
 
         if( lock != null )
         {
-            wiki.getPageManager().unlockPage( lock );
+            pManager.unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
         response.sendRedirect( wiki.getViewURL(pagereq) );
@@ -254,7 +256,7 @@
     //
     //  Attempt to lock the page.
     //
-    PageLock lock = wiki.getPageManager().lockPage( wikipage,
+    PageLock lock = pManager.lockPage( wikipage,
                                                     user );
 
     if( lock != null )

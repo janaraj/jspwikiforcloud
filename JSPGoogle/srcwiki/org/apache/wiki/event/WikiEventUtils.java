@@ -21,7 +21,8 @@
 
 package org.apache.wiki.event;
 
-import  org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  A utility class that adds some JSPWiki-specific functionality to the
@@ -112,7 +113,7 @@ public class WikiEventUtils
             {
                 if( client instanceof WikiEngine )
                 {
-                    WikiEventManager.addWikiEventListener( ((WikiEngine)client).getPageManager(), listener );
+                    WikiEventManager.addWikiEventListener( BeanHolder.getPageManager(), listener );
                 }
                 else // if ( client instanceof PageManager ) // no filter?
                 {

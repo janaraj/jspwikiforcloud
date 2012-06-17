@@ -20,10 +20,16 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import org.apache.wiki.preferences.Preferences;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-import java.util.*;
+import org.apache.wiki.PageLock;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  This is a plugin for the administrator: It allows him to see in a single
@@ -44,7 +50,7 @@ public class ListLocksPlugin
     {
         StringBuffer result = new StringBuffer();
 
-        PageManager mgr = context.getEngine().getPageManager();
+        PageManager mgr = BeanHolder.getPageManager();
         List locks = mgr.getActiveLocks();
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 

@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -34,6 +34,7 @@ import org.apache.wiki.dav.items.DavItem;
 import org.apache.wiki.dav.items.DirectoryItem;
 import org.apache.wiki.dav.items.PageDavItem;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -64,7 +65,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         
         try
         {
-            Collection allPages = m_engine.getPageManager().getAllPages();
+            Collection allPages = BeanHolder.getPageManager().getAllPages();
             
             for( Iterator i = allPages.iterator(); i.hasNext(); )
             {
@@ -109,7 +110,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         
         try
         {
-            Collection allPages = m_engine.getPageManager().getAllPages();
+            Collection allPages = BeanHolder.getPageManager().getAllPages();
         
             for( Iterator i = allPages.iterator(); i.hasNext(); )
             {

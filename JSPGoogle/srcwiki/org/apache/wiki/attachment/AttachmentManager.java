@@ -34,7 +34,6 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiContext;
@@ -45,6 +44,7 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiAttachmentProvider;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.ClassUtil;
 
 import com.opensymphony.oscache.base.Cache;
@@ -492,7 +492,7 @@ public class AttachmentManager implements Serializable {
 		// Checks if the actual, real page exists without any modifications
 		// or aliases. We cannot store an attachment to a non-existant page.
 		//
-		if (!m_engine.getPageManager().pageExists(att.getParentName())) {
+		if (!BeanHolder.getPageManager().pageExists(att.getParentName())) {
 			// the caller should catch the exception and use the exception text
 			// as an i18n key
 			throw new ProviderException("attach.parent.not.exist");

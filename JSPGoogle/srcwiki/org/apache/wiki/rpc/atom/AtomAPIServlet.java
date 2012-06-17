@@ -20,27 +20,37 @@
  */
 package org.apache.wiki.rpc.atom;
 
-import java.io.*;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.Date;
-import java.util.Collection;
-import java.util.Iterator;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-import org.intabulas.sandler.*;
-import org.intabulas.sandler.exceptions.*;
-import org.intabulas.sandler.elements.*;
-
-import org.apache.wiki.*;
-import org.apache.wiki.util.*;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
+import org.apache.wiki.util.BlogUtil;
+import org.intabulas.sandler.Sandler;
+import org.intabulas.sandler.SyndicationFactory;
+import org.intabulas.sandler.elements.Content;
+import org.intabulas.sandler.elements.Entry;
+import org.intabulas.sandler.elements.Feed;
+import org.intabulas.sandler.elements.Link;
+import org.intabulas.sandler.elements.Person;
+import org.intabulas.sandler.exceptions.FeedMarshallException;
 
 /**
  *  Handles incoming requests for the Atom API.  This class uses the
@@ -256,7 +266,7 @@ public class AtomAPIServlet extends HttpServlet
         throws ProviderException,
                IOException
     {
-        Collection pages = m_engine.getPageManager().getAllPages();
+        Collection pages = BeanHolder.getPageManager().getAllPages();
 
         Feed feed = SyndicationFactory.newSyndicationFeed();
         feed.setTitle("List of blogs at this site");

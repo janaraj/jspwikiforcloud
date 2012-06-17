@@ -22,13 +22,14 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.wiki.PageLock;
+import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.PageManager;
-import org.apache.wiki.PageLock;
 import org.apache.wiki.providers.ProviderException;
-
-import javax.servlet.http.HttpSession;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Checks whether the page is locked for editing.  If the mode matches,
@@ -98,7 +99,7 @@ public class CheckLockTag
 
         if( page != null )
         {
-            PageManager mgr = engine.getPageManager();
+            PageManager mgr = BeanHolder.getPageManager();
 
             PageLock lock = mgr.getCurrentLock( page );
 

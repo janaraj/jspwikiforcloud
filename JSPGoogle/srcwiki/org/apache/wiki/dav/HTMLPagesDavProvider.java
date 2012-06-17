@@ -31,6 +31,7 @@ import org.apache.wiki.dav.items.DavItem;
 import org.apache.wiki.dav.items.DirectoryItem;
 import org.apache.wiki.dav.items.HTMLPageDavItem;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 public class HTMLPagesDavProvider extends RawPagesDavProvider
 {
@@ -48,7 +49,7 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
         
         try
         {
-            Collection allPages = m_engine.getPageManager().getAllPages();
+            Collection allPages = BeanHolder.getPageManager().getAllPages();
         
             for( Iterator i = allPages.iterator(); i.hasNext(); )
             {

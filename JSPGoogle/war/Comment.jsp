@@ -6,6 +6,7 @@
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
@@ -128,8 +129,8 @@
         //  We expire ALL locks at this moment, simply because someone has
         //  already broken it.
         //
-        PageLock lock = wiki.getPageManager().getCurrentLock( wikipage );
-        wiki.getPageManager().unlockPage( lock );
+        PageLock lock = BeanHolder.getPageManager().getCurrentLock( wikipage );
+        BeanHolder.getPageManager().unlockPage( lock );
         session.removeAttribute( "lock-"+pagereq );
 
         //
@@ -244,7 +245,7 @@
 
         if( lock != null )
         {
-            wiki.getPageManager().unlockPage( lock );
+            BeanHolder.getPageManager().unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
         response.sendRedirect( wiki.getViewURL(pagereq) );
@@ -273,7 +274,7 @@
     //
     //  Attempt to lock the page.
     //
-    PageLock lock = wiki.getPageManager().lockPage( wikipage,
+    PageLock lock = BeanHolder.getPageManager().lockPage( wikipage,
                                                     storedUser );
 
     if( lock != null )

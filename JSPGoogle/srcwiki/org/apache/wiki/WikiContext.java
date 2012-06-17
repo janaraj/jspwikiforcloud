@@ -776,9 +776,11 @@ public class WikiContext implements Cloneable, Command {
 
 		// TODO: we should really break the contract so that this
 		// method returns null, but until then we will use this hack
-		if (m_command.requiredPermission() == null) {
-			return DUMMY_PERMISSION;
-		}
+		
+// return null : command is not protected		
+//		if (m_command.requiredPermission() == null) {
+//			return DUMMY_PERMISSION;
+//		}
 
 		return m_command.requiredPermission();
 	}

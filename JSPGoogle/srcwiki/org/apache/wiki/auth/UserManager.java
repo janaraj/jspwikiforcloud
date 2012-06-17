@@ -131,7 +131,7 @@ public final class UserManager extends AbstractWikiProvider
 
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly
-        addWikiEventListener( m_engine.getPageManager() );
+        addWikiEventListener( BeanHolder.getPageManager() );
 
         JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
     }

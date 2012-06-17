@@ -29,7 +29,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
@@ -38,6 +39,7 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.url.URLConstructor;
 
 /**
@@ -528,7 +530,7 @@ public final class CommandResolver implements Serializable
         {
             return true;
         }
-        return m_engine.getPageManager().pageExists( page );
+        return BeanHolder.getPageManager().pageExists( page );
     }
 
 }

@@ -812,21 +812,16 @@ public final class SecurityVerifier
     {
         WikiSubject subject = new WikiSubject();
         subject.getPrincipals().add( principal );
-        PrivilegedAction<Object> act = new PrivilegedAction<Object>()
-                {
-            public Object run()
-            {
-                try
-                {
-                    WikiAccessController.checkPermission( permission );
-                    return Boolean.TRUE;
-                }
-                catch ( AccessControlException e )
-                {
-                    return Boolean.FALSE;
-                }
-            }
-        };
+		PrivilegedAction<Object> act = new PrivilegedAction<Object>() {
+			public Object run() {
+				try {
+					WikiAccessController.checkPermission(permission);
+					return Boolean.TRUE;
+				} catch (AccessControlException e) {
+					return Boolean.FALSE;
+				}
+			}
+		};
         boolean allowedByGlobalPolicy = ((Boolean)
             WikiSubject.doAsPrivileged( subject, act)).booleanValue();
 

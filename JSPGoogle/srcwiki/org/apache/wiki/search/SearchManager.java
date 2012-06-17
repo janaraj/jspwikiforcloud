@@ -49,6 +49,7 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.json.JSONRPCManager;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.ClassUtil;
 
 /**
@@ -91,7 +92,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule,
 	 */
 	public void initSearchManager() {
 
-		WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
+		WikiEventUtils.addWikiEventListener(BeanHolder.getPageManager(),
 				WikiPageEvent.PAGE_DELETE_REQUEST, this);
 
 		JSONRPCManager.registerGlobalObject(JSON_SEARCH, new JSONSearch());

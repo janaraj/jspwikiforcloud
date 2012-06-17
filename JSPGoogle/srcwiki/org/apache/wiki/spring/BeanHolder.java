@@ -19,6 +19,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.IObjectPersist;
+import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -94,10 +95,15 @@ public class BeanHolder {
 				.getObject("authenticationManager");
 		return ge;
 	}
-	
+
 	public static AuthorizationManager getAuthorizationManager() {
 		AuthorizationManager ge = (AuthorizationManager) BeanHolder
 				.getObject("authorizationManager");
+		return ge;
+	}
+
+	public static PageManager getPageManager() {
+		PageManager ge = (PageManager) BeanHolder.getObject("pageManager");
 		return ge;
 	}
 

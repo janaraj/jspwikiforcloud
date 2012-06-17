@@ -263,7 +263,7 @@ public class WeblogPlugin
 
         try
         {
-            List<WikiPage> blogEntries = findBlogEntries( engine.getPageManager(),
+            List<WikiPage> blogEntries = findBlogEntries( BeanHolder.getPageManager(),
                                                           weblogName,
                                                           startTime.getTime(),
                                                           stopTime.getTime() );

@@ -195,12 +195,15 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 		//
 		// A slight sanity check.
 		//
-		if (session == null || permission == null) {
-			fireEvent(WikiSecurityEvent.ACCESS_DENIED, null, permission);
-			return false;
-		}
-
 		Principal user = session.getLoginPrincipal();
+		if (session == null || permission == null) {
+			
+//			fireEvent(WikiSecurityEvent.ACCESS_DENIED, null, permission);
+//			return false;
+			// action is not protected, allow everybody
+			fireEvent(WikiSecurityEvent.ACCESS_ALLOWED, user, permission);
+			return true;
+		}
 
 		// Always allow the action if user has AllPermission
 		Permission allPermission = new AllPermission(
