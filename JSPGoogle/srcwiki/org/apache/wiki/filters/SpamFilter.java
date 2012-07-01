@@ -966,7 +966,7 @@ public class SpamFilter
         //
         //  Don't forget to include the change note, too
         //
-        String changeNote = (String)page.getAttribute(WikiPage.CHANGENOTE);
+        String changeNote = page.getAttribute(WikiPage.CHANGENOTE);
 
         if( changeNote != null )
         {

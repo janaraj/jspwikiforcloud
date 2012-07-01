@@ -78,7 +78,7 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 			page.setLastModified(ent.getChangetime());
 			page.setAuthor(ent.getChangeBy());
 			if (ent.getChangeNote() != null) {
-				page.setAttribute(WikiPage.CHANGENOTE, ent.getChangeNote());
+				page.setChangeNote( ent.getChangeNote());
 			}
 		}
 	}
@@ -195,8 +195,7 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 			log.debug("Store text, size =" + text.length());
 			log.debug(text);
 			ret.ent.setContent(text);
-			ret.ent.setChangeNote((String) page
-					.getAttribute(WikiPage.CHANGENOTE));
+			ret.ent.setChangeNote(page.getAttribute(WikiPage.CHANGENOTE));
 			eF.persist(ret.ent);
 		}
 	}

@@ -140,7 +140,7 @@
 
         if( changenote != null && changenote.length() > 0 )
         {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setChangeNote( changenote );
         }
         else
         {

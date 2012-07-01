@@ -349,7 +349,7 @@ public class BasicAttachmentProvider extends AbstractWikiProvider implements
 
             props.setProperty(versionNumber + ".author", author);
 
-            String changeNote = (String) att.getAttribute(WikiPage.CHANGENOTE);
+            String changeNote = att.getAttribute(WikiPage.CHANGENOTE);
             if (changeNote != null) {
                 props.setProperty(versionNumber + ".changenote", changeNote);
             }
@@ -562,7 +562,7 @@ public class BasicAttachmentProvider extends AbstractWikiProvider implements
 
             String changeNote = props.getProperty(version + ".changenote");
             if (changeNote != null) {
-                att.setAttribute(WikiPage.CHANGENOTE, changeNote);
+                att.setChangeNote( changeNote);
             }
 
             File f = findFile(dir, att);

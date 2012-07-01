@@ -51,7 +51,7 @@ public class WikiPage implements Cloneable, Comparable {
     private long m_fileSize = -1;
     private int m_version = WikiPageProvider.LATEST_VERSION;
     private String m_author = null;
-    private final HashMap<String, Object> m_attributes = new HashMap<String, Object>();
+    private final HashMap<String, String> m_attributes = new HashMap<String, String>();
 
     /**
      * "Summary" is a short summary of the page. It is a String.
@@ -102,7 +102,7 @@ public class WikiPage implements Cloneable, Comparable {
      *            The key using which the attribute is fetched
      * @return The attribute. If the attribute has not been set, returns null.
      */
-    public Object getAttribute(String key) {
+    public String getAttribute(String key) {
         return m_attributes.get(key);
     }
 
@@ -116,8 +116,12 @@ public class WikiPage implements Cloneable, Comparable {
      * @param attribute
      *            The attribute value
      */
-    public void setAttribute(String key, Object attribute) {
+    public void setAttribute(String key, String attribute) {
         m_attributes.put(key, attribute);
+    }
+
+    public void setChangeNote(String changeNote) {
+        setAttribute(CHANGENOTE, changeNote);
     }
 
     /**
@@ -127,7 +131,7 @@ public class WikiPage implements Cloneable, Comparable {
      * @return The attribute Map. Please note that this is a direct reference,
      *         not a copy.
      */
-    public Map getAttributes() {
+    public Map<String, String> getAttributes() {
         return m_attributes;
     }
 
@@ -316,7 +320,7 @@ public class WikiPage implements Cloneable, Comparable {
 
         p.m_fileSize = m_fileSize;
 
-        for (Map.Entry<String, Object> entry : m_attributes.entrySet()) {
+        for (Map.Entry<String, String> entry : m_attributes.entrySet()) {
             p.m_attributes.put(entry.getKey(), entry.getValue());
         }
 

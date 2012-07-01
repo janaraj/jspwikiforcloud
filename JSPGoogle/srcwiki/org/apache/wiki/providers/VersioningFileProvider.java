@@ -427,7 +427,7 @@ public class VersioningFileProvider extends AbstractFileProvider implements
             props.setProperty(versionNumber + ".author",
                     (page.getAuthor() != null) ? page.getAuthor() : "unknown");
 
-            String changeNote = (String) page.getAttribute(WikiPage.CHANGENOTE);
+            String changeNote = page.getAttribute(WikiPage.CHANGENOTE);
             if (changeNote != null) {
                 props.setProperty(versionNumber + ".changenote", changeNote);
             }
@@ -505,7 +505,7 @@ public class VersioningFileProvider extends AbstractFileProvider implements
                 String changenote = props.getProperty(realVersion
                         + ".changenote");
                 if (changenote != null)
-                    p.setAttribute(WikiPage.CHANGENOTE, changenote);
+                    p.setChangeNote( changenote);
 
             } catch (IOException e) {
                 log.error("Cannot get author for page" + page + ": ", e);

@@ -140,7 +140,7 @@
         modifiedPage.setAuthor( storedUser );
 
         if( changenote != null )
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setChangeNote( changenote );
         else
             modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
         

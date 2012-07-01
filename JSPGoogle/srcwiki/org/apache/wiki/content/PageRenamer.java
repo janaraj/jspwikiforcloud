@@ -148,7 +148,7 @@ public class PageRenamer implements Serializable
         
         if( toPage == null ) throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
 
-        toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
+        toPage.setChangeNote( fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
         
         BeanHolder.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
@@ -223,7 +223,7 @@ public class PageRenamer implements Serializable
             
             if( !sourceText.equals( newText ) )
             {
-                p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
+                p.setChangeNote( fromPage.getName()+" ==> "+toPage.getName() );
                 p.setAuthor( context.getCurrentUser().getName() );
          
                 try

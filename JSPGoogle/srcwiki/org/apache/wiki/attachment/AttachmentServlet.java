@@ -779,7 +779,7 @@ public class AttachmentServlet extends WebdavServlet {
 			}
 
 			if (changenote != null && changenote.length() > 0) {
-				att.setAttribute(WikiPage.CHANGENOTE, changenote);
+				att.setChangeNote(changenote);
 			}
 
 			try {

@@ -64,11 +64,11 @@ public class DownloadWiki extends AbstractWikiProvider implements IDownloadWiki 
                     addAttr(sb, "ver", "author", ver.getAuthor(), "ver", ""
                             + ver.getVersion(), "date", ver.getLastModified()
                             .toString());
-                    Map<String, Object> prop = ver.getAttributes();
-                    Set<Map.Entry<String, Object>> mSet = prop.entrySet();
-                    for (Map.Entry<String, Object> e : mSet) {
+                    Map<String, String> prop = ver.getAttributes();
+                    Set<Map.Entry<String, String>> mSet = prop.entrySet();
+                    for (Map.Entry<String, String> e : mSet) {
                         String key = e.getKey();
-                        String val = e.getValue().toString();
+                        String val = e.getValue();
                         addAttr(sb, "property", "key", key, "value", val);
                         sb.append("</property>");
                     }

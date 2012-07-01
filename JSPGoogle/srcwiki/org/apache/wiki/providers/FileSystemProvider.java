@@ -72,7 +72,7 @@ public class FileSystemProvider
         try
         {
             String author = page.getAuthor();
-            String changenote = (String)page.getAttribute( WikiPage.CHANGENOTE );
+            String changenote = page.getAttribute( WikiPage.CHANGENOTE );
             
             if( author != null )
             {
@@ -122,7 +122,7 @@ public class FileSystemProvider
                 String changenote = props.getProperty( "changenote" );
                 if( changenote != null )
                 {
-                    page.setAttribute( WikiPage.CHANGENOTE, changenote );
+                    page.setChangeNote( changenote );
                 }
             }            
         }
