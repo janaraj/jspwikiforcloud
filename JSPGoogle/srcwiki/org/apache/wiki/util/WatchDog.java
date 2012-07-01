@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * WatchDog is a general system watchdog. You can attach any Watchable or a
@@ -384,7 +385,7 @@ public final class WatchDog {
 
 		public WatchDogThread(WikiEngine engine) {
 			super(engine, CHECK_INTERVAL);
-			setName("WatchDog for '" + engine.getApplicationName() + "'");
+			setName("WatchDog for '" + BeanHolder.getApplicationName() + "'");
 		}
 
 		public void startupTask() {

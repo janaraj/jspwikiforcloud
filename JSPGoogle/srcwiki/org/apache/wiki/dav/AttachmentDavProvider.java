@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -34,6 +34,7 @@ import org.apache.wiki.dav.items.AttachmentItem;
 import org.apache.wiki.dav.items.DavItem;
 import org.apache.wiki.dav.items.DirectoryItem;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 public class AttachmentDavProvider implements DavProvider
 {
@@ -78,7 +79,7 @@ public class AttachmentDavProvider implements DavProvider
             log.error("Unable to get all attachments",e);
         }
 
-        m_engine.getPageSorter().sort( pageNames );
+        BeanHolder.getPageSorter().sort( pageNames );
 
         ArrayList<DirectoryItem> result = new ArrayList<DirectoryItem>();
 

@@ -551,20 +551,9 @@ public class AttachmentServlet extends WebdavServlet {
 			IOException {
 		String msg = "";
 		String attName = "(unknown)";
-		String errorPage = m_engine.getURL(WikiContext.ERROR, "", null, false); // If
-																				// something
-																				// bad
-																				// happened,
-																				// Upload
-																				// should
-																				// be
-																				// able
-																				// to
-																				// take
-																				// care
-																				// of
-																				// most
-																				// stuff
+		String errorPage = m_engine.getURL(WikiContext.ERROR, "", null, false);
+		// If something bad happened, Upload should be able to take care of most
+		// stuff
 		String nextPage = errorPage;
 
 		String progressId = req.getParameter("progressid");
@@ -772,7 +761,7 @@ public class AttachmentServlet extends WebdavServlet {
 		Attachment att = mgr.getAttachmentInfo(context.getPage().getName());
 
 		if (att == null) {
-			att = new Attachment(m_engine, parentPage, filename);
+			att = new Attachment(parentPage, filename);
 			created = true;
 		}
 		att.setSize(contentLength);

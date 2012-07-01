@@ -20,12 +20,6 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,7 +72,7 @@ import org.apache.wiki.util.TimedCounterList;
  * @since 2.3
  */
 @SuppressWarnings("serial")
-public final class AuthenticationManager extends AbstractWikiProvider
+public final class AuthenticationManager extends AbstractWikiProvider 
 {
     /** How many milliseconds the logins are stored before they're cleaned away. */
     private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
@@ -163,18 +157,15 @@ public final class AuthenticationManager extends AbstractWikiProvider
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
-    private boolean               m_useJAAS = true;        
+    private boolean               useJAAS;      
 
-    public boolean isM_useJAAS() {
-		return m_useJAAS;
-	}
 
 	/** Keeps a list of the usernames who have attempted a login recently. */
     
     private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
     
     public AuthenticationManager(WikiEngine engine) throws WikiException {
-    	initialize(engine,engine.getWikiProperties());
+    	initialize(engine);
     }
     
     /**
@@ -195,7 +186,8 @@ public final class AuthenticationManager extends AbstractWikiProvider
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
         // Should J2SE policies be used for authorization?
-        m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
+//        useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
+        useJAAS = BeanHolder.getIsJAAS();
         
         // Should we allow cookies for assertions? (default: yes)
         m_allowsCookieAssertions = TextUtil.getBooleanProperty( props,
@@ -239,7 +231,7 @@ public final class AuthenticationManager extends AbstractWikiProvider
      */
     public final boolean isContainerAuthenticated()
     {
-        if( !m_useJAAS ) return true;
+        if( !useJAAS ) return true;
 
         try
         {
@@ -294,7 +286,7 @@ public final class AuthenticationManager extends AbstractWikiProvider
      */
     public final boolean login( HttpServletRequest request ) throws WikiSecurityException
     {
-        if( !m_useJAAS ) { return true; }
+        if( !useJAAS ) { return true; }
         log.trace("entering login HttpServletEquest");
         HttpSession httpSession = request.getSession();
 //        WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );

@@ -302,7 +302,7 @@ public final class UserManager extends AbstractWikiProvider
     public final void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException
     {
         // Verify user is allowed to save profile!
-        Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
+        Permission p = new WikiPermission( BeanHolder.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
     	AuthorizationManager mgrA = BeanHolder.getAuthorizationManager();
         if ( !mgrA.checkPermission( session, p ) )
         {
@@ -770,7 +770,7 @@ public final class UserManager extends AbstractWikiProvider
             {
                 try
                 {
-                    String app = m_engine.getApplicationName();
+                    String app = BeanHolder.getApplicationName();
                     String to = profile.getEmail();
                     String subject = "Welcome to " + app;
                     String content = "Congratulations! Your new profile on "

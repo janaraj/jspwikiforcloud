@@ -20,12 +20,26 @@
 */
 package org.apache.wiki.plugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-import org.apache.oro.text.regex.*;
-
-import org.apache.wiki.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.spring.BeanHolder;
 
 
 /**
@@ -196,7 +210,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         if( links != null )
             allLinks.addAll( links );
 
-        if( m_formatSort ) context.getEngine().getPageSorter().sort( allLinks );
+        if( m_formatSort ) BeanHolder.getPageSorter().sort( allLinks );
 
         for( Iterator i = allLinks.iterator(); i.hasNext(); )
         {

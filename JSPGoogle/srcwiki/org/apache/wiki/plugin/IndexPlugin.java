@@ -27,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  A plugin that creates an index of pages according to a certain  pattern.
@@ -69,7 +70,7 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
         try
         {
             pages = listPages( context, include, exclude );
-            context.getEngine().getPageSorter().sort( pages );
+            BeanHolder.getPageSorter().sort( pages );
             
             char initialChar = ' ';
             

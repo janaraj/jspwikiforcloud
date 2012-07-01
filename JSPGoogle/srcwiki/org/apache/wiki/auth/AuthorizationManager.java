@@ -121,7 +121,7 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 
 	private Authorizer m_authorizer = null;
 
-	private boolean m_useJAAS = true;
+	private boolean useJAAS;
 
 	/**
 	 * Returns <code>true</code> or <code>false</code>, depending on whether a
@@ -172,16 +172,17 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 	 */
 
 	private final LocalPolicyProvider lPolicy;
-
+	
 	public AuthorizationManager(WikiEngine wiki, LocalPolicyProvider lPolicy)
 			throws WikiException {
-		initialize(wiki, wiki.getWikiProperties());
+//		initialize(wiki, wiki.getWikiProperties());
+		initialize(wiki);
 		this.lPolicy = lPolicy;
 	}
 
 	public final boolean checkPermission(WikiSession session,
 			Permission permission) {
-		if (!m_useJAAS) {
+		if (!useJAAS) {
 			//
 			// Nobody can login, if JAAS is turned off.
 			//
@@ -207,7 +208,7 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 
 		// Always allow the action if user has AllPermission
 		Permission allPermission = new AllPermission(
-				m_engine.getApplicationName());
+				BeanHolder.getApplicationName());
 		boolean hasAllPermission = checkStaticPermission(session, allPermission);
 		if (hasAllPermission) {
 			fireEvent(WikiSecurityEvent.ACCESS_ALLOWED, user, permission);
@@ -420,11 +421,12 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 			throws WikiException {
 		m_engine = engine;
 
-		m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals(properties
-				.getProperty(AuthenticationManager.PROP_SECURITY,
-						AuthenticationManager.SECURITY_JAAS));
+//		m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals(properties
+//				.getProperty(AuthenticationManager.PROP_SECURITY,
+//						AuthenticationManager.SECURITY_JAAS));
 
-		if (!m_useJAAS)
+		useJAAS = BeanHolder.getIsJAAS();
+		if (!useJAAS)
 			return;
 
 		//
@@ -441,9 +443,9 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 	 * 
 	 * @return the result
 	 */
-	protected boolean isJAASAuthorized() {
-		return m_useJAAS;
-	}
+//	protected boolean isJAASAuthorized() {
+//		return m_useJAAS;
+//	}
 
 	/**
 	 * Attempts to locate and initialize a Authorizer to use with this manager.
@@ -556,7 +558,7 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 	 */
 	protected final boolean checkStaticPermission(final WikiSession session,
 			final Permission permission) {
-		if (!m_useJAAS)
+		if (!useJAAS)
 			return true;
 
 		Boolean allowed = (Boolean) WikiSession.doPrivileged(session,
@@ -612,7 +614,7 @@ public final class AuthorizationManager extends AbstractWikiProvider {
 	 * @return the fully-resolved Principal
 	 */
 	public final Principal resolvePrincipal(String name) {
-		if (!m_useJAAS) {
+		if (!useJAAS) {
 			return new UnresolvedPrincipal(name);
 		}
 

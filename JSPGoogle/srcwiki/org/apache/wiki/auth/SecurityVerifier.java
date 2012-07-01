@@ -189,7 +189,7 @@ public final class SecurityVerifier
     public final String policyRoleTable()
     {
         Principal[] roles = m_policyPrincipals;
-        String wiki = m_engine.getApplicationName();
+        String wiki = BeanHolder.getApplicationName();
 
         String[] pages = new String[]
         { "Main", "Index", "GroupTest", "GroupAdmin" };
@@ -610,7 +610,8 @@ public final class SecurityVerifier
         // See if JAAS is on
     	AuthorizationManager authMgr = BeanHolder.getAuthorizationManager();
 //        AuthorizationManager authMgr = m_engine.getAuthorizationManager();
-        if ( !authMgr.isJAASAuthorized() )
+    	boolean useJAAS = BeanHolder.getIsJAAS();
+        if ( !useJAAS )
         {
             m_session.addMessage( ERROR_JAAS, "JSPWiki's JAAS-based authentication " +
                     "and authorization system is turned off (your jspwiki.properties file " +

@@ -330,7 +330,7 @@ public class AttachmentManager implements Serializable {
 		// Collection.
 		//
 		if (atts instanceof List) {
-			m_engine.getPageSorter().sortPages((List) atts);
+			BeanHolder.getPageSorter().sortPages((List) atts);
 		}
 
 		return atts;
@@ -503,7 +503,7 @@ public class AttachmentManager implements Serializable {
 		m_engine.getReferenceManager().updateReferences(att.getName(),
 				new java.util.Vector());
 
-		WikiPage parent = new WikiPage(m_engine, att.getParentName());
+		WikiPage parent = new WikiPage(att.getParentName());
 		m_engine.updateReferences(parent);
 
 		m_engine.getSearchManager().reindexPage(att);

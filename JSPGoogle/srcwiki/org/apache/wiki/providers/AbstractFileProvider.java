@@ -406,7 +406,7 @@ public abstract class AbstractFileProvider extends AbstractWikiProvider implemen
 			return null;
 		}
 
-		WikiPage p = new WikiPage(m_engine, page);
+		WikiPage p = new WikiPage(page);
 		p.setLastModified(new Date(file.lastModified()));
 
 		return p;

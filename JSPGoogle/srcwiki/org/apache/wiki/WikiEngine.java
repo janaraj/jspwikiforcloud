@@ -52,12 +52,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
-import org.apache.wiki.auth.AuthenticationManager;
-import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.DefaultAclManager;
-import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEngineEvent;
@@ -179,10 +175,10 @@ public class WikiEngine implements Serializable {
 	public static final String PROP_RUNFILTERS = "jspwiki.runFilters";
 
 	/** Compares pages by name */
-	private PageSorter m_pageSorter = null;
+//	private PageSorter m_pageSorter = null;
 
 	/** Does the work in renaming pages. */
-	private PageRenamer m_pageRenamer = null;
+//	private PageRenamer m_pageRenamer = null;
 
 	/**
 	 * The name of the property containing the ACLManager implementing class.
@@ -402,7 +398,8 @@ public class WikiEngine implements Serializable {
 			context.log(" Assigning new engine to " + appid);
 			try {
 				if (props == null) {
-					props = PropertyReader.loadWebAppProps(context);
+//					props = PropertyReader.loadWebAppProps(context);
+					props = BeanHolder.getWikiProperties();
 				}
 
 				// engine = new WikiEngine(context, appid, props);
@@ -601,7 +598,7 @@ public class WikiEngine implements Serializable {
 
 		// Initialize the page name comparator now as it may be used while
 		// initializing other modules
-		initPageSorter(props);
+//		initPageSorter(props);
 
 		//
 		// Initialize the important modules. Any exception thrown by the
@@ -763,8 +760,8 @@ public class WikiEngine implements Serializable {
 						RSSGenerator.class.getName(), this, props);
 			}
 
-			m_pageRenamer = (PageRenamer) ClassUtil.getMappedObject(
-					PageRenamer.class.getName(), this, props);
+//			m_pageRenamer = (PageRenamer) ClassUtil.getMappedObject(
+//					PageRenamer.class.getName(), this, props);
 		} catch (Exception e) {
 			log.error(
 					"Unable to start RSS generator - JSPWiki will still work, "
@@ -1183,12 +1180,12 @@ public class WikiEngine implements Serializable {
 	 */
 
 	// FIXME: Should use servlet context as a default instead of a constant.
-	public String getApplicationName() {
-		String appName = TextUtil.getStringProperty(m_properties, PROP_APPNAME,
-				Release.APPNAME);
+//	public String getApplicationName() {
+//		String appName = TextUtil.getStringProperty(m_properties, PROP_APPNAME,
+//				Release.APPNAME);
 
-		return MarkupParser.cleanLink(appName);
-	}
+//		return MarkupParser.cleanLink(appName);
+//	}
 
 	/**
 	 * Beautifies the title of the page by appending spaces in suitable places,
@@ -1865,9 +1862,9 @@ public class WikiEngine implements Serializable {
 	 * @return The full class name of the current page provider.
 	 */
 
-	public String getCurrentProvider() {
-		return BeanHolder.getPageManager().getProvider().getClass().getName();
-	}
+//	public String getCurrentProvider() {
+//		return BeanHolder.getPageManager().getProvider().getClass().getName();
+//	}
 
 	/**
 	 * Return information about current provider. This method just calls the
@@ -2370,11 +2367,11 @@ public class WikiEngine implements Serializable {
 	 *             In the case of an error, such as the destination page already
 	 *             existing.
 	 */
-	public String renamePage(WikiContext context, String renameFrom,
-			String renameTo, boolean changeReferrers) throws WikiException {
-		return m_pageRenamer.renamePage(context, renameFrom, renameTo,
-				changeReferrers);
-	}
+//	public String renamePage(WikiContext context, String renameFrom,
+//			String renameTo, boolean changeReferrers) throws WikiException {
+//		return m_pageRenamer.renamePage(context, renameFrom, renameTo,
+//				changeReferrers);
+//	}
 
 	/**
 	 * Returns the PageRenamer employed by this WikiEngine.
@@ -2382,9 +2379,9 @@ public class WikiEngine implements Serializable {
 	 * @since 2.5.141
 	 * @return The current PageRenamer instance.
 	 */
-	public PageRenamer getPageRenamer() {
-		return m_pageRenamer;
-	}
+//    public PageRenamer getPageRenamer() {
+//        return m_pageRenamer;
+//    }
 
 	/**
 	 * Returns the UserManager employed by this WikiEngine.
@@ -2565,19 +2562,19 @@ public class WikiEngine implements Serializable {
 	/**
 	 * Initialize the page name comparator.
 	 */
-	private void initPageSorter(Properties props) {
-		m_pageSorter = new PageSorter();
-		m_pageSorter.initialize(props);
-	}
+//	private void initPageSorter(Properties props) {
+//		m_pageSorter = new PageSorter();
+//		m_pageSorter.initialize(props);
+//	}
 
 	/**
 	 * Get this engine's page name comparator.
 	 * 
 	 * @return the PageSorter used to sort pages by name in this engine
 	 */
-	public PageSorter getPageSorter() {
-		return m_pageSorter;
-	}
+//	public PageSorter getPageSorter() {
+//		return m_pageSorter;
+//	}
 
 	public IObjectPersist getObjectPersist() {
 		return BeanHolder.getObjectPersist();

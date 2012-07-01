@@ -257,7 +257,7 @@ public final class CommandResolver implements Serializable
         }
 
         // If "create group" command, target this wiki
-        String wiki = m_engine.getApplicationName();
+        String wiki = BeanHolder.getApplicationName();
         if ( WikiCommand.CREATE_GROUP.equals( command ) )
         {
             return WikiCommand.CREATE_GROUP.targetedCommand( wiki );
@@ -510,7 +510,7 @@ public final class CommandResolver implements Serializable
         if ( wikipage == null )
         {
             page = MarkupParser.cleanLink( page );
-            wikipage = new WikiPage( m_engine, page );
+            wikipage = new WikiPage( page );
         }
         return wikipage;
     }

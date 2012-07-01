@@ -17,8 +17,12 @@
 	</bean>
 
 	<bean id="pageProvider" class="org.apache.wiki.providers.WikiGaePageProvider"
-		scope="request">
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
 	</bean>
+
 	<bean id="groupProvider" class="org.apache.wiki.providers.WikiGaeGroupDatabase"
 		scope="request">
 	</bean>
@@ -44,6 +48,7 @@
 		<constructor-arg>
 			<ref bean="wikiEngine" />
 		</constructor-arg>
+		<property name="pageProvider" ref="pageProvider"></property>
 	</bean>
 
 	<bean id="searchManager" class="org.apache.wiki.search.SearchManager"
@@ -82,22 +87,24 @@
 	<bean id="wikiCache" class="org.apache.wiki.cache.WikiCacheImplementation"
 		scope="request">
 	</bean>
-	
+
 	<bean id="localPolicyProvider" class="org.apache.wiki.auth.LocalPolicyProvider"
-		init-method="initializeProvider"  scope="request">
+		init-method="initializeProvider" scope="request">
 		<constructor-arg>
 			<ref bean="wikiEngine" />
 		</constructor-arg>
 	</bean>
-	
+
 
 	<bean id="authenticationManager" class="org.apache.wiki.auth.AuthenticationManager"
 		init-method="initializeProvider" scope="request">
 		<constructor-arg>
 			<ref bean="wikiEngine" />
 		</constructor-arg>
+		<!-- <property name="useJASS" ref="useJAASBean"></property> -->
+
 	</bean>
-	
+
 	<bean id="authorizationManager" class="org.apache.wiki.auth.AuthorizationManager"
 		init-method="initializeProvider" scope="request">
 		<constructor-arg>
@@ -107,7 +114,44 @@
 			<ref bean="localPolicyProvider" />
 		</constructor-arg>
 	</bean>
-	
 
+
+	<bean id="useJAASBean"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+		scope="request">
+		<property name="targetClass">
+			<value>org.apache.wiki.spring.BeanHolder</value>
+		</property>
+		<property name="targetMethod">
+			<value>getIsJAAS</value>
+		</property>
+	</bean>
+
+	<bean id="downloadWiki" class="org.apache.wiki.downup.DownloadWiki"
+		scope="request">
+		<property name="pageManager" ref="pageManager"></property> 
+	</bean>
+
+	<bean id="properties"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+		scope="request">
+		<property name="targetClass">
+			<value>org.apache.wiki.spring.BeanHolder</value>
+		</property>
+		<property name="targetMethod">
+			<value>getWikiProperties</value>
+		</property>
+	</bean>
+
+	<bean id="pageSorter" class="org.apache.wiki.util.PageSorter"
+		scope="request">
+		<constructor-arg>
+			<ref bean="properties" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="pageRenamer" class="org.apache.wiki.content.PageRenamer"
+		scope="request">
+	</bean>
 
 </beans>

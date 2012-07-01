@@ -19,15 +19,18 @@ public abstract class AbstractWikiProvider implements WikiProvider {
 	protected WikiEngine m_engine;
 	protected Properties m_properties;
 
+	protected void initialize(WikiEngine engine) throws WikiException {
+		initialize(engine, engine.getWikiProperties());
+	}
+
 	@Override
 	public void initialize(WikiEngine engine, Properties properties)
 			throws WikiException {
 		this.m_engine = engine;
 		if (properties == null) {
 			this.m_properties = engine.getWikiProperties();
-		}
-		else {
-		  this.m_properties = properties;
+		} else {
+			this.m_properties = properties;
 		}
 	}
 
@@ -38,9 +41,7 @@ public abstract class AbstractWikiProvider implements WikiProvider {
 	}
 
 	@Override
-    public void initializeProvider() {		
+	public void initializeProvider() {
 	}
-
-
 
 }

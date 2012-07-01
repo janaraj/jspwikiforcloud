@@ -51,7 +51,6 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.spring.BeanHolder;
-import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.WikiBackgroundThread;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
@@ -150,9 +149,15 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 
 	// private LockReaper m_reaper = null;
 
-	private CreateModuleManager cBean;
+//	private CreateModuleManager cBean;
 	
-	public PageManager(WikiEngine engine) throws WikiException {
+	private WikiPageProvider pageProvider;
+			
+	public void setPageProvider(WikiPageProvider pageProvider) {
+        this.pageProvider = pageProvider;
+    }
+
+    public PageManager(WikiEngine engine) throws WikiException {
 		log.trace("Contructor for PageManager");
 	    initialize(engine,null);
 	}
@@ -193,21 +198,21 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 			}
 		}
 
-		try {
-			log.debug("Page provider class: '" + classname + "'");
+//		try {
+//			log.debug("Page provider class: '" + classname + "'");
 
-			Class providerclass = ClassUtil.findClass(
-					"org.apache.wiki.providers", classname);
+//			Class providerclass = ClassUtil.findClass(
+//					"org.apache.wiki.providers", classname);
 
 			// getProvider() = (WikiPageProvider) providerclass.newInstance();
-			cBean = new CreateModuleManager(m_engine, m_properties,
-					"pageProvider");
+//			cBean = new CreateModuleManager(m_engine, m_properties,
+//					"pageProvider");
 
 			// log.debug("Initializing page provider class " + getProvider());
 			// .initialize(m_engine, props);
-		} catch (ClassNotFoundException e) {
-			log.fatal("Unable to locate provider class '" + classname + "'", e);
-		}
+//		} catch (ClassNotFoundException e) {
+//			log.fatal("Unable to locate provider class '" + classname + "'", e);
+//		}
 		// } catch (InstantiationException e) {
 		// log.error("Unable to create provider class '" + classname + "'", e);
 		// throw new WikiException("Faulty provider class.", e);
@@ -233,9 +238,11 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 	 * 
 	 * @return A WikiPageProvider instance.
 	 */
-	public WikiPageProvider getProvider() {
+	private WikiPageProvider getProvider() {
 		// return getProvider();
-		return (WikiPageProvider) cBean.getBeanObject();
+//		return (WikiPageProvider) cBean.getBeanObject();
+//	    return BeanHolder.getWikiPageProvider();
+	    return pageProvider;
 	}
 
 	/**
@@ -247,7 +254,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 	 * @throws ProviderException
 	 *             If the backend has problems.
 	 */
-	public Collection getAllPages() throws ProviderException {
+	public Collection<WikiPage> getAllPages() throws ProviderException {
 		return getProvider().getAllPages();
 	}
 
@@ -298,7 +305,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 				// Make sure that it no longer exists in internal data
 				// structures either.
 				//
-				WikiPage dummy = new WikiPage(m_engine, pageName);
+				WikiPage dummy = new WikiPage(pageName);
 				m_engine.getSearchManager().pageRemoved(dummy);
 				m_engine.getReferenceManager().pageRemoved(dummy);
 			}
@@ -474,7 +481,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 				m_engine.updateReferences(page);
 			} else {
 				m_engine.getReferenceManager().pageRemoved(
-						new WikiPage(m_engine, pageName));
+						new WikiPage(pageName));
 			}
 		}
 
@@ -500,7 +507,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 	 * @throws ProviderException
 	 *             If the repository fails.
 	 */
-	public List getVersionHistory(String pageName) throws ProviderException {
+	public List<WikiPage> getVersionHistory(String pageName) throws ProviderException {
 		if (pageExists(pageName)) {
 			return getProvider().getVersionHistory(pageName);
 		}

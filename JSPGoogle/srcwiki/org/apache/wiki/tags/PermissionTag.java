@@ -67,130 +67,130 @@ import org.apache.wiki.ui.GroupCommand;
  * @since 2.0
  */
 public class PermissionTag extends WikiTagBase {
-	private static final String ALL_PERMISSION = "allPermission";
-	private static final String CREATE_GROUPS = "createGroups";
-	private static final String CREATE_PAGES = "createPages";
-	private static final String DELETE_GROUP = "deleteGroup";
-	private static final String EDIT = "edit";
-	private static final String EDIT_GROUP = "editGroup";
-	private static final String EDIT_PREFERENCES = "editPreferences";
-	private static final String EDIT_PROFILE = "editProfile";
-	private static final String LOGIN = "login";
-	private static final String VIEW_GROUP = "viewGroup";
+    private static final String ALL_PERMISSION = "allPermission";
+    private static final String CREATE_GROUPS = "createGroups";
+    private static final String CREATE_PAGES = "createPages";
+    private static final String DELETE_GROUP = "deleteGroup";
+    private static final String EDIT = "edit";
+    private static final String EDIT_GROUP = "editGroup";
+    private static final String EDIT_PREFERENCES = "editPreferences";
+    private static final String EDIT_PROFILE = "editProfile";
+    private static final String LOGIN = "login";
+    private static final String VIEW_GROUP = "viewGroup";
 
-	private static final long serialVersionUID = 3761412993048982325L;
+    private static final long serialVersionUID = 3761412993048982325L;
 
-	private String[] m_permissionList;
+    private String[] m_permissionList;
 
-	/**
-	 * Initializes the tag.
-	 */
-	@Override
-	public void initTag() {
-		super.initTag();
-		m_permissionList = null;
-	}
+    /**
+     * Initializes the tag.
+     */
+    @Override
+    public void initTag() {
+        super.initTag();
+        m_permissionList = null;
+    }
 
-	/**
-	 * Sets the permissions to look for (case sensitive). See above for the
-	 * format.
-	 * 
-	 * @param permission
-	 *            A list of permissions
-	 */
-	public void setPermission(String permission) {
-		m_permissionList = StringUtils.split(permission, '|');
-	}
+    /**
+     * Sets the permissions to look for (case sensitive). See above for the
+     * format.
+     * 
+     * @param permission
+     *            A list of permissions
+     */
+    public void setPermission(String permission) {
+        m_permissionList = StringUtils.split(permission, '|');
+    }
 
-	/**
-	 * Checks a single permission.
-	 * 
-	 * @param permission
-	 * @return
-	 */
-	private boolean checkPermission(String permission) {
-		WikiSession session = m_wikiContext.getWikiSession();
-		WikiPage page = m_wikiContext.getPage();
-		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
-		//
-		// AuthorizationManager mgr = m_wikiContext.getEngine()
-		// .getAuthorizationManager();
-		boolean gotPermission = false;
+    /**
+     * Checks a single permission.
+     * 
+     * @param permission
+     * @return
+     */
+    private boolean checkPermission(String permission) {
+        WikiSession session = m_wikiContext.getWikiSession();
+        WikiPage page = m_wikiContext.getPage();
+        AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
+        //
+        // AuthorizationManager mgr = m_wikiContext.getEngine()
+        // .getAuthorizationManager();
+        boolean gotPermission = false;
 
-		if (CREATE_GROUPS.equals(permission) || CREATE_PAGES.equals(permission)
-				|| EDIT_PREFERENCES.equals(permission)
-				|| EDIT_PROFILE.equals(permission) || LOGIN.equals(permission)) {
-			gotPermission = mgr.checkPermission(session, new WikiPermission(
-					page.getWiki(), permission));
-		} else if (VIEW_GROUP.equals(permission)
-				|| EDIT_GROUP.equals(permission)
-				|| DELETE_GROUP.equals(permission)) {
-			Command command = m_wikiContext.getCommand();
-			gotPermission = false;
-			if (command instanceof GroupCommand && command.getTarget() != null) {
-				GroupPrincipal group = (GroupPrincipal) command.getTarget();
-				String groupName = group.getName();
-				String action = "view";
-				if (EDIT_GROUP.equals(permission)) {
-					action = "edit";
-				} else if (DELETE_GROUP.equals(permission)) {
-					action = "delete";
-				}
-				gotPermission = mgr.checkPermission(session,
-						new GroupPermission(groupName, action));
-			}
-		} else if (ALL_PERMISSION.equals(permission)) {
-			gotPermission = mgr.checkPermission(session, new AllPermission(
-					m_wikiContext.getEngine().getApplicationName()));
-		} else if (page != null) {
-			//
-			// Edit tag also checks that we're not trying to edit an
-			// old version: they cannot be edited.
-			//
-			if (EDIT.equals(permission)) {
-				WikiPage latest = m_wikiContext.getEngine().getPage(
-						page.getName());
-				if (page.getVersion() != WikiProvider.LATEST_VERSION
-						&& latest.getVersion() != page.getVersion()) {
-					return false;
-				}
-			}
+        if (CREATE_GROUPS.equals(permission) || CREATE_PAGES.equals(permission)
+                || EDIT_PREFERENCES.equals(permission)
+                || EDIT_PROFILE.equals(permission) || LOGIN.equals(permission)) {
+            gotPermission = mgr.checkPermission(session, new WikiPermission(
+                    page.getWiki(), permission));
+        } else if (VIEW_GROUP.equals(permission)
+                || EDIT_GROUP.equals(permission)
+                || DELETE_GROUP.equals(permission)) {
+            Command command = m_wikiContext.getCommand();
+            gotPermission = false;
+            if (command instanceof GroupCommand && command.getTarget() != null) {
+                GroupPrincipal group = (GroupPrincipal) command.getTarget();
+                String groupName = group.getName();
+                String action = "view";
+                if (EDIT_GROUP.equals(permission)) {
+                    action = "edit";
+                } else if (DELETE_GROUP.equals(permission)) {
+                    action = "delete";
+                }
+                gotPermission = mgr.checkPermission(session,
+                        new GroupPermission(groupName, action));
+            }
+        } else if (ALL_PERMISSION.equals(permission)) {
+            gotPermission = mgr.checkPermission(session, new AllPermission(
+                    BeanHolder.getApplicationName()));
+        } else if (page != null) {
+            //
+            // Edit tag also checks that we're not trying to edit an
+            // old version: they cannot be edited.
+            //
+            if (EDIT.equals(permission)) {
+                WikiPage latest = m_wikiContext.getEngine().getPage(
+                        page.getName());
+                if (page.getVersion() != WikiProvider.LATEST_VERSION
+                        && latest.getVersion() != page.getVersion()) {
+                    return false;
+                }
+            }
 
-			Permission p = PermissionFactory
-					.getPagePermission(page, permission);
-			gotPermission = mgr.checkPermission(session, p);
-		}
+            Permission p = PermissionFactory
+                    .getPagePermission(page, permission);
+            gotPermission = mgr.checkPermission(session, p);
+        }
 
-		return gotPermission;
-	}
+        return gotPermission;
+    }
 
-	/**
-	 * Initializes the tag.
-	 * 
-	 * @return the result of the tag: SKIP_BODY or EVAL_BODY_CONTINUE
-	 * @throws IOException
-	 *             this exception will never be thrown
-	 */
-	@Override
-	public final int doWikiStartTag() throws IOException {
-		for (int i = 0; i < m_permissionList.length; i++) {
-			String perm = m_permissionList[i];
+    /**
+     * Initializes the tag.
+     * 
+     * @return the result of the tag: SKIP_BODY or EVAL_BODY_CONTINUE
+     * @throws IOException
+     *             this exception will never be thrown
+     */
+    @Override
+    public final int doWikiStartTag() throws IOException {
+        for (int i = 0; i < m_permissionList.length; i++) {
+            String perm = m_permissionList[i];
 
-			boolean hasPermission = false;
+            boolean hasPermission = false;
 
-			if (perm.charAt(0) == '!') {
-				hasPermission = !checkPermission(perm.substring(1));
-			} else {
-				hasPermission = checkPermission(perm);
-			}
+            if (perm.charAt(0) == '!') {
+                hasPermission = !checkPermission(perm.substring(1));
+            } else {
+                hasPermission = checkPermission(perm);
+            }
 
-			// TODO:
-			hasPermission = true;
+            // TODO:
+            hasPermission = true;
 
-			if (hasPermission)
-				return EVAL_BODY_INCLUDE;
-		}
+            if (hasPermission)
+                return EVAL_BODY_INCLUDE;
+        }
 
-		return SKIP_BODY;
-	}
+        return SKIP_BODY;
+    }
 }

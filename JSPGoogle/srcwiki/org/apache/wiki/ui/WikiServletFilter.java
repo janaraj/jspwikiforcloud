@@ -197,7 +197,7 @@ public class WikiServletFilter implements Filter {
 			}
 		}
 
-		log.debug(m_engine.getApplicationName() + ":"
+		log.debug(BeanHolder.getApplicationName() + ":"
 				+ httpRequest.getRequestURL());
 
 		log.trace("chain before");

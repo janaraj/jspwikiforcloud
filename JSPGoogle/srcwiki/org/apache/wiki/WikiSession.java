@@ -125,9 +125,6 @@ public final class WikiSession implements WikiEventListener {
 
 	private static final String ALL = "*";
 
-	// private static final ThreadLocal<WikiSession> c_guestSession = new
-	// ThreadLocal<WikiSession>();
-
 	private final WikiSubject userSubject = new WikiSubject();
 
 	private final Map<String, Set<String>> m_messages = new HashMap<String, Set<String>>();
@@ -140,8 +137,8 @@ public final class WikiSession implements WikiEventListener {
 	private Principal m_userPrincipal = WikiPrincipal.GUEST;
 
 	private Principal m_loginPrincipal = WikiPrincipal.GUEST;
-
-	// private Locale m_cachedLocale = Locale.getDefault();
+	
+	private boolean useJAAS;
 
 	public WikiSubject getWikiSubject() {
 		return userSubject;
@@ -168,6 +165,7 @@ public final class WikiSession implements WikiEventListener {
 	public WikiSession() {
 		log.trace("New WikiSession");
 		makeGuestUser();
+		useJAAS = BeanHolder.getIsJAAS();
 	}
 
 	/**
@@ -181,15 +179,12 @@ public final class WikiSession implements WikiEventListener {
 		return userSubject.getPrincipals().contains(Role.ASSERTED);
 	}
 
-	private static WikiEngine getEngine() {
-		return BeanHolder.getWikiEngine();
-	}
-
-	private boolean useJAAS() {
-		AuthenticationManager auth = BeanHolder.getAuthenticationManager();
-		return auth.isM_useJAAS();
+//	private boolean useJAAS() {
+//		AuthenticationManager auth = BeanHolder.getAuthenticationManager();
+//		return auth.isM_useJAAS();
 //		return getEngine().getAuthenticationManager().isM_useJAAS();
-	}
+//		return BeanHolder.getIsJAAS();
+//	}
 
 	/**
 	 * Returns the authentication status of the user's session. The user is
@@ -201,7 +196,7 @@ public final class WikiSession implements WikiEventListener {
 	 * @return Returns <code>true</code> if the user is authenticated
 	 */
 	public final boolean isAuthenticated() {
-		if (!useJAAS()) {
+		if (!useJAAS) {
 			return true;
 		}
 		log.debug("Test : isAuthenticated");
@@ -247,7 +242,7 @@ public final class WikiSession implements WikiEventListener {
 	 */
 	public final boolean isAnonymous() {
 
-		if (!useJAAS()) {
+		if (!useJAAS) {
 			return true;
 		}
 
@@ -664,7 +659,7 @@ public final class WikiSession implements WikiEventListener {
 	 * equivalent of a "guest session".
 	 */
 	public final void invalidate() {
-		if (!useJAAS()) {
+		if (!useJAAS) {
 			return;
 		}
 		makeGuestUser();

@@ -41,6 +41,7 @@ import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.spring.BeanHolder;
 
 /**
@@ -130,7 +131,8 @@ public class PageRenamer implements Serializable
         //  all of the attachments
         //
         
-        BeanHolder.getPageManager().getProvider().movePage( renameFrom, renameToClean );
+        WikiPageProvider mPage = BeanHolder.getWikiPageProvider();
+        mPage.movePage( renameFrom, renameToClean );
         
         if( engine.getAttachmentManager().attachmentsEnabled() )
         {

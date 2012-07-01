@@ -25,39 +25,40 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- *  A generic Wiki provider for all sorts of things that the Wiki can
- *  store.
- *
- *  @since 2.0
+ * A generic Wiki provider for all sorts of things that the Wiki can store.
+ * 
+ * @since 2.0
  */
-public interface WikiProvider extends Serializable
-{
-    /**
-     *  Passing this to any method should get the latest version
-     */
-    public static final int LATEST_VERSION = -1;
+public interface WikiProvider extends Serializable {
+	/**
+	 * Passing this to any method should get the latest version
+	 */
+	public static final int LATEST_VERSION = -1;
 
-    /**
-     *  Initializes the page provider.
-     *  
-     *  @param engine WikiEngine to own this provider
-     *  @param properties A set of properties used to initialize this provider
-     *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
-     *  @throws IOException If there is an IO problem
-     */
-    public void initialize( WikiEngine engine, Properties properties ) 
-        throws WikiException;
+	/**
+	 * Initializes the page provider.
+	 * 
+	 * @param engine
+	 *            WikiEngine to own this provider
+	 * @param properties
+	 *            A set of properties used to initialize this provider
+	 * @throws NoRequiredPropertyException
+	 *             If the provider needs a property which is not found in the
+	 *             property set
+	 * @throws IOException
+	 *             If there is an IO problem
+	 */
+	public void initialize(WikiEngine engine, Properties properties)
+			throws WikiException;
 
-    /**
-     *  Return a valid HTML string for information.  May
-     *  be anything.
-     *  @since 1.6.4
-     *  @return A string describing the provider.
-     */
+	/**
+	 * Return a valid HTML string for information. May be anything.
+	 * 
+	 * @since 1.6.4
+	 * @return A string describing the provider.
+	 */
 
-    public String getProviderInfo();
-    
-    public void initializeProvider();
+	public String getProviderInfo();
+
+	public void initializeProvider();
 }
-
-

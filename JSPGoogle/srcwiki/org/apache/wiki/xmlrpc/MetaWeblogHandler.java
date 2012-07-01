@@ -270,7 +270,7 @@ public class MetaWeblogHandler
 
             String pageName = plugin.getNewEntryPage( engine, blogid );
 
-            WikiPage entryPage = new WikiPage( engine, pageName );
+            WikiPage entryPage = new WikiPage( pageName );
             entryPage.setAuthor( username );
 
             WikiContext context = new WikiContext( engine, entryPage );
@@ -327,7 +327,7 @@ public class MetaWeblogHandler
 
         try
         {
-            Attachment att = new Attachment( engine, blogid, name );
+            Attachment att = new Attachment( blogid, name );
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 

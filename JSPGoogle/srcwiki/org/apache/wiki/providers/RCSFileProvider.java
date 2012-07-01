@@ -472,7 +472,7 @@ public class RCSFileProvider extends AbstractFileProvider {
 
 			while ((line = stdout.readLine()) != null) {
 				if (matcher.contains(line, revpattern)) {
-					info = new WikiPage(m_engine, page);
+					info = new WikiPage(page);
 
 					MatchResult result = matcher.getMatch();
 

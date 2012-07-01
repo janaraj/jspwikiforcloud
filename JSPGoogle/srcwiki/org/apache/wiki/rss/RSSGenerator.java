@@ -301,8 +301,7 @@ public class RSSGenerator implements Serializable {
 	 * @return A RSS 1.0 feed in the "full" mode.
 	 */
 	public String generate() {
-		WikiContext context = new WikiContext(m_engine, new WikiPage(m_engine,
-				"__DUMMY"));
+		WikiContext context = new WikiContext(m_engine, new WikiPage("__DUMMY"));
 		context.setRequestContext(WikiContext.RSS);
 		Feed feed = new RSS10Feed(context);
 
@@ -413,7 +412,7 @@ public class RSSGenerator implements Serializable {
 	 * @return feed.getString().
 	 */
 	protected String generateFullWikiRSS(WikiContext wikiContext, Feed feed) {
-		feed.setChannelTitle(m_engine.getApplicationName());
+		feed.setChannelTitle(BeanHolder.getApplicationName());
 		feed.setFeedURL(m_engine.getBaseURL());
 		feed.setChannelLanguage(m_channelLanguage);
 		feed.setChannelDescription(m_channelDescription);
@@ -476,7 +475,7 @@ public class RSSGenerator implements Serializable {
 	@SuppressWarnings("unchecked")
 	protected String generateWikiPageRSS(WikiContext wikiContext, List changed,
 			Feed feed) {
-		feed.setChannelTitle(m_engine.getApplicationName() + ": "
+		feed.setChannelTitle(BeanHolder.getApplicationName() + ": "
 				+ wikiContext.getPage().getName());
 		feed.setFeedURL(wikiContext.getViewURL(wikiContext.getPage().getName()));
 		String language = m_engine.getVariable(wikiContext,
@@ -558,7 +557,7 @@ public class RSSGenerator implements Serializable {
 		if (ctitle != null)
 			feed.setChannelTitle(ctitle);
 		else
-			feed.setChannelTitle(m_engine.getApplicationName() + ":"
+			feed.setChannelTitle(BeanHolder.getApplicationName() + ":"
 					+ wikiContext.getPage().getName());
 
 		feed.setFeedURL(wikiContext.getViewURL(wikiContext.getPage().getName()));

@@ -16,13 +16,10 @@
 
 %>
 <%
-    response.getWriter();
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
-    response.getWriter();
 
     WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
-    response.getWriter();
     
     // If no context, it means we're using container auth.  So, create one anyway
     if( wikiContext == null )
@@ -33,14 +30,10 @@
                                   PageContext.REQUEST_SCOPE );
     }
     
-    response.getWriter();
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    response.getWriter();
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
-    response.getWriter();                                                            
     log.debug("Login template content is: " + contentPage);
-    response.getWriter();
     
 %><wiki:Include page="<%=contentPage%>" />

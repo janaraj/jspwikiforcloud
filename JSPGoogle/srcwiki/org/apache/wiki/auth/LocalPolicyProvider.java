@@ -11,6 +11,7 @@ import org.apache.wiki.WikiException;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
 
+@SuppressWarnings("serial")
 public class LocalPolicyProvider extends AbstractWikiProvider {
 
 	private final static Log log = LogFactory.getLog(LocalPolicyProvider.class);

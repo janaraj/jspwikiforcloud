@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="srcprovider"/>
 	<classpathentry excluding="org/apache/commons/logging/" kind="src" path="srcstub"/>
 	<classpathentry kind="src" path="srcwiki"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
@@ -51,5 +50,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.struts-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LOG"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

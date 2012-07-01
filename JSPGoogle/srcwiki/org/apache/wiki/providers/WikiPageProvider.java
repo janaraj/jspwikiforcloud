@@ -75,7 +75,7 @@ public interface WikiPageProvider
      *  @param query An array of QueryItems to match
      *  @return A Collection of WikiPages.
      */
-    public Collection findPages( QueryItem[] query );
+    public Collection<WikiPage> findPages( QueryItem[] query );
 
     /**
      *  Returns info about the page.
@@ -96,7 +96,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong.
      */
 
-    public Collection getAllPages()
+    public Collection<WikiPage> getAllPages()
         throws ProviderException;
 
     /**
@@ -107,7 +107,7 @@ public interface WikiPageProvider
      *  @since 1.6.4
      */
 
-    public Collection getAllChangedSince( Date date );
+    public Collection<WikiPage> getAllChangedSince( Date date );
 
     /**
      *  Gets the number of pages.
@@ -129,7 +129,7 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong.
      */
 
-    public List getVersionHistory( String page )
+    public List<WikiPage> getVersionHistory( String page )
         throws ProviderException;
 
     /**

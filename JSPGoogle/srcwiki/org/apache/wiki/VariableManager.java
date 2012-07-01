@@ -32,11 +32,12 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.filters.PageFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
@@ -386,7 +387,8 @@ public class VariableManager implements Serializable
 
         public String getApplicationname()
         {
-            return m_context.getEngine().getApplicationName();
+//            return m_context.getEngine().getApplicationName();
+            return BeanHolder.getApplicationName();
         }
 
         public String getJspwikiversion()
@@ -404,10 +406,10 @@ public class VariableManager implements Serializable
             return Integer.toString(m_context.getEngine().getPageCount());
         }
 
-        public String getPageprovider()
-        {
-            return m_context.getEngine().getCurrentProvider();
-        }
+//        public String getPageprovider()
+//        {
+//            return m_context.getEngine().getCurrentProvider();
+//        }
 
         public String getPageproviderdescription()
         {

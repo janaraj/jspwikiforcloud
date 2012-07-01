@@ -196,6 +196,9 @@ public class WikiContext implements Cloneable, Command {
 	/** User is doing administrative things. */
 	public static final String ADMIN = WikiCommand.ADMIN.getRequestContext();
 
+	public static final String DOWNLOADWIKI = WikiCommand.DOWNLOADWIKI
+			.getRequestContext();
+
 	private static final Log log = LogFactory.getLog(WikiContext.class);
 
 	private static final Permission DUMMY_PERMISSION = new java.util.PropertyPermission(
@@ -262,7 +265,7 @@ public class WikiContext implements Cloneable, Command {
 
 			// Front page does not exist?
 			if (m_page == null) {
-				m_page = new WikiPage(m_engine, m_engine.getFrontPage());
+				m_page = new WikiPage(m_engine.getFrontPage());
 			}
 		}
 
@@ -770,17 +773,17 @@ public class WikiContext implements Cloneable, Command {
 				return DUMMY_PERMISSION;
 			}
 			if (adminExists) {
-				return new AllPermission(m_engine.getApplicationName());
+				return new AllPermission(BeanHolder.getApplicationName());
 			}
 		}
 
 		// TODO: we should really break the contract so that this
 		// method returns null, but until then we will use this hack
-		
-// return null : command is not protected		
-//		if (m_command.requiredPermission() == null) {
-//			return DUMMY_PERMISSION;
-//		}
+
+		// return null : command is not protected
+		// if (m_command.requiredPermission() == null) {
+		// return DUMMY_PERMISSION;
+		// }
 
 		return m_command.requiredPermission();
 	}
@@ -896,7 +899,7 @@ public class WikiContext implements Cloneable, Command {
 		boolean admin = false;
 		AuthorizationManager mgr = BeanHolder.getAuthorizationManager();
 		admin = mgr.checkPermission(getWikiSession(), new AllPermission(
-				m_engine.getApplicationName()));
+				BeanHolder.getApplicationName()));
 
 		return admin;
 	}

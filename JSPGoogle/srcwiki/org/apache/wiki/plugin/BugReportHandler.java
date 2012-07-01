@@ -170,7 +170,7 @@ public class BugReportHandler
             String pageName = findNextPage( context, title,
                                             (String)params.get( PARAM_PAGE ) );
 
-            WikiPage newPage = new WikiPage( context.getEngine(), pageName );
+            WikiPage newPage = new WikiPage( pageName );
             WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );
 

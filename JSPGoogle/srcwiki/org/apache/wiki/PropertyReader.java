@@ -183,7 +183,7 @@ public final class PropertyReader
      *  
      *  @return The default property set.
      */
-    public static final Properties getDefaultProperties()
+    private static final Properties getDefaultProperties()
     {
         Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
         

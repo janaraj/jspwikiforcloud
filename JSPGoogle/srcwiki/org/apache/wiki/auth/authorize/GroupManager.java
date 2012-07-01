@@ -379,7 +379,7 @@ public final class GroupManager extends AbstractWikiProvider implements
 		memberLine = memberLine.trim();
 
 		// Create or retrieve the group (may have been previously cached)
-		Group group = new Group(name, m_engine.getApplicationName());
+		Group group = new Group(name, BeanHolder.getApplicationName());
 		try {
 			Group existingGroup = getGroup(name);
 

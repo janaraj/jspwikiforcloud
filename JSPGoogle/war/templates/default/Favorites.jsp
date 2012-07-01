@@ -65,6 +65,12 @@
                title="<fmt:message key='actions.creategroup.title' />"><fmt:message key='actions.creategroup' />
         </a></li>
       </wiki:Permission>
+       <li><a class="action creategroup" 
+            href="<wiki:Link jsp='DownloadWiki.jsp' format='url' />" 
+               title="<fmt:message key='actions.downloadwiki.title' />"><fmt:message key='actions.downloadwiki' />
+        </a></li>
+      
+      
 	  <li class='separator'>
         <div id="moremenu" ><wiki:InsertPage page="MoreMenu" /></div>
       </li>

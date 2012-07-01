@@ -20,9 +20,12 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import java.util.*;
-
-import org.apache.xmlrpc.XmlRpcException;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
@@ -31,6 +34,8 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.spring.BeanHolder;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  *  Provides handlers for all RPC routines.  These routines are used by
@@ -46,7 +51,7 @@ public class RPCHandlerUTF8
     {
         checkPermission( PagePermission.VIEW );
         
-        return m_engine.getApplicationName();
+        return BeanHolder.getApplicationName();
     }
 
     public Vector getAllPages()

@@ -13,6 +13,7 @@
 package org.apache.wiki.spring;
 
 import java.util.Locale;
+import java.util.Properties;
 
 import org.springframework.web.context.WebApplicationContext;
 
@@ -23,6 +24,9 @@ public class ApplicationContextHolder {
 	 */
 	private static final ThreadLocal<WebApplicationContext> contextSession = new ThreadLocal<WebApplicationContext>();
 	private static final ThreadLocal<Locale> locale = new ThreadLocal<Locale>();
+	private static final ThreadLocal<Properties> properties = new ThreadLocal<Properties>();
+	private static final ThreadLocal<Boolean> useJAAS = new ThreadLocal<Boolean>();
+    private static final ThreadLocal<String> appName = new ThreadLocal<String>();
 
 	private ApplicationContextHolder() {
 	}
@@ -45,4 +49,29 @@ public class ApplicationContextHolder {
 	static void setLocale(Locale value) {
 		locale.set(value);
 	}
+
+	static Properties getProperties() {
+		return properties.get();
+	}
+
+	static void setProperties(Properties prop) {
+		properties.set(prop);
+	}
+
+	static Boolean getUseJASS() {
+		return useJAAS.get();
+	}
+
+	static void setJAAS(Boolean b) {
+		useJAAS.set(b);
+	}
+	
+	static String getAppName() {
+	    return appName.get();
+	}
+	
+	static void setAppName(String s) {
+	    appName.set(s);
+	}
+
 }

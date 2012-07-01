@@ -58,6 +58,7 @@ public abstract class AbstractCommand implements Command
         WikiCommand.PREFS,
         WikiCommand.WORKFLOW,
         WikiCommand.ADMIN,
+        WikiCommand.DOWNLOADWIKI,
         RedirectCommand.REDIRECT
     };
 

@@ -31,6 +31,8 @@ import org.apache.wiki.QueryItem;
 import org.apache.wiki.SearchMatcher;
 import org.apache.wiki.SearchResult;
 import org.apache.wiki.SearchResultComparator;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.providers.jpa.WikiPageEnt;
 
@@ -46,6 +48,10 @@ import org.apache.wiki.providers.jpa.WikiPageEnt;
 @SuppressWarnings("serial")
 public class WikiGaePageProvider extends AbstractWikiProvider implements
 		WikiPageProvider {
+    
+    public WikiGaePageProvider(WikiEngine engine) throws WikiException {
+        initialize(engine);
+    }
 
 	private final Log log = LogFactory.getLog(WikiGaePageProvider.class);
 
@@ -67,7 +73,7 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 		 * </p>
 		 */
 		void toPage() {
-			page = new WikiPage(m_engine, ent.getName());
+			page = new WikiPage(ent.getName());
 			page.setVersion(ent.getVersion());
 			page.setLastModified(ent.getChangetime());
 			page.setAuthor(ent.getChangeBy());
@@ -372,9 +378,8 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Collection getAllPages() throws ProviderException {
+	public Collection<WikiPage> getAllPages() throws ProviderException {
 		log.debug("Start: getAllPages");
 		GetAllPages e = new GetAllPages();
 		e.runCommand();

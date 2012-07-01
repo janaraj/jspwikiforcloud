@@ -20,7 +20,10 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.wiki.*;
+import org.apache.wiki.NoSuchVariableException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 
 
 /**
@@ -59,7 +62,7 @@ public final class BlogUtil
 
         if( blogname == null )
         {
-            blogname = engine.getApplicationName()+": "+context.getPage().getName();
+            blogname = BeanHolder.getApplicationName()+": "+context.getPage().getName();
         }
 
         return blogname;

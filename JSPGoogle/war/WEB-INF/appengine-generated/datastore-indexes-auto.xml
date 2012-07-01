@@ -1,8 +1,8 @@
-<!-- Indices written at Sun, 17 Jun 2012 10:40:40 UTC -->
+<!-- Indices written at Sun, 1 Jul 2012 08:11:49 UTC -->
 
 <datastore-indexes>
 
-    <!-- Used 279 times in query history -->
+    <!-- Used 664 times in query history -->
     <datastore-index kind="WikiPageEnt" ancestor="false" source="auto">
         <property name="name" direction="asc"/>
         <property name="version" direction="desc"/>
