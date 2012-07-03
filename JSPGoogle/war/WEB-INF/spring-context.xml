@@ -73,7 +73,10 @@
 	</bean>
 
 	<bean id="pluginManager" class="org.apache.wiki.plugin.PluginManager"
-		scope="request">
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
 	</bean>
 
 	<bean id="templateManager" class="org.apache.wiki.ui.TemplateManager"
@@ -129,7 +132,12 @@
 
 	<bean id="downloadWiki" class="org.apache.wiki.downup.DownloadWiki"
 		scope="request">
-		<property name="pageManager" ref="pageManager"></property> 
+		<property name="pageManager" ref="pageManager"></property>
+	</bean>
+	
+	<bean id="uploadWiki" class="org.apache.wiki.downup.UploadWiki"
+		scope="request">
+		<property name="pageManager" ref="pageManager"></property>
 	</bean>
 
 	<bean id="properties"

@@ -31,7 +31,9 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.downup.IDownloadWiki;
+import org.apache.wiki.downup.IUploadWiki;
 import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.security.WikiSubject;
 import org.apache.wiki.util.PageSorter;
@@ -161,6 +163,16 @@ public class BeanHolder {
     public static PageRenamer getPageRenamer() {
         PageRenamer p = (PageRenamer) getObject("pageRenamer");
         return p;
+    }
+
+    public static PluginManager getPluginManager() {
+        PluginManager p = (PluginManager) getObject("pluginManager");
+        return p;
+    }
+
+    public static IUploadWiki getUploadWiki() {
+        IUploadWiki up = (IUploadWiki) getObject("uploadWiki");
+        return up;
     }
 
 }

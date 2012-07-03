@@ -66,10 +66,14 @@
         </a></li>
       </wiki:Permission>
        <li><a class="action creategroup" 
-            href="<wiki:Link jsp='DownloadWiki.jsp' format='url' />" 
+            href="<wiki:Link jsp='DownloadWiki.jsp' format='url' urlParam='?action=downloadwiki' />" 
                title="<fmt:message key='actions.downloadwiki.title' />"><fmt:message key='actions.downloadwiki' />
-        </a></li>
-      
+        </a></li>      
+         
+       <li><a class="action creategroup" 
+            href="<wiki:Link jsp='DownloadWiki.jsp' format='url' urlParam='?action=uploadwiki' />" 
+               title="<fmt:message key='actions.uploadwiki.title' />"><fmt:message key='actions.uploadwiki' />
+        </a></li>      
       
 	  <li class='separator'>
         <div id="moremenu" ><wiki:InsertPage page="MoreMenu" /></div>

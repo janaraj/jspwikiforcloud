@@ -162,5 +162,5 @@ var WikiGroup =
 
 		Wiki.submitOnce(form);
 		form.submit();
-	}
+	} 
 }

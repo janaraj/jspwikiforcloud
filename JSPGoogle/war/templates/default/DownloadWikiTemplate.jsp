@@ -8,6 +8,7 @@
 <%
 	WikiEngine wiki = BeanHolder.getWikiEngine();
 	WikiContext c = WikiContext.findContext(pageContext);
+    String action = request.getParameter("action");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -35,11 +36,17 @@
 
 			<div id="page">
 
-				<wiki:TabbedSection defaultTab="download">
-					<wiki:Tab id="download"
+				<wiki:TabbedSection defaultTab="<%=action%>">
+					<wiki:Tab id="downloadwiki"
 						title='<%=LocaleSupport.getLocalizedMessage(pageContext,
 							"downloadwiki.download.tab")%>'>
 						<wiki:Include page="DownloadWikiTab.jsp" />
+					</wiki:Tab>
+					
+					<wiki:Tab id="uploadwiki"
+						title='<%=LocaleSupport.getLocalizedMessage(pageContext,
+							"downloadwiki.upload.tab")%>'>
+						<wiki:Include page="UploadWikiTab.jsp" />
 					</wiki:Tab>
 
 					<wiki:Tab id="info"

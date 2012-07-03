@@ -12,12 +12,12 @@
  */
 package org.apache.wiki.downup;
 
-import java.io.Reader;
+import java.io.InputStream;
 
 import org.apache.wiki.WikiProvider;
 
-public interface IDownloadWiki extends WikiProvider {
-
-    Reader provideReader();
+public interface IUploadWiki extends WikiProvider {
     
+    void uploadWiki(InputStream in);
+
 }

@@ -16,9 +16,8 @@
 	String downloadWikiAction = wiki.getTemplateManager().findJSP( pageContext,
             c.getTemplate(),
             "DownloadWikiAction.jsp" );
-	int i = 0;
 %>
-<div id="addattachment">
+<div id="downloadwikiid">
 
 	<h3>
 		<fmt:message key="downloadwiki.download.header" />
@@ -36,7 +35,7 @@
         <input type="submit" name="upload" id="upload" value="<fmt:message key='downloadwiki.download.submit'/>" />
         <input type="hidden" name="action" value="upload" />
         <div id="progressbar"><div class="ajaxprogress"></div></div>
-		
+        <br>
 	</form>
 
 </div>

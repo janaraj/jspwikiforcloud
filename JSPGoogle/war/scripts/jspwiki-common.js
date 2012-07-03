@@ -388,6 +388,18 @@ var Wiki = {
 
 		return Wiki.submitOnce(form);
 	},
+	
+	validateFileName: function(message)
+	{
+	var x=$('attachfilename').value;
+	if (x==null || x=="")
+	  {
+	  alert(message);
+	  return false;
+	  }
+	return true; 
+	} ,
+
 
 	addEditLinks: function(){
 		if( $("previewcontent") || !this.PermissionEdit || this.prefs.get('SectionEditing') != 'on') return;

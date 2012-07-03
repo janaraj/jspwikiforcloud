@@ -29,6 +29,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.plugin.PluginException;
 import org.apache.wiki.plugin.PluginManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Inserts any Wiki plugin.  The body of the tag becomes then
@@ -96,8 +97,7 @@ public class PluginTag
     private String executePlugin( String plugin, String args, String body )
         throws PluginException, IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        PluginManager pm  = engine.getPluginManager();
+        PluginManager pm  = BeanHolder.getPluginManager();
 
         m_evaluated = true;
 

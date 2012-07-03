@@ -47,22 +47,26 @@ public class DownloadWiki extends AbstractWikiProvider implements IDownloadWiki 
         sb.append('>');
     }
 
+    private void addTag(StringBuffer sb, String tag, boolean beg) {
+        sb.append(beg ? "<" : "</" + IWikiTag.WIKI + ">");
+    }
+
     @Override
     public Reader provideReader() {
         try {
             Collection<WikiPage> pList = pageManager.getAllPages();
             StringBuffer sb = new StringBuffer();
-            sb.append("<wiki>");
+            addTag(sb, IWikiTag.WIKI, true);
             for (WikiPage page : pList) {
                 sb.append('\n');
-                addAttr(sb, "page", "name", page.getName(), "wiki",
+                addAttr(sb, IWikiTag.PAGE, IWikiTag.NAME, page.getName(), IWikiTag.WIKI,
                         page.getWiki());
                 List<WikiPage> verList = pageManager.getVersionHistory(page
                         .getName());
                 for (WikiPage ver : verList) {
                     sb.append('\n');
-                    addAttr(sb, "ver", "author", ver.getAuthor(), "ver", ""
-                            + ver.getVersion(), "date", ver.getLastModified()
+                    addAttr(sb, IWikiTag.VER, IWikiTag.AUTHOR, ver.getAuthor(), IWikiTag.VER, ""
+                            + ver.getVersion(), IWikiTag.DATE, ver.getLastModified()
                             .toString());
                     Map<String, String> prop = ver.getAttributes();
                     Set<Map.Entry<String, String>> mSet = prop.entrySet();
@@ -74,16 +78,18 @@ public class DownloadWiki extends AbstractWikiProvider implements IDownloadWiki 
                     }
                     String content = pageManager.getPageText(ver.getName(),
                             ver.getVersion());
-                    sb.append("<content> <![CDATA[");
+                    addTag(sb,IWikiTag.CONTENT,true);
+                    sb.append(" <![CDATA[");
                     sb.append(content);
-                    sb.append("]]></content>");
-                    sb.append("</ver>");
+                    sb.append("]]>");
+                    addTag(sb,IWikiTag.CONTENT,false);
+                    addTag(sb,IWikiTag.VER,false);
                     sb.append('\n');
                 }
                 sb.append("</page>");
                 sb.append('\n');
             }
-            sb.append("</wiki>");
+            addTag(sb, IWikiTag.WIKI, true);
             return new StringReader(sb.toString());
         } catch (ProviderException e) {
             log.error(e);

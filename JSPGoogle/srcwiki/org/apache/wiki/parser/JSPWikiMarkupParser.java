@@ -1496,7 +1496,7 @@ public class JSPWikiMarkupParser
         {
             try
             {
-                PluginContent pluginContent = m_engine.getPluginManager().parsePluginLine( m_context,
+                PluginContent pluginContent = BeanHolder.getPluginManager().parsePluginLine( m_context,
                                                                                            linktext,
                                                                                            pos );
                 //

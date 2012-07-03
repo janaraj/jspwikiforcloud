@@ -213,7 +213,7 @@ public class WikiEngine implements Serializable {
 
 	/** Stores the Plugin manager */
 	// private PluginManager m_pluginManager;
-	private CreateProviderManager<PluginManager> mPlugin;
+//	private CreateProviderManager<PluginManager> mPlugin;
 
 	/** Stores the Variable manager */
 	private VariableManager m_variableManager;
@@ -622,8 +622,8 @@ public class WikiEngine implements Serializable {
 //					"pageManager");
 			// m_pluginManager = (PluginManager) ClassUtil.getMappedObject(
 			// PluginManager.class.getName(), this, props);
-			mPlugin = new CreateProviderManager<PluginManager>(this, props,
-					"pluginManager");
+//			mPlugin = new CreateProviderManager<PluginManager>(this, props,
+//					"pluginManager");
 			m_differenceManager = (DifferenceManager) ClassUtil
 					.getMappedObject(DifferenceManager.class.getName(), this,
 							props);
@@ -2083,9 +2083,9 @@ public class WikiEngine implements Serializable {
 	 * @return The current PluginManager instance
 	 */
 
-	public PluginManager getPluginManager() {
-		return mPlugin.getManager();
-	}
+//	public PluginManager getPluginManager() {
+//		return mPlugin.getManager();
+//	}
 
 	/**
 	 * Returns the current variable manager.

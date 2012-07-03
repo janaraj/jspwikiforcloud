@@ -198,6 +198,9 @@ public class WikiContext implements Cloneable, Command {
 
 	public static final String DOWNLOADWIKI = WikiCommand.DOWNLOADWIKI
 			.getRequestContext();
+	
+    public static final String UPLOADWIKI = WikiCommand.UPLOADWIKI
+            .getRequestContext();
 
 	private static final Log log = LogFactory.getLog(WikiContext.class);
 

@@ -78,6 +78,9 @@ public final class WikiCommand extends AbstractCommand {
 
 	public static final Command DOWNLOADWIKI = new WikiCommand("downloadwiki",
 			"%uDownloadWiki.jsp", "DownloadWikiContent.jsp", null);
+	
+    public static final Command UPLOADWIKI = new WikiCommand("uploadwiki",
+            "%uDownloadWiki.jsp", "DownloadWikiContent.jsp", null);
 
 	private final String m_action;
 

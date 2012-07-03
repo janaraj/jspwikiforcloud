@@ -25,13 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.jdom.Text;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.plugin.PluginException;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.plugin.WikiPlugin;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.spring.BeanHolder;
+import org.jdom.Text;
 
 /**
  *  Stores the contents of a plugin in a WikiDocument DOM tree.
@@ -128,6 +129,7 @@ public class PluginContent extends Text
         String result;
         
         WikiDocument doc = (WikiDocument)getDocument();
+        PluginManager pManager = BeanHolder.getPluginManager();
 
         if( doc == null )
         {
@@ -193,7 +195,7 @@ public class PluginContent extends Text
                     parsedParams.put( (String)e.getKey(), val );
                 }
             
-                result = engine.getPluginManager().execute( context,
+                result = pManager.execute( context,
                                                             m_pluginName,
                                                             parsedParams );
             }
@@ -227,7 +229,7 @@ public class PluginContent extends Text
     public void executeParse(WikiContext context)
         throws PluginException
     {
-        context.getEngine().getPluginManager().executeParse( this, context );
+        BeanHolder.getPluginManager().executeParse( this, context );
     }
 
 }

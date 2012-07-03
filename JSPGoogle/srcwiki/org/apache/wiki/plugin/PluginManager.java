@@ -220,6 +220,10 @@ public class PluginManager extends ModuleManager {
 	 * Keeps a list of all known plugin classes.
 	 */
 	private Map<String, WikiPluginInfo> m_pluginClassMap = new HashMap<String, WikiPluginInfo>();
+	
+	public PluginManager(WikiEngine engine) throws WikiException {
+	    initialize(engine);
+	}
 
 	/**
 	 * Create a new PluginManager.

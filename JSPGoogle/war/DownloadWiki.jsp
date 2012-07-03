@@ -7,8 +7,15 @@
 	Log log = LogFactory.getLog("JSPWiki");%>
 <%
 	WikiEngine wiki = WikiEngine.getInstance(getServletConfig());
+    String action = request.getParameter("action");
 
-	WikiContext wikiContext = wiki.createContext(request, WikiContext.DOWNLOADWIKI);
+    WikiContext wikiContext;
+    if (action.equals("downloadwiki")) {
+	  wikiContext = wiki.createContext(request, WikiContext.DOWNLOADWIKI);
+    }
+    else {
+  	  wikiContext = wiki.createContext(request, WikiContext.UPLOADWIKI);        
+    }
 	pageContext.setAttribute(WikiTagBase.ATTR_CONTEXT, wikiContext,
 			PageContext.REQUEST_SCOPE);
 

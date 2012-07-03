@@ -12,12 +12,14 @@
  */
 package org.apache.wiki.downup;
 
-import java.io.Reader;
-
-import org.apache.wiki.WikiProvider;
-
-public interface IDownloadWiki extends WikiProvider {
-
-    Reader provideReader();
+interface IWikiTag {
     
+    String WIKI = "wiki";
+    String PAGE = "page";
+    String NAME = "name";
+    String VER = "ver";
+    String AUTHOR = "author";
+    String DATE = "date";
+    String CONTENT = "content";
+
 }
