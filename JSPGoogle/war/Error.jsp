@@ -1,6 +1,7 @@
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.tags.WikiTagBase" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
     Log log = LogFactory.getLog("JSPWiki"); 
@@ -9,6 +10,9 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     WikiContext wikiContext = wiki.createContext( request, 
                                                   WikiContext.ERROR );
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+            wikiContext,
+            PageContext.REQUEST_SCOPE );
     String pagereq = wikiContext.getName();
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

@@ -2,11 +2,12 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.jsp.util.localize.LocaleSupport" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );
-  int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
+  int attCount = BeanHolder.getAttachmentManager().listAttachments(c.getPage()).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";  
 %>

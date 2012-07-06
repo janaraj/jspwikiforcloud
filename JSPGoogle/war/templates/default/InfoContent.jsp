@@ -6,6 +6,7 @@
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager"%>
 <%@ page import="java.security.Permission"%>
 <%@ page import="com.jsp.util.localize.LocaleSupport"%>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <fmt:setLocale value="${prefs.Language}" />
@@ -13,7 +14,7 @@
 <%
     WikiContext c = WikiContext.findContext(pageContext);
     WikiPage wikiPage = c.getPage();
-    int attCount = c.getEngine().getAttachmentManager()
+    int attCount = BeanHolder.getAttachmentManager()
             .listAttachments(c.getPage()).size();
     String attTitle = LocaleSupport.getLocalizedMessage(pageContext,
             "attach.tab");

@@ -3,6 +3,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%!
     Log log = LogFactory.getLog("JSPWiki");
 %>
@@ -18,7 +19,7 @@
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     if(!wikiContext.hasAccess( response )) return;
     
-    Set allPages = wiki.getReferenceManager().findCreated();
+    Set allPages = BeanHolder.getReferenceManager().findCreated();
     
     response.setContentType("text/plain; charset=UTF-8");
     for( Iterator i = allPages.iterator(); i.hasNext(); )

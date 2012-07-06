@@ -7,9 +7,9 @@
 <%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
-<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -61,7 +61,8 @@
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = "";
 
-   RenderingManager renderingManager = new RenderingManager();
+//   RenderingManager renderingManager = new RenderingManager();
+   RenderingManager renderingManager = BeanHolder.getRenderingManager();
    
    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
    Properties copyOfWikiProperties = new Properties();
