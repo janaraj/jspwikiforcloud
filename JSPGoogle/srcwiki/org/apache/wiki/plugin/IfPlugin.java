@@ -25,8 +25,13 @@ import java.security.Principal;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.oro.text.regex.*;
-
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.wiki.TextToHtml;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiProvider;
@@ -177,7 +182,7 @@ public class IfPlugin implements WikiPlugin {
 	 */
 	public String execute(WikiContext context, Map params)
 			throws PluginException {
-		return ifInclude(context, params) ? context.getEngine().textToHTML(
+		return ifInclude(context, params) ? TextToHtml.textToHTML(
 				context, (String) params.get(PluginManager.PARAM_BODY)) : "";
 	}
 

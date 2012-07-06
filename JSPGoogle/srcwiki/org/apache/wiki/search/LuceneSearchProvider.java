@@ -248,7 +248,7 @@ public class LuceneSearchProvider extends AbstractWikiProvider implements
                         }
                     }
 
-                    Collection allAttachments = m_engine.getAttachmentManager()
+                    Collection allAttachments = BeanHolder.getAttachmentManager()
                             .getAllAttachments();
                     for (Iterator iterator = allAttachments.iterator(); iterator
                             .hasNext();) {
@@ -312,7 +312,7 @@ public class LuceneSearchProvider extends AbstractWikiProvider implements
      * @return the content of the Attachment as a String.
      */
     protected String getAttachmentContent(String attachmentName, int version) {
-        AttachmentManager mgr = m_engine.getAttachmentManager();
+        AttachmentManager mgr = BeanHolder.getAttachmentManager();
 
         try {
             Attachment att = mgr.getAttachmentInfo(attachmentName, version);
@@ -337,7 +337,7 @@ public class LuceneSearchProvider extends AbstractWikiProvider implements
      *         providers or some other 'pluggable' wat to search attachments
      */
     protected String getAttachmentContent(Attachment att) {
-        AttachmentManager mgr = m_engine.getAttachmentManager();
+        AttachmentManager mgr = BeanHolder.getAttachmentManager();
         // FIXME: Add attachment plugin structure
 
         String filename = att.getFileName();
@@ -479,7 +479,7 @@ public class LuceneSearchProvider extends AbstractWikiProvider implements
 
         // Now add the names of the attachments of this page
         try {
-            Collection attachments = m_engine.getAttachmentManager()
+            Collection attachments = BeanHolder.getAttachmentManager()
                     .listAttachments(page);
             String attachmentNames = "";
 

@@ -22,13 +22,14 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
+import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.TextUtil;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Writes the author name of the current page, including a link to that page,
@@ -61,7 +62,7 @@ public class AuthorTag
                 // FIXME: It's very boring to have to do this.
                 //        Slow, too.
 
-                RenderingManager mgr = engine.getRenderingManager();
+                RenderingManager mgr = BeanHolder.getRenderingManager();
                 
                 MarkupParser p = mgr.getParser( m_wikiContext, "["+author+"|"+author+"]" );
 

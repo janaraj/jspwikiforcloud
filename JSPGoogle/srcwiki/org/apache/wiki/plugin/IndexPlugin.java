@@ -143,7 +143,7 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
         
         ArrayList<String> result = new ArrayList<String>();
         
-        Collection pages = context.getEngine().getReferenceManager().findCreated();
+        Collection pages = BeanHolder.getReferenceManager().findCreated();
         
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {

@@ -20,11 +20,15 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.*;
-import org.apache.wiki.*;
-import org.apache.wiki.attachment.AttachmentManager;
+import java.util.Map;
+
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Provides an image plugin for better control than is possible with a simple image inclusion.
@@ -120,7 +124,7 @@ public class Image
 
         try
         {
-            AttachmentManager mgr = engine.getAttachmentManager();
+            AttachmentManager mgr = BeanHolder.getAttachmentManager();
             Attachment        att = mgr.getAttachmentInfo( context, src );
 
             if( att != null )

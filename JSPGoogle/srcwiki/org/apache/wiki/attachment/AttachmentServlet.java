@@ -240,7 +240,7 @@ public class AttachmentServlet extends WebdavServlet {
         String msg = "An error occurred. Ouch.";
         int ver = WikiProvider.LATEST_VERSION;
 
-        AttachmentManager mgr = m_engine.getAttachmentManager();
+        AttachmentManager mgr = BeanHolder.getAttachmentManager();
         AuthorizationManager authmgr = BeanHolder.getAuthorizationManager();
         // AuthorizationManager authmgr = m_engine.getAuthorizationManager();
 
@@ -726,7 +726,7 @@ public class AttachmentServlet extends WebdavServlet {
 
         Principal user = context.getCurrentUser();
 
-        AttachmentManager mgr = m_engine.getAttachmentManager();
+        AttachmentManager mgr = BeanHolder.getAttachmentManager();
 
         log.debug("file=" + filename);
 
@@ -772,7 +772,7 @@ public class AttachmentServlet extends WebdavServlet {
             }
 
             try {
-                m_engine.getAttachmentManager().storeAttachment(att, data);
+                BeanHolder.getAttachmentManager().storeAttachment(att, data);
             } catch (ProviderException pe) {
                 // this is a kludge, the exception that is caught here contains
                 // the i18n key

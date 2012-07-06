@@ -134,9 +134,9 @@ public class PageRenamer implements Serializable
         WikiPageProvider mPage = BeanHolder.getWikiPageProvider();
         mPage.movePage( renameFrom, renameToClean );
         
-        if( engine.getAttachmentManager().attachmentsEnabled() )
+        if( BeanHolder.getAttachmentManager().attachmentsEnabled() )
         {
-            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
+            BeanHolder.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
 
         //
@@ -157,7 +157,7 @@ public class PageRenamer implements Serializable
         //  Update the references
         //
         
-        engine.getReferenceManager().pageRemoved( fromPage );
+        BeanHolder.getReferenceManager().pageRemoved( fromPage );
         engine.updateReferences( toPage );
 
         //
@@ -171,13 +171,13 @@ public class PageRenamer implements Serializable
         //
         //  re-index the page 
         //
-        engine.getSearchManager().reindexPage(toPage);
+        BeanHolder.getSearchManager().reindexPage(toPage);
         
         @SuppressWarnings( "unchecked" )
-        Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( toPage );
+        Collection<Attachment> attachments = BeanHolder.getAttachmentManager().listAttachments( toPage );
         for (Attachment att:attachments)
         {
-            engine.getSearchManager().reindexPage(att);
+            BeanHolder.getSearchManager().reindexPage(att);
         }
 
         // Currently not used internally by JSPWiki itself, but you can use it for something else.
@@ -248,18 +248,18 @@ public class PageRenamer implements Serializable
         Set<String> referrers = new TreeSet<String>();
         
         @SuppressWarnings( "unchecked" )
-        Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        Collection<String> r = BeanHolder.getReferenceManager().findReferrers( fromPage.getName() );
         if( r != null ) referrers.addAll( r );
         
         try
         {
             @SuppressWarnings( "unchecked" )
-            Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
+            Collection<Attachment> attachments = BeanHolder.getAttachmentManager().listAttachments( fromPage );
 
             for( Attachment att : attachments  )
             {
                 @SuppressWarnings( "unchecked" )
-                Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
+                Collection<String> c = BeanHolder.getReferenceManager().findReferrers(att.getName());
 
                 if( c != null ) referrers.addAll(c);
             }

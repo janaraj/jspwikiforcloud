@@ -44,6 +44,7 @@ import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.filters.BasicPageFilter;
 import org.apache.wiki.filters.FilterException;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
@@ -79,6 +80,10 @@ public class SearchManager extends BasicPageFilter implements InternalModule,
 	 * The name of the JSON object that manages search.
 	 */
 	public static final String JSON_SEARCH = "search";
+	
+	public SearchManager(WikiEngine engine) throws WikiException {
+	    initialize(engine);
+	}
 
 	/**
 	 * Creates a new SearchManager.
@@ -90,10 +95,10 @@ public class SearchManager extends BasicPageFilter implements InternalModule,
 	 * @throws WikiException
 	 *             If it cannot be instantiated.
 	 */
-	public void initSearchManager() {
+	public void initializeSearchManager(FilterManager fManager) {
 
 		WikiEventUtils.addWikiEventListener(BeanHolder.getPageManager(),
-				WikiPageEvent.PAGE_DELETE_REQUEST, this);
+				WikiPageEvent.PAGE_DELETE_REQUEST, this, fManager);
 
 		JSONRPCManager.registerGlobalObject(JSON_SEARCH, new JSONSearch());
 	}
@@ -134,7 +139,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule,
 				String oldStyleName = MarkupParser.wikifyLink(wikiName)
 						.toLowerCase() + filename;
 
-				Set allPages = m_engine.getReferenceManager().findCreated();
+				Set allPages = BeanHolder.getReferenceManager().findCreated();
 
 				int counter = 0;
 				for (Iterator i = allPages.iterator(); i.hasNext()

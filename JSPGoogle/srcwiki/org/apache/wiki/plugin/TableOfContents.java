@@ -20,15 +20,23 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-import org.apache.wiki.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
-
-import java.util.*;
-import java.io.StringReader;
-import java.io.IOException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Provides a table of contents. 
@@ -212,12 +220,14 @@ public class TableOfContents
         {
             String wikiText = engine.getPureText( page );
             boolean runFilters = 
-                "true".equals(engine.getVariableManager().getValue(context,WikiEngine.PROP_RUNFILTERS,"true"));
+                "true".equals(BeanHolder.getVariableManager().getValue(context,WikiEngine.PROP_RUNFILTERS,"true"));
             
             try
             {
-                if( runFilters )
-                    wikiText = engine.getFilterManager().doPreTranslateFiltering( context, wikiText );
+                if( runFilters ) {
+                    FilterManager f = BeanHolder.getFilterManager();
+                    wikiText = f.doPreTranslateFiltering( context, wikiText );
+                }
             }
             catch(Exception e) 
             {

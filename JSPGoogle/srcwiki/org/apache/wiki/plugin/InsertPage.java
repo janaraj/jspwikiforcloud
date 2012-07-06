@@ -178,7 +178,7 @@ public class InsertPage
                 }
 
                 res.append("<div style=\""+style+"\""+(clazz != null ? " class=\""+clazz+"\"" : "")+">");
-                res.append( engine.textToHTML( includedContext, pageData ) );
+                res.append( TextToHtml.textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
                 res.append("</div>");
                 

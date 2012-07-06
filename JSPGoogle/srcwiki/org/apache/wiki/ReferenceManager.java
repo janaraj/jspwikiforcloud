@@ -47,9 +47,11 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.filters.BasicPageFilter;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.spring.BeanHolder;
 
 /*
@@ -157,15 +159,18 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
      * afterwards.
      */
     @SuppressWarnings("unchecked")
-    private void updatePageReferences(WikiPage page) throws ProviderException {
+    private void updatePageReferences(WikiPage page, FilterManager fManager,
+            RenderingManager rManager) throws ProviderException {
         String content = BeanHolder.getPageManager().getPageText(
                 page.getName(), WikiPageProvider.LATEST_VERSION);
 
         TreeSet<String> res = new TreeSet<String>();
-        Collection<String> links = m_engine.scanWikiLinks(page, content);
+        // Collection<String> links = m_engine.scanWikiLinks(page, content);
+        Collection<String> links = TextToHtml.scanWikiLinks(m_engine, fManager,
+                rManager, page, content);
 
         res.addAll(links);
-        Collection attachments = m_engine.getAttachmentManager()
+        Collection attachments = BeanHolder.getAttachmentManager()
                 .listAttachments(page);
 
         for (Iterator atti = attachments.iterator(); atti.hasNext();) {
@@ -173,6 +178,10 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         }
 
         internalUpdateReferences(page.getName(), res);
+    }
+
+    public ReferenceManager(WikiEngine engine) throws WikiException {
+        initialize(engine);
     }
 
     /**
@@ -186,7 +195,10 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
      * @throws ProviderException
      *             If reading of pages fail.
      */
-    public void initializePages(Collection pages) throws ProviderException {
+    // important : FilterManager as a parameter, not Spring wired
+    public void initializePages(FilterManager fManager,
+            RenderingManager rManager, Collection pages)
+            throws ProviderException {
         m_refersTo = new HashMap<String, Collection<String>>();
         m_referredBy = new HashMap<String, Set<String>>();
 
@@ -250,7 +262,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
                     if (page.getLastModified() == null) {
                         log.fatal("Provider returns null lastModified.  Please submit a bug report.");
                     } else if (page.getLastModified().getTime() > saved) {
-                        updatePageReferences(page);
+                        updatePageReferences(page, fManager, rManager);
                     }
                 }
             }
@@ -270,7 +282,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
                     // We cannot build a reference list from the contents
                     // of attachments, so we skip them.
                 } else {
-                    updatePageReferences(page);
+                    updatePageReferences(page, fManager, rManager);
 
                     serializeAttrsToDisk(page);
                 }
@@ -284,7 +296,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         log.info("Cross reference scan done in " + sw);
 
         WikiEventUtils.addWikiEventListener(BeanHolder.getPageManager(),
-                WikiPageEvent.PAGE_DELETED, this);
+                WikiPageEvent.PAGE_DELETED, this,fManager);
     }
 
     /**
@@ -300,7 +312,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         try {
             StopWatch sw = new StopWatch();
             sw.start();
-            
+
             // TODO: should be modified in reference to attribute
 
             IObjectPersist oP = m_engine.getObjectPersist();
@@ -557,9 +569,11 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
      */
     public void postSave(WikiContext context, String content) {
         WikiPage page = context.getPage();
+        FilterManager fManager = BeanHolder.getFilterManager();
+        RenderingManager rManager = BeanHolder.getRenderingManager();
 
-        updateReferences(page.getName(),
-                context.getEngine().scanWikiLinks(page, content));
+        updateReferences(page.getName(), TextToHtml.scanWikiLinks(m_engine,
+                fManager, rManager, page, content));
 
         serializeAttrsToDisk(page);
     }

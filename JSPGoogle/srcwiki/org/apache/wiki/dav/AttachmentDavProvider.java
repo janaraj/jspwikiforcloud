@@ -62,7 +62,7 @@ public class AttachmentDavProvider implements DavProvider
 
         try
         {
-            Collection atts = m_engine.getAttachmentManager().getAllAttachments();
+            Collection atts = BeanHolder.getAttachmentManager().getAllAttachments();
 
             for( Iterator i = atts.iterator(); i.hasNext(); )
             {
@@ -102,7 +102,7 @@ public class AttachmentDavProvider implements DavProvider
         try
         {
             WikiPage page = m_engine.getPage( pageName );
-            Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
+            Collection attachments = BeanHolder.getAttachmentManager().listAttachments(page);
 
             for( Iterator i = attachments.iterator(); i.hasNext(); )
             {
@@ -149,7 +149,7 @@ public class AttachmentDavProvider implements DavProvider
 
             try
             {
-                Attachment att = m_engine.getAttachmentManager().getAttachmentInfo( attName );
+                Attachment att = BeanHolder.getAttachmentManager().getAttachmentInfo( attName );
 
                 if( att != null )
                 {

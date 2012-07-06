@@ -419,7 +419,7 @@ public abstract class AbstractReferralPlugin implements WikiPlugin {
     protected String makeHTML(WikiContext context, String wikitext) {
         String result = "";
 
-        RenderingManager mgr = m_engine.getRenderingManager();
+        RenderingManager mgr = BeanHolder.getRenderingManager();
 
         try {
             MarkupParser parser = mgr.getParser(context, wikitext);

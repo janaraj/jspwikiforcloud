@@ -26,6 +26,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Includes body if page has attachments.
@@ -42,7 +43,7 @@ public class HasAttachmentsTag
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
-        AttachmentManager mgr = engine.getAttachmentManager();
+        AttachmentManager mgr = BeanHolder.getAttachmentManager();
 
         try
         {

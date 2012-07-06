@@ -20,53 +20,51 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
+import java.util.Collection;
+import java.util.Map;
 
-import java.util.*;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
- *  Plugin that enumerates the pages in the wiki that have not yet been defined.
- *  
- *  Parameters  (from AbstractReferralPlugin):
- *  <ul>
- *  <li><b>separator</b> - how to separate generated links; default is a wikitext line break,  producing a vertical list</li>
+ * Plugin that enumerates the pages in the wiki that have not yet been defined.
+ * 
+ * Parameters (from AbstractReferralPlugin):
+ * <ul>
+ * <li><b>separator</b> - how to separate generated links; default is a wikitext
+ * line break, producing a vertical list</li>
  * <li><b> maxwidth</b> - maximum width, in chars, of generated links.</li>
  * </ul>
- *
+ * 
  */
-public class UndefinedPagesPlugin
-    extends AbstractReferralPlugin
-{
+public class UndefinedPagesPlugin extends AbstractReferralPlugin {
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
-        throws PluginException
-    {
-        ReferenceManager refmgr = context.getEngine().getReferenceManager();
+    public String execute(WikiContext context, Map params)
+            throws PluginException {
+        ReferenceManager refmgr = BeanHolder.getReferenceManager();
         Collection links = refmgr.findUncreated();
 
-        super.initialize( context, params );
+        super.initialize(context, params);
 
-        links = filterAndSortCollection( links );
-        
+        links = filterAndSortCollection(links);
+
         String wikitext = null;
-        
-        if (m_lastModified)
-        {
-            throw new PluginException("parameter " + PARAM_LASTMODIFIED + " is not valid for the UndefinedPagesPlugin");
+
+        if (m_lastModified) {
+            throw new PluginException("parameter " + PARAM_LASTMODIFIED
+                    + " is not valid for the UndefinedPagesPlugin");
         }
-        
-        if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
-        {
+
+        if (m_show.equals(PARAM_SHOW_VALUE_COUNT)) {
             wikitext = "" + links.size();
+        } else {
+            wikitext = wikitizeCollection(links, m_separator, ALL_ITEMS);
         }
-        else
-        {
-            wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
-        }
-        
-        return makeHTML( context, wikitext );
+
+        return makeHTML(context, wikitext);
     }
 }

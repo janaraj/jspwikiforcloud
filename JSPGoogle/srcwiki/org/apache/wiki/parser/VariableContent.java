@@ -26,6 +26,7 @@ import org.jdom.Text;
 import org.apache.wiki.NoSuchVariableException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Stores the contents of a WikiVariable in a WikiDocument DOM tree.
@@ -83,7 +84,7 @@ public class VariableContent extends Text
         {
             try
             {
-                result = context.getEngine().getVariableManager().parseAndGetValue( context, m_varName );
+                result = BeanHolder.getVariableManager().parseAndGetValue( context, m_varName );
             }
             catch( NoSuchVariableException e )
             {

@@ -323,7 +323,7 @@ public class MetaWeblogHandler
         String name = (String) content.get( "name" );
         byte[] data = (byte[]) content.get( "bits" );
 
-        AttachmentManager attmgr = engine.getAttachmentManager();
+        AttachmentManager attmgr = BeanHolder.getAttachmentManager();
 
         try
         {

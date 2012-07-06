@@ -189,7 +189,7 @@ public class PluginContent extends Text
                 
                     if( val instanceof String )
                     {
-                        val = engine.getVariableManager().expandVariables( context, (String)val );
+                        val = BeanHolder.getVariableManager().expandVariables( context, (String)val );
                     }
                 
                     parsedParams.put( (String)e.getKey(), val );

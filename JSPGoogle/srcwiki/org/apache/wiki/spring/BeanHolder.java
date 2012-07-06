@@ -23,8 +23,11 @@ import org.apache.wiki.GetApplicationName;
 import org.apache.wiki.IObjectPersist;
 import org.apache.wiki.PageManager;
 import org.apache.wiki.PropertyReader;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.VariableManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
@@ -33,8 +36,12 @@ import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.downup.IDownloadWiki;
 import org.apache.wiki.downup.IUploadWiki;
 import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.filters.FilterListContainer;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.security.WikiSubject;
 import org.apache.wiki.util.PageSorter;
 import org.springframework.web.context.WebApplicationContext;
@@ -45,8 +52,7 @@ public class BeanHolder {
 
     public static Object getObject(String name) {
         WebApplicationContext apx = ApplicationContextHolder.getContext();
-        log.trace("get subject context : " + apx + " long="
-                + apx.getStartupDate());
+        log.trace("getObject=" + name);
         return apx.getBean(name);
     }
 
@@ -173,6 +179,41 @@ public class BeanHolder {
     public static IUploadWiki getUploadWiki() {
         IUploadWiki up = (IUploadWiki) getObject("uploadWiki");
         return up;
+    }
+
+    public static AttachmentManager getAttachmentManager() {
+        AttachmentManager up = (AttachmentManager) getObject("attachmentManager");
+        return up;
+    }
+
+    public static FilterListContainer getFiltrListContainer() {
+        FilterListContainer f = (FilterListContainer) getObject("filtrListContainer");
+        return f;
+    }
+
+    public static FilterManager getFilterManager() {
+        FilterManager f = (FilterManager) getObject("filterManager");
+        return f;
+    }
+
+    public static VariableManager getVariableManager() {
+        VariableManager va = (VariableManager) getObject("variableManager");
+        return va;
+    }
+
+    public static RenderingManager getRenderingManager() {
+        RenderingManager r = (RenderingManager) getObject("renderManager");
+        return r;
+    }
+
+    public static ReferenceManager getReferenceManager() {
+        ReferenceManager r = (ReferenceManager) getObject("referenceManager");
+        return r;
+    }
+
+    public static SearchManager getSearchManager() {
+        SearchManager s = (SearchManager) getObject("searchManager");
+        return s;
     }
 
 }

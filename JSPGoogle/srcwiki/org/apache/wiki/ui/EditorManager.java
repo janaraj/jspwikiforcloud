@@ -43,6 +43,7 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.spring.BeanHolder;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -211,7 +212,7 @@ public class EditorManager extends ModuleManager {
 		if (editor == null) {
 			// or use the default editor in jspwiki.properties
 			try {
-				editor = m_engine.getVariableManager().getValue(context,
+				editor = BeanHolder.getVariableManager().getValue(context,
 						PROP_EDITORTYPE);
 			} catch (NoSuchVariableException e) {
 			} // This is fine

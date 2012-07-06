@@ -27,6 +27,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.TextToHtml;
 import org.apache.wiki.WikiContext;
 
 /**
@@ -71,7 +72,7 @@ public class TranslateTag
             {            	
                 wikiText = wikiText.trim();
             
-                String result = context.getEngine().textToHTML( context, wikiText );
+                String result = TextToHtml.textToHTML( context, wikiText );
                 
                 log.debug("Translated text = " + result);
 

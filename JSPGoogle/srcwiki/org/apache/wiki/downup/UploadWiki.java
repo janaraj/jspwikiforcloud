@@ -34,8 +34,6 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
 
     private static final Log log = LogFactory.getLog(UploadWiki.class);
 
-    private static final String WIKI = "wiki";
-
     private PageManager pageManager;
 
     public void setPageManager(PageManager pageManager) {
@@ -58,13 +56,13 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
         public void startElement(String uri, String localName, String qName,
                 Attributes attributes) throws SAXException {
 
-            if (localName.equals(IWikiTag.WIKI)) {
+            if (qName.equals(IWikiTag.WIKI)) {
                 wikitag = true;
             }
             if (!wikitag) {
                 return;
             }
-            if (localName.equals(IWikiTag.PAGE)) {
+            if (qName.equals(IWikiTag.PAGE)) {
                 page = true;
                 pageName = attributes.getValue(IWikiTag.NAME);
                 wikiName = attributes.getValue(IWikiTag.WIKI);
@@ -72,7 +70,7 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
             if (!page) {
                 return;
             }
-            if (localName.equals(IWikiTag.VER)) {
+            if (qName.equals(IWikiTag.VER)) {
                 ver = true;
                 author = attributes.getValue(IWikiTag.AUTHOR);
                 date = new Date(attributes.getValue(IWikiTag.DATE));
@@ -84,7 +82,7 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
             if (!ver) {
                 return;
             }
-            if (localName.equals(IWikiTag.CONTENT)) {
+            if (qName.equals(IWikiTag.CONTENT)) {
                 sb = new StringBuffer();
             }
         }
@@ -100,16 +98,16 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
         @Override
         public void endElement(String uri, String localName, String qName)
                 throws SAXException {
-            if (localName.equals(IWikiTag.VER))
+            if (qName.equals(IWikiTag.VER))
                 try {
                     WikiPage page = new WikiPage(pageName);
                     page.setAuthor(author);
                     page.setVersion(pVer);
+                    log.info("Add page: " + pageName + " " + author + " version=" + pVer); 
                     pageManager.putPageText(page, sb.toString());
 
                 } catch (ProviderException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    log.fatal(e);
                 }
         }
     }

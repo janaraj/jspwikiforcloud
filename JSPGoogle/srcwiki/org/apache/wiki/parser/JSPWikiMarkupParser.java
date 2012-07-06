@@ -1447,7 +1447,7 @@ public class JSPWikiMarkupParser
 
             if( name.length() > 0 && val.length() > 0 )
             {
-                val = m_engine.getVariableManager().expandVariables( m_context,
+                val = BeanHolder.getVariableManager().expandVariables( m_context,
                                                                      val );
 
                 m_context.getPage().setAttribute( name, val );
@@ -1697,7 +1697,7 @@ public class JSPWikiMarkupParser
 
     private String findAttachment( String linktext )
     {
-        AttachmentManager mgr = m_engine.getAttachmentManager();
+        AttachmentManager mgr = BeanHolder.getAttachmentManager();
         Attachment att = null;
 
         try

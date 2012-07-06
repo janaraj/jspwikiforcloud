@@ -21,12 +21,14 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.JspException;
 
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+
+import org.apache.wiki.NoSuchVariableException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.NoSuchVariableException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Returns the value of an Wiki variable.
@@ -84,7 +86,7 @@ public class VariableTag
 
         try
         {
-            value = engine.getVariableManager().getValue( m_wikiContext,
+            value = BeanHolder.getVariableManager().getValue( m_wikiContext,
                                                           getVar() );
         }
         catch( NoSuchVariableException e )

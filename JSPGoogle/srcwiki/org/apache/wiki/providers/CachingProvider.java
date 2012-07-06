@@ -20,19 +20,38 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.wiki.*;
+import org.apache.wiki.AbstractWikiProvider;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.QueryItem;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
+import org.apache.wiki.WikiPage;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.ClassUtil;
+
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
-import com.opensymphony.oscache.base.events.*;
+import com.opensymphony.oscache.base.events.CacheEntryEvent;
+import com.opensymphony.oscache.base.events.CacheEntryEventListener;
+import com.opensymphony.oscache.base.events.CacheGroupEvent;
+import com.opensymphony.oscache.base.events.CachePatternEvent;
+import com.opensymphony.oscache.base.events.CachewideEvent;
 
 /**
  * Provides a caching page provider. This class rests on top of a real provider
@@ -604,7 +623,7 @@ public class CachingProvider extends AbstractWikiProvider implements WikiPagePro
 
 	private void refreshMetadata(WikiPage page) {
 		if (page != null && !page.hasMetadata()) {
-			RenderingManager mgr = m_engine.getRenderingManager();
+			RenderingManager mgr = BeanHolder.getRenderingManager();
 
 			try {
 				String data = m_provider.getPageText(page.getName(),

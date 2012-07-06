@@ -23,13 +23,13 @@ package org.apache.wiki.rss;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletContext;
-
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
@@ -37,6 +37,10 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  *  Represents an RSS 2.0 feed (with enclosures).  This feed provides no
@@ -86,11 +90,11 @@ public class RSS20Feed extends Feed
             //  Attachments for enclosures
             //
 
-            if( engine.getAttachmentManager().hasAttachments(p) && servletContext != null )
+            if( BeanHolder.getAttachmentManager().hasAttachments(p) && servletContext != null )
             {
                 try
                 {
-                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                    Collection c = BeanHolder.getAttachmentManager().listAttachments(p);
 
                     for( Iterator a = c.iterator(); a.hasNext(); )
                     {

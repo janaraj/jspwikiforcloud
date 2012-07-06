@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.PageTimeComparator;
+import org.apache.wiki.TextToHtml;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -632,7 +633,7 @@ public class RSSGenerator implements Serializable {
 					maxlen = MAX_CHARACTERS;
 
 				if (maxlen > 0) {
-					pageText = m_engine.textToHTML(wikiContext, pageText
+					pageText = TextToHtml.textToHTML(wikiContext, pageText
 							.substring(firstLine + 1, maxlen).trim());
 
 					if (maxlen == MAX_CHARACTERS)

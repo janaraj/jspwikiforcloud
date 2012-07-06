@@ -191,7 +191,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         if( pagename == null ) return;
         if( !m_engine.pageExists(pagename) ) return;
 
-        ReferenceManager mgr = m_engine.getReferenceManager();
+        ReferenceManager mgr = BeanHolder.getReferenceManager();
 
         Collection<String> allPages = mgr.findRefersTo( pagename );
 

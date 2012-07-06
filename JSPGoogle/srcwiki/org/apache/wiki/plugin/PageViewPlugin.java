@@ -36,7 +36,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -45,6 +45,7 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.TextToHtml;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -52,6 +53,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.util.WikiBackgroundThread;
 
 /**
@@ -334,7 +336,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
                 if( refer != null )
                 {
-                    ReferenceManager refManager = engine.getReferenceManager();
+                    ReferenceManager refManager = BeanHolder.getReferenceManager();
 
                     Iterator iter = refManager.findCreated().iterator();
 
@@ -351,7 +353,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
 
                         if( use )
                         {
-                            Collection<String> refs = engine.getReferenceManager().findReferrers( name );
+                            Collection<String> refs = BeanHolder.getReferenceManager().findReferrers( name );
 
                             if( refs != null && !refs.isEmpty() )
                             {
@@ -494,7 +496,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                         buf.append( footer );
 
                         // let the engine render the list
-                        result = engine.textToHTML( context, buf.toString() );
+                        result = TextToHtml.textToHTML( context, buf.toString() );
                     }
                 }
             }

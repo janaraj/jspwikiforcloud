@@ -20,8 +20,14 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.
@@ -49,7 +55,7 @@ public class UnusedPagesPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        ReferenceManager refmgr = context.getEngine().getReferenceManager();
+        ReferenceManager refmgr = BeanHolder.getReferenceManager();
         Collection<String> links = refmgr.findUnreferenced();
         //
         // filter out attachments if "excludeattachments" was requested:

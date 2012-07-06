@@ -113,12 +113,12 @@ public class BasicSearchProvider extends AbstractWikiProvider implements SearchP
 
     private String attachmentNames(WikiPage page, String separator)
     {
-        if(m_engine.getAttachmentManager().hasAttachments(page))
+        if(BeanHolder.getAttachmentManager().hasAttachments(page))
         {
             Collection attachments;
             try
             {
-                attachments = m_engine.getAttachmentManager().listAttachments(page);
+                attachments = BeanHolder.getAttachmentManager().listAttachments(page);
             }
             catch (ProviderException e)
             {

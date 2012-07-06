@@ -50,7 +50,7 @@ import org.apache.commons.jrcs.diff.DifferentiationFailedException;
 import org.apache.commons.jrcs.diff.Revision;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
@@ -69,6 +69,7 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.EditorManager;
 
 /**
@@ -795,7 +796,7 @@ public class SpamFilter
         try
         {
             WikiPage source = context.getEngine().getPage( m_forbiddenWordsPage );
-            Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
+            Attachment att = BeanHolder.getAttachmentManager().getAttachmentInfo( context, m_blacklist );
 
             boolean rebuild = false;
 
@@ -835,7 +836,7 @@ public class SpamFilter
 
                 if( att != null )
                 {
-                    InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
+                    InputStream in = BeanHolder.getAttachmentManager().getAttachmentStream(att);
 
                     StringWriter out = new StringWriter();
 

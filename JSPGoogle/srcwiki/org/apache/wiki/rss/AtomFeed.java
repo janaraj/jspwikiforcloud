@@ -30,17 +30,17 @@ import java.util.Iterator;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  *  Provides an Atom 1.0 standard feed, with enclosures.
@@ -119,11 +119,11 @@ public class AtomFeed extends Feed
             //  Check for enclosures
             //
 
-            if( engine.getAttachmentManager().hasAttachments(p) && servletContext != null )
+            if( BeanHolder.getAttachmentManager().hasAttachments(p) && servletContext != null )
             {
                 try
                 {
-                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                    Collection c = BeanHolder.getAttachmentManager().listAttachments(p);
 
                     for( Iterator a = c.iterator(); a.hasNext(); )
                     {

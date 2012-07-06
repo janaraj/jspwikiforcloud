@@ -20,11 +20,18 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-import org.apache.wiki.*;
-
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.ReferenceManager;
+import org.apache.wiki.TextUtil;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Displays the pages referring to the current page.
@@ -67,7 +74,7 @@ public class ReferringPagesPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        ReferenceManager refmgr = context.getEngine().getReferenceManager();
+        ReferenceManager refmgr = BeanHolder.getReferenceManager();
         String pageName = (String)params.get( PARAM_PAGE );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         

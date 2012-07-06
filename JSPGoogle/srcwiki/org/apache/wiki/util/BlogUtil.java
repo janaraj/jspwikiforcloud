@@ -56,7 +56,7 @@ public final class BlogUtil
 
         try
         {
-            blogname = engine.getVariableManager().getValue( context, VAR_BLOGNAME );
+            blogname = BeanHolder.getVariableManager().getValue( context, VAR_BLOGNAME );
         }
         catch( NoSuchVariableException e ) {}
 

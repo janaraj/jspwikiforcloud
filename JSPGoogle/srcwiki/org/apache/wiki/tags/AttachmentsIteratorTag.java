@@ -22,17 +22,19 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 import java.util.Collection;
+
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
-
-import org.apache.wiki.WikiEngine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  *  Iterates through the list of attachments one has.
@@ -63,7 +65,7 @@ public class AttachmentsIteratorTag
                                                                 PageContext.REQUEST_SCOPE );
 
         WikiEngine        engine = m_wikiContext.getEngine();
-        AttachmentManager mgr    = engine.getAttachmentManager();
+        AttachmentManager mgr    = BeanHolder.getAttachmentManager();
         WikiPage          page;
 
         page = m_wikiContext.getPage();
