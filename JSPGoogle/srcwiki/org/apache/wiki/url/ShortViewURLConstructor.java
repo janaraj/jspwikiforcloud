@@ -26,85 +26,69 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 
 /**
- *  A specific URL constructor that returns easy-to-grok URLs for
- *  VIEW and ATTACH contexts, but goes through JSP pages otherwise.
+ * A specific URL constructor that returns easy-to-grok URLs for VIEW and ATTACH
+ * contexts, but goes through JSP pages otherwise.
  * 
- *
- *  @since 2.2
+ * 
+ * @since 2.2
  */
-public class ShortViewURLConstructor 
-    extends ShortURLConstructor
-{
-    /**
-     *  {@inheritDoc}
-     */
-    public void initialize( WikiEngine engine, 
-                            Properties properties )
-    {
-        super.initialize( engine, properties );
+public class ShortViewURLConstructor extends ShortURLConstructor {
+    
+    
+    public ShortViewURLConstructor(WikiEngine engine) throws WikiException {
+        super(engine);
     }
     
-    private String makeURL( String context,
-                            String name,
-                            boolean absolute )
-    {
-        String viewurl = "%p"+m_urlPrefix+"%n";
+    private String makeURL(String context, String name, boolean absolute) {
+        String viewurl = "%p" + m_urlPrefix + "%n";
 
-        if( absolute ) 
-            viewurl = "%u"+m_urlPrefix+"%n";
+        if (absolute)
+            viewurl = "%u" + m_urlPrefix + "%n";
 
-        if( context.equals(WikiContext.VIEW) )
-        {
-            if( name == null ) return doReplacement("%u","",absolute);
-            return doReplacement( viewurl, name, absolute );
+        if (context.equals(WikiContext.VIEW)) {
+            if (name == null)
+                return doReplacement("%u", "", absolute);
+            return doReplacement(viewurl, name, absolute);
         }
 
-        return doReplacement( DefaultURLConstructor.getURLPattern(context,name),
-                              name,
-                              absolute );
+        return doReplacement(
+                DefaultURLConstructor.getURLPattern(context, name), name,
+                absolute);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String makeURL( String context,
-                           String name,
-                           boolean absolute,
-                           String parameters )
-    {
-        if( parameters != null && parameters.length() > 0 )
-        {            
-            if( context.equals(WikiContext.ATTACH) || context.equals(WikiContext.VIEW) || name == null )
-            {
-                parameters = "?"+parameters;
+    public String makeURL(String context, String name, boolean absolute,
+            String parameters) {
+        if (parameters != null && parameters.length() > 0) {
+            if (context.equals(WikiContext.ATTACH)
+                    || context.equals(WikiContext.VIEW) || name == null) {
+                parameters = "?" + parameters;
+            } else if (context.equals(WikiContext.NONE)) {
+                parameters = (name.indexOf('?') != -1) ? "&amp;" : "?"
+                        + parameters;
+            } else {
+                parameters = "&amp;" + parameters;
             }
-            else if( context.equals(WikiContext.NONE) )
-            {
-                parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
-            }
-            else
-            {
-                parameters = "&amp;"+parameters;
-            }
-        }
-        else
-        {
+        } else {
             parameters = "";
         }
-        return makeURL( context, name, absolute )+parameters;
+        return makeURL(context, name, absolute) + parameters;
     }
-    
+
     /**
-     *   Since we're only called from WikiServlet, where we get the VIEW requests,
-     *   we can safely return this.
-     *   
-     * @param request The HTTP Request that was used to end up in this page.
+     * Since we're only called from WikiServlet, where we get the VIEW requests,
+     * we can safely return this.
+     * 
+     * @param request
+     *            The HTTP Request that was used to end up in this page.
      * @return always returns "Wiki.jsp"
      */
-    public String getForwardPage( HttpServletRequest request )
-    {        
+    public String getForwardPage(HttpServletRequest request) {
         return "Wiki.jsp";
     }
 }

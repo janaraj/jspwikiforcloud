@@ -69,7 +69,6 @@ import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.spring.WikiSetContext;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
-import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
@@ -106,7 +105,7 @@ public class WikiEngine implements Serializable {
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
     // to run defines where the log goes. Not what we want.
-//    private static boolean c_configured = false;
+    // private static boolean c_configured = false;
 
     /** Stores properties. */
     private Properties m_properties;
@@ -134,7 +133,7 @@ public class WikiEngine implements Serializable {
 
     /** Property name for the "spaces in titles" -hack. */
     public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
-    
+
     public static final String WIKIACTIONRESULT = "wikiactionresult";
 
     /**
@@ -230,10 +229,10 @@ public class WikiEngine implements Serializable {
     private CommandResolver m_commandResolver = null;
 
     // private TemplateManager m_templateManager = null;
-//    private CreateProviderManager<TemplateManager> mTemplate;
+    // private CreateProviderManager<TemplateManager> mTemplate;
 
     /** Does all our diffs for us. */
-    private DifferenceManager m_differenceManager;
+    // private DifferenceManager m_differenceManager;
 
     /** Handlers page filters. */
     // private FilterManager m_filterManager;
@@ -254,14 +253,14 @@ public class WikiEngine implements Serializable {
     // private RenderingManager m_renderingManager;
     // private CreateModuleManager cRender;
 
-    private EditorManager m_editorManager;
+    // private EditorManager m_editorManager;
 
     private InternationalizationManager m_internationalizationManager;
 
     private ProgressManager m_progressManager;
 
     /** Constructs URLs */
-    private URLConstructor m_urlConstructor;
+    // private URLConstructor m_urlConstructor;
 
     /** Generates RSS feed when requested. */
     private RSSGenerator m_rssGenerator;
@@ -599,11 +598,11 @@ public class WikiEngine implements Serializable {
         // FIXME: This part of the code is getting unwieldy. We must think
         // of a better way to do the startup-sequence.
         try {
-            Class urlclass = ClassUtil.findClass("org.apache.wiki.url",
-                    TextUtil.getStringProperty(props, PROP_URLCONSTRUCTOR,
-                            "DefaultURLConstructor"));
-            m_urlConstructor = (URLConstructor) urlclass.newInstance();
-            m_urlConstructor.initialize(this, props);
+            // Class urlclass = ClassUtil.findClass("org.apache.wiki.url",
+            // TextUtil.getStringProperty(props, PROP_URLCONSTRUCTOR,
+            // "DefaultURLConstructor"));
+            // m_urlConstructor = (URLConstructor) urlclass.newInstance();
+            // m_urlConstructor.initialize(this, props);
 
             // BeanHolder.getPageManager() = (PageManager)
             // ClassUtil.getMappedObject(
@@ -616,9 +615,9 @@ public class WikiEngine implements Serializable {
             // PluginManager.class.getName(), this, props);
             // mPlugin = new CreateProviderManager<PluginManager>(this, props,
             // "pluginManager");
-            m_differenceManager = (DifferenceManager) ClassUtil
-                    .getMappedObject(DifferenceManager.class.getName(), this,
-                            props);
+            // m_differenceManager = (DifferenceManager) ClassUtil
+            // .getMappedObject(DifferenceManager.class.getName(), this,
+            // props);
             // m_attachmentManager = (AttachmentManager) ClassUtil
             // .getMappedObject(AttachmentManager.class.getName(), this,
             // props);
@@ -645,9 +644,9 @@ public class WikiEngine implements Serializable {
             // .getMappedObject(GroupManager.class.getName());
             // mGroup = new CreateModuleManager(this, props, "groupManager");
 
-            m_editorManager = (EditorManager) ClassUtil
-                    .getMappedObject(EditorManager.class.getName());
-            m_editorManager.initialize(this, props);
+            // m_editorManager = (EditorManager) ClassUtil
+            // .getMappedObject(EditorManager.class.getName());
+            // m_editorManager.initialize(this, props);
 
             m_progressManager = new ProgressManager();
 
@@ -671,8 +670,9 @@ public class WikiEngine implements Serializable {
 
             // m_templateManager = (TemplateManager) ClassUtil.getMappedObject(
             // TemplateManager.class.getName(), this, props);
-//            mTemplate = new CreateProviderManager<TemplateManager>(this, props,
-//                    "templateManager");
+            // mTemplate = new CreateProviderManager<TemplateManager>(this,
+            // props,
+            // "templateManager");
 
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event
@@ -713,24 +713,24 @@ public class WikiEngine implements Serializable {
             e.printStackTrace();
             throw new WikiException("Failed to start managers: "
                     + e.getMessage(), e);
-        } catch (ClassNotFoundException e) {
-            log.fatal(
-                    "JSPWiki could not start, URLConstructor was not found: ",
-                    e);
-            e.printStackTrace();
-            throw new WikiException(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            log.fatal(
-                    "JSPWiki could not start, URLConstructor could not be instantiated: ",
-                    e);
-            e.printStackTrace();
-            throw new WikiException(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            log.fatal(
-                    "JSPWiki could not start, URLConstructor cannot be accessed: ",
-                    e);
-            e.printStackTrace();
-            throw new WikiException(e.getMessage(), e);
+            // } catch (ClassNotFoundException e) {
+            // log.fatal(
+            // "JSPWiki could not start, URLConstructor was not found: ",
+            // e);
+            // e.printStackTrace();
+            // throw new WikiException(e.getMessage(), e);
+            // } catch (InstantiationException e) {
+            // log.fatal(
+            // "JSPWiki could not start, URLConstructor could not be instantiated: ",
+            // e);
+            // e.printStackTrace();
+            // throw new WikiException(e.getMessage(), e);
+            // } catch (IllegalAccessException e) {
+            // log.fatal(
+            // "JSPWiki could not start, URLConstructor cannot be accessed: ",
+            // e);
+            // e.printStackTrace();
+            // throw new WikiException(e.getMessage(), e);
         } catch (Exception e) {
             // Final catch-all for everything
             log.fatal(
@@ -890,9 +890,9 @@ public class WikiEngine implements Serializable {
      * 
      * @return A TemplateManager instance.
      */
-//    public TemplateManager getTemplateManager() {
-//        return mTemplate.getManager();
-//    }
+    // public TemplateManager getTemplateManager() {
+    // return mTemplate.getManager();
+    // }
 
     /**
      * Returns the base URL, telling where this Wiki actually lives.
@@ -936,8 +936,8 @@ public class WikiEngine implements Serializable {
         if (pageName == null) {
             pageName = getFrontPage();
         }
-        return getURLConstructor().makeURL(WikiContext.VIEW, pageName, true,
-                null);
+        URLConstructor u = BeanHolder.getURLConstructor();
+        return u.makeURL(WikiContext.VIEW, pageName, true, null);
     }
 
     /**
@@ -955,8 +955,8 @@ public class WikiEngine implements Serializable {
      * @since 2.0.3
      */
     public String getEditURL(String pageName) {
-        return m_urlConstructor
-                .makeURL(WikiContext.EDIT, pageName, false, null);
+        URLConstructor u = BeanHolder.getURLConstructor();
+        return u.makeURL(WikiContext.EDIT, pageName, false, null);
     }
 
     /**
@@ -972,7 +972,8 @@ public class WikiEngine implements Serializable {
      * @return An URI.
      */
     public String getAttachmentURL(String attName) {
-        return m_urlConstructor.makeURL(WikiContext.ATTACH, attName, false,
+        URLConstructor u = BeanHolder.getURLConstructor();
+        return u.makeURL(WikiContext.ATTACH, attName, false,
                 null);
     }
 
@@ -994,7 +995,8 @@ public class WikiEngine implements Serializable {
             boolean absolute) {
         if (pageName == null)
             pageName = getFrontPage();
-        return m_urlConstructor.makeURL(context, pageName, absolute, params);
+        URLConstructor u = BeanHolder.getURLConstructor();
+        return u.makeURL(context, pageName, absolute, params);
     }
 
     /**
@@ -1765,8 +1767,8 @@ public class WikiEngine implements Serializable {
         FilterManager fManager = BeanHolder.getFilterManager();
         RenderingManager reManager = BeanHolder.getRenderingManager();
 
-        rManager.updateReferences(page.getName(),
-                TextToHtml.scanWikiLinks(this, fManager, reManager,page, pageData));
+        rManager.updateReferences(page.getName(), TextToHtml.scanWikiLinks(
+                this, fManager, reManager, page, pageData));
     }
 
     /**
@@ -1797,6 +1799,7 @@ public class WikiEngine implements Serializable {
      */
     public void saveText(WikiContext context, String text) throws WikiException {
         // Check if page data actually changed; bail if not
+        DifferenceManager diff = BeanHolder.getDifferenceManager();
         WikiPage page = context.getPage();
         String oldText = getPureText(page);
         String proposedText = TextUtil.normalizePostData(text);
@@ -1821,8 +1824,7 @@ public class WikiEngine implements Serializable {
         Task prepTask = new PageManager.PreSaveWikiPageTask(context,
                 proposedText);
         Task completionTask = new PageManager.SaveWikiPageTask();
-        String diffText = m_differenceManager.makeDiff(context, oldText,
-                proposedText);
+        String diffText = diff.makeDiff(context, oldText, proposedText);
         boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         Fact[] facts = new Fact[5];
         facts[0] = new Fact(PageManager.FACT_PAGE_NAME, page.getName());
@@ -2036,8 +2038,9 @@ public class WikiEngine implements Serializable {
         if (version1 == WikiPageProvider.LATEST_VERSION) {
             page1 = "";
         }
+        DifferenceManager m_diff = BeanHolder.getDifferenceManager();
 
-        String diff = m_differenceManager.makeDiff(context, page1, page2);
+        String diff = m_diff.makeDiff(context, page1, page2);
 
         return diff;
     }
@@ -2332,9 +2335,9 @@ public class WikiEngine implements Serializable {
      * @since 2.2.6
      * @return the URL constructor
      */
-    public URLConstructor getURLConstructor() {
-        return m_urlConstructor;
-    }
+    // public URLConstructor getURLConstructor() {
+    // return m_urlConstructor;
+    // }
 
     /**
      * Returns the RSSGenerator. If the property
@@ -2459,18 +2462,18 @@ public class WikiEngine implements Serializable {
      * 
      * @return the difference manager
      */
-    public DifferenceManager getDifferenceManager() {
-        return m_differenceManager;
-    }
+    // public DifferenceManager getDifferenceManager() {
+    // return m_differenceManager;
+    // }
 
     /**
      * Returns the current EditorManager instance.
      * 
      * @return The current EditorManager.
      */
-    public EditorManager getEditorManager() {
-        return m_editorManager;
-    }
+    // public EditorManager getEditorManager() {
+    // return m_editorManager;
+    // }
 
     /**
      * Returns the current i18n manager.
@@ -2578,8 +2581,8 @@ public class WikiEngine implements Serializable {
     // return m_pageSorter;
     // }
 
-    public IObjectPersist getObjectPersist() {
-        return BeanHolder.getObjectPersist();
-    }
+    // public IObjectPersist getObjectPersist() {
+    // return BeanHolder.getObjectPersist();
+    // }
 
 }

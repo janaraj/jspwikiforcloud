@@ -20,50 +20,48 @@
  */
 package org.apache.wiki.diff;
 
-import java.util.Properties;
-
 import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.WikiProvider;
 
 /**
- *  Provides an SPI for creating a diff between two page versions.
+ * Provides an SPI for creating a diff between two page versions.
  */
-public interface DiffProvider extends WikiProvider
-{
+public interface DiffProvider extends WikiProvider {
     /**
-     * The return string is to be XHTML compliant ready to display html.  No further
-     * processing of this text will be done by the wiki engine.
+     * The return string is to be XHTML compliant ready to display html. No
+     * further processing of this text will be done by the wiki engine.
      * 
      * @return An XHTML diff.
-     * @param context The Wiki Context
-     * @param oldWikiText the old text
-     * @param newWikiText the new text
+     * @param context
+     *            The Wiki Context
+     * @param oldWikiText
+     *            the old text
+     * @param newWikiText
+     *            the new text
      */
-    public String makeDiffHtml(WikiContext context, String oldWikiText, String newWikiText);
-    
+    public String makeDiffHtml(WikiContext context, String oldWikiText,
+            String newWikiText);
+
     /**
-     *  If there is no diff provider set, this provider will work instead.
+     * If there is no diff provider set, this provider will work instead.
      */
-    public static class NullDiffProvider extends AbstractWikiProvider implements DiffProvider
-    {
+    public static class NullDiffProvider extends AbstractWikiProvider implements
+            DiffProvider {
         /**
-         *  {@inheritDoc}
+         * {@inheritDoc}
          */
-        public String makeDiffHtml(WikiContext ctx, String oldWikiText, String newWikiText)
-        {
+        public String makeDiffHtml(WikiContext ctx, String oldWikiText,
+                String newWikiText) {
             return "You are using the NullDiffProvider, check your properties file.";
         }
 
         /**
-         *  {@inheritDoc}
+         * {@inheritDoc}
          */
-        public String getProviderInfo()
-        {
+        public String getProviderInfo() {
             return "NullDiffProvider";
         }
     }
-    
+
 }

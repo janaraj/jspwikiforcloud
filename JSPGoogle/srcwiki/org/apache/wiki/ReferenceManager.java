@@ -154,6 +154,8 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 4L;
 
+    private final IObjectPersist objectPersist;
+
     /**
      * Does a full reference update. Does not sync; assumes that you do it
      * afterwards.
@@ -180,7 +182,9 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         internalUpdateReferences(page.getName(), res);
     }
 
-    public ReferenceManager(WikiEngine engine) throws WikiException {
+    public ReferenceManager(WikiEngine engine, IObjectPersist objectPersist)
+            throws WikiException {
+        this.objectPersist = objectPersist;
         initialize(engine);
     }
 
@@ -296,7 +300,7 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         log.info("Cross reference scan done in " + sw);
 
         WikiEventUtils.addWikiEventListener(BeanHolder.getPageManager(),
-                WikiPageEvent.PAGE_DELETED, this,fManager);
+                WikiPageEvent.PAGE_DELETED, this, fManager);
     }
 
     /**
@@ -315,12 +319,12 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
 
             // TODO: should be modified in reference to attribute
 
-            IObjectPersist oP = m_engine.getObjectPersist();
+            // IObjectPersist oP = objectPersist.getObjectPersist();
             // File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
 
             // in = new ObjectInputStream( new BufferedInputStream(new
             // FileInputStream(f)) );
-            in = oP.constructInput(null, SERIALIZATION_FILE);
+            in = objectPersist.constructInput(null, SERIALIZATION_FILE);
             if (in == null) {
                 return 0l;
             }
@@ -365,8 +369,9 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
 
             // out = new ObjectOutputStream(new BufferedOutputStream(
             // new xjava.io.FileOutputStream(f)));
-            IObjectPersist oP = m_engine.getObjectPersist();
-            out = oP.constructOutput(null, SERIALIZATION_FILE, false);
+            // IObjectPersist oP = m_engine.getObjectPersist();
+            out = objectPersist
+                    .constructOutput(null, SERIALIZATION_FILE, false);
 
             out.writeLong(serialVersionUID);
             out.writeLong(System.currentTimeMillis()); // Timestamp
@@ -420,8 +425,8 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
             //
             // Find attribute cache, and check if it exists
             //
-            IObjectPersist oP = m_engine.getObjectPersist();
-            in = oP.constructInput(SERIALIZATION_DIR, p.getName());
+            // IObjectPersist oP = m_engine.getObjectPersist();
+            in = objectPersist.constructInput(SERIALIZATION_DIR, p.getName());
             if (in == null) {
                 return 0L;
             }
@@ -492,10 +497,10 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         sw.start();
 
         try {
-            IObjectPersist oP = m_engine.getObjectPersist();
+            // IObjectPersist oP = m_engine.getObjectPersist();
             Set entries = p.getAttributes().entrySet();
 
-            out = oP.constructOutput(SERIALIZATION_DIR,
+            out = objectPersist.constructOutput(SERIALIZATION_DIR,
                     getHashFileName(p.getName()), entries.size() == 0);
             if (out == null) {
                 return;
@@ -638,9 +643,9 @@ public class ReferenceManager extends BasicPageFilter implements WikiProvider,
         serializeToDisk();
 
         try {
-            IObjectPersist oP = m_engine.getObjectPersist();
-            oP.constructOutput(SERIALIZATION_DIR, getHashFileName(pageName),
-                    true);
+            // IObjectPersist oP = m_engine.getObjectPersist();
+            objectPersist.constructOutput(SERIALIZATION_DIR,
+                    getHashFileName(pageName), true);
             // File f = new File(m_engine.getWorkDir(), SERIALIZATION_DIR);
 
             // f = new File(f, getHashFileName(pageName));

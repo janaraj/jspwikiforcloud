@@ -30,58 +30,46 @@ import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.EditorManager;
 
 /**
- *  Creates an editor component with all the necessary parts
- *  to get it working.
- *  <p>
- *  In the future, this component should be expanded to provide
- *  a customized version of the editor according to user preferences.
- *
- *  @since 2.2
+ * Creates an editor component with all the necessary parts to get it working.
+ * <p>
+ * In the future, this component should be expanded to provide a customized
+ * version of the editor according to user preferences.
+ * 
+ * @since 2.2
  */
-public class EditorTag
-    extends WikiBodyTag
-{
+public class EditorTag extends WikiBodyTag {
     private static final long serialVersionUID = 0L;
-    
-    public final int doWikiStartTag()
-        throws IOException
-    {
+
+    public final int doWikiStartTag() throws IOException {
         return SKIP_BODY;
     }
-       
-    public int doEndTag() throws JspException
-    {
+
+    public int doEndTag() throws JspException {
         WikiEngine engine = m_wikiContext.getEngine();
-        EditorManager mgr = engine.getEditorManager();
-        
-        String editorPath = mgr.getEditorPath( m_wikiContext );
-        
-        try
-        {
-            String page = BeanHolder.getTemplateManager().findJSP( pageContext,
-                                                               m_wikiContext.getTemplate(),
-                                                               editorPath );
-            
-            if( page == null )
-            {
-                //FIXME: should be I18N ...
-                pageContext.getOut().println("Unable to find editor '"+editorPath+"'");
+        EditorManager mgr = BeanHolder.getEditorManager();
+
+        String editorPath = mgr.getEditorPath(m_wikiContext);
+
+        try {
+            String page = BeanHolder.getTemplateManager().findJSP(pageContext,
+                    m_wikiContext.getTemplate(), editorPath);
+
+            if (page == null) {
+                // FIXME: should be I18N ...
+                pageContext.getOut().println(
+                        "Unable to find editor '" + editorPath + "'");
+            } else {
+                pageContext.include(page);
             }
-            else
-            {
-                pageContext.include( page );
-            }
+        } catch (ServletException e) {
+            log.error("Failed to include editor", e);
+            throw new JspException("Failed to include editor: "
+                    + e.getMessage());
+        } catch (IOException e) {
+            throw new JspException("Could not print Editor tag: "
+                    + e.getMessage());
         }
-        catch( ServletException e )
-        {
-            log.error("Failed to include editor",e);
-            throw new JspException("Failed to include editor: "+e.getMessage() );
-        }
-        catch( IOException e )
-        {
-            throw new JspException("Could not print Editor tag: "+e.getMessage() );
-        }
-        
+
         return EVAL_PAGE;
     }
 }

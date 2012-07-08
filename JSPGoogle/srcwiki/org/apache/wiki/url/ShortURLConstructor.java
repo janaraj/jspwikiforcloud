@@ -31,6 +31,7 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 
 
 /**
@@ -57,6 +58,11 @@ public class ShortURLConstructor
      *  name.
      */
     public static final String PROP_PREFIX = "jspwiki.shortURLConstructor.prefix";
+    
+    public ShortURLConstructor(WikiEngine engine) throws WikiException {
+        super(engine);
+    }
+    
     
     /** {@inheritDoc} */
     public void initialize( WikiEngine engine, 

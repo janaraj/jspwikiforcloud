@@ -43,66 +43,70 @@ import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.url.URLConstructor;
 
 /**
- * <p>Resolves special pages, JSPs and Commands on behalf of a
- * WikiEngine. CommandResolver will automatically resolve page names
- * with singular/plural variants. It can also detect the correct Command
- * based on parameters supplied in an HTTP request, or due to the
- * JSP being accessed.</p>
  * <p>
- * <p>CommandResolver's static {@link #findCommand(String)} method is
- * the simplest method; it looks up and returns the Command matching
- * a supplied wiki context. For example, looking up the request context
- * <code>view</code> returns {@link PageCommand#VIEW}. Use this method
- * to obtain static Command instances that aren't targeted at a particular
- * page or group.</p>
- * <p>For more complex lookups in which the caller supplies an HTTP
- * request, {@link #findCommand(HttpServletRequest, String)} will
- * look up and return the correct Command. The String parameter
- * <code>defaultContext</code> supplies the request context to use
- * if it cannot be detected. However, note that the default wiki
- * context may be over-ridden if the request was for a "special page."</p>
- * <p>For example, suppose the WikiEngine's properties specify a
- * special page called <code>UserPrefs</code>
- * that redirects to <code>UserPreferences.jsp</code>. The ordinary
- * lookup method {@linkplain #findCommand(String)} using a supplied
- * context <code>view</code> would return {@link PageCommand#VIEW}. But
- * the {@linkplain #findCommand(HttpServletRequest, String)} method,
- * when passed the same context (<code>view</code>) and an HTTP request
- * containing the page parameter value <code>UserPrefs</code>,
- * will instead return {@link WikiCommand#PREFS}.</p>
+ * Resolves special pages, JSPs and Commands on behalf of a WikiEngine.
+ * CommandResolver will automatically resolve page names with singular/plural
+ * variants. It can also detect the correct Command based on parameters supplied
+ * in an HTTP request, or due to the JSP being accessed.
+ * </p>
+ * <p>
+ * <p>
+ * CommandResolver's static {@link #findCommand(String)} method is the simplest
+ * method; it looks up and returns the Command matching a supplied wiki context.
+ * For example, looking up the request context <code>view</code> returns
+ * {@link PageCommand#VIEW}. Use this method to obtain static Command instances
+ * that aren't targeted at a particular page or group.
+ * </p>
+ * <p>
+ * For more complex lookups in which the caller supplies an HTTP request,
+ * {@link #findCommand(HttpServletRequest, String)} will look up and return the
+ * correct Command. The String parameter <code>defaultContext</code> supplies
+ * the request context to use if it cannot be detected. However, note that the
+ * default wiki context may be over-ridden if the request was for a
+ * "special page."
+ * </p>
+ * <p>
+ * For example, suppose the WikiEngine's properties specify a special page
+ * called <code>UserPrefs</code> that redirects to
+ * <code>UserPreferences.jsp</code>. The ordinary lookup method
+ * {@linkplain #findCommand(String)} using a supplied context <code>view</code>
+ * would return {@link PageCommand#VIEW}. But the
+ * {@linkplain #findCommand(HttpServletRequest, String)} method, when passed the
+ * same context (<code>view</code>) and an HTTP request containing the page
+ * parameter value <code>UserPrefs</code>, will instead return
+ * {@link WikiCommand#PREFS}.
+ * </p>
+ * 
  * @since 2.4.22
  */
 @SuppressWarnings("serial")
-public final class CommandResolver implements Serializable
-{
+public final class CommandResolver implements Serializable {
     /** Prefix in jspwiki.properties signifying special page keys. */
     private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
     /** Private map with request contexts as keys, Commands as values */
-    private static final Map<String, Command>    CONTEXTS;
+    private static final Map<String, Command> CONTEXTS;
 
     /** Private map with JSPs as keys, Commands as values */
-    private static final Map<String, Command>    JSPS;
+    private static final Map<String, Command> JSPS;
 
     /** Store the JSP-to-Command and context-to-Command mappings */
-    static
-    {
+    static {
         CONTEXTS = new HashMap<String, Command>();
         JSPS = new HashMap<String, Command>();
         Command[] commands = AbstractCommand.allCommands();
-        for( int i = 0; i < commands.length; i++ )
-        {
-            JSPS.put( commands[i].getJSP(), commands[i] );
-            CONTEXTS.put( commands[i].getRequestContext(), commands[i] );
+        for (int i = 0; i < commands.length; i++) {
+            JSPS.put(commands[i].getJSP(), commands[i]);
+            CONTEXTS.put(commands[i].getRequestContext(), commands[i]);
         }
     }
 
-    private final Log        m_log = LogFactory.getLog( CommandResolver.class );
+    private final Log m_log = LogFactory.getLog(CommandResolver.class);
 
-    private final WikiEngine    m_engine;
+    private final WikiEngine m_engine;
 
     /** If true, we'll also consider english plurals (+s) a match. */
-    private final boolean       m_matchEnglishPlurals;
+    private final boolean m_matchEnglishPlurals;
 
     /** Stores special page names as keys, and Commands as values. */
     private final Map<String, Command> m_specialPages;
@@ -111,11 +115,13 @@ public final class CommandResolver implements Serializable
      * Constructs a CommandResolver for a given WikiEngine. This constructor
      * will extract the special page references for this wiki and store them in
      * a cache used for resolution.
-     * @param engine the wiki engine
-     * @param properties the properties used to initialize the wiki
+     * 
+     * @param engine
+     *            the wiki engine
+     * @param properties
+     *            the properties used to initialize the wiki
      */
-    public CommandResolver( WikiEngine engine, Properties properties )
-    {
+    public CommandResolver(WikiEngine engine, Properties properties) {
         m_engine = engine;
         m_specialPages = new HashMap<String, Command>();
 
@@ -123,49 +129,47 @@ public final class CommandResolver implements Serializable
         // the "special page" prefix. Create maps that allow us
         // look up the correct Command based on special page name.
         // If a matching command isn't found, create a RedirectCommand.
-        for( Iterator i = properties.entrySet().iterator(); i.hasNext(); )
-        {
+        for (Iterator i = properties.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String key = (String) entry.getKey();
-            if ( key.startsWith( PROP_SPECIALPAGE ) )
-            {
-                String specialPage = key.substring( PROP_SPECIALPAGE.length() );
+            if (key.startsWith(PROP_SPECIALPAGE)) {
+                String specialPage = key.substring(PROP_SPECIALPAGE.length());
                 String jsp = (String) entry.getValue();
-                if ( specialPage != null && jsp != null )
-                {
+                if (specialPage != null && jsp != null) {
                     specialPage = specialPage.trim();
                     jsp = jsp.trim();
-                    Command command = JSPS.get( jsp );
-                    if ( command == null )
-                    {
+                    Command command = JSPS.get(jsp);
+                    if (command == null) {
                         Command redirect = RedirectCommand.REDIRECT;
-                        command = redirect.targetedCommand( jsp );
+                        command = redirect.targetedCommand(jsp);
                     }
-                    m_specialPages.put( specialPage, command );
+                    m_specialPages.put(specialPage, command);
                 }
             }
         }
 
         // Do we match plurals?
-        m_matchEnglishPlurals = TextUtil.getBooleanProperty( properties, WikiEngine.PROP_MATCHPLURALS, true );
+        m_matchEnglishPlurals = TextUtil.getBooleanProperty(properties,
+                WikiEngine.PROP_MATCHPLURALS, true);
     }
 
     /**
-     * Attempts to locate a wiki command for a supplied request context.
-     * The resolution technique is simple: we examine the list of
-     * Commands returned by {@link AbstractCommand#allCommands()} and
-     * return the one whose <code>requestContext</code> matches the
-     * supplied context. If the supplied context does not resolve to a known
-     * Command, this method throws an {@link IllegalArgumentException}.
-     * @param context the request context
+     * Attempts to locate a wiki command for a supplied request context. The
+     * resolution technique is simple: we examine the list of Commands returned
+     * by {@link AbstractCommand#allCommands()} and return the one whose
+     * <code>requestContext</code> matches the supplied context. If the supplied
+     * context does not resolve to a known Command, this method throws an
+     * {@link IllegalArgumentException}.
+     * 
+     * @param context
+     *            the request context
      * @return the resolved context
      */
-    public static Command findCommand( String context )
-    {
-        Command command = CONTEXTS.get( context );
-        if ( command == null )
-        {
-            throw new IllegalArgumentException( "Unsupported wiki context: " + context + "." );
+    public static Command findCommand(String context) {
+        Command command = CONTEXTS.get(context);
+        if (command == null) {
+            throw new IllegalArgumentException("Unsupported wiki context: "
+                    + context + ".");
         }
         return command;
     }
@@ -175,10 +179,11 @@ public final class CommandResolver implements Serializable
      * Attempts to locate a Command for a supplied wiki context and HTTP
      * request, incorporating the correct WikiPage into the command if reqiured.
      * This method will first determine what page the user requested by
-     * delegating to {@link #extractPageFromParameter(String, HttpServletRequest)}. If
-     * this page equates to a special page, we return the Command
-     * corresponding to that page. Otherwise, this method simply returns the
-     * Command for the supplied request context.
+     * delegating to
+     * {@link #extractPageFromParameter(String, HttpServletRequest)}. If this
+     * page equates to a special page, we return the Command corresponding to
+     * that page. Otherwise, this method simply returns the Command for the
+     * supplied request context.
      * </p>
      * <p>
      * The reason this method attempts to resolve against special pages is
@@ -189,89 +194,85 @@ public final class CommandResolver implements Serializable
      * <p>
      * When the caller supplies a request context and HTTP request that
      * specifies an actual wiki page (rather than a special page), this method
-     * will return a "targeted" Command that includes the resolved WikiPage
-     * as the target. (See {@link #resolvePage(HttpServletRequest, String)}
-     * for the resolution algorithm). Specifically, the Command will
-     * return a non-<code>null</code> value for its {@link AbstractCommand#getTarget()} method.
+     * will return a "targeted" Command that includes the resolved WikiPage as
+     * the target. (See {@link #resolvePage(HttpServletRequest, String)} for the
+     * resolution algorithm). Specifically, the Command will return a non-
+     * <code>null</code> value for its {@link AbstractCommand#getTarget()}
+     * method.
      * </p>
-     * <p><em>Note: if this method determines that the Command is the VIEW PageCommand,
-     * then the Command returned will always be targeted to the front page.</em></p>
-     * @param request the HTTP request; if <code>null</code>, delegates
-     * to {@link #findCommand(String)}
-     * @param defaultContext the request context to use by default
+     * <p>
+     * <em>Note: if this method determines that the Command is the VIEW PageCommand,
+     * then the Command returned will always be targeted to the front page.</em>
+     * </p>
+     * 
+     * @param request
+     *            the HTTP request; if <code>null</code>, delegates to
+     *            {@link #findCommand(String)}
+     * @param defaultContext
+     *            the request context to use by default
      * @return the resolved wiki command
      */
-    public final Command findCommand( HttpServletRequest request, String defaultContext )
-    {
+    public final Command findCommand(HttpServletRequest request,
+            String defaultContext) {
         // Corner case if request is null
-        if ( request == null )
-        {
-            return findCommand( defaultContext );
+        if (request == null) {
+            return findCommand(defaultContext);
         }
 
         Command command = null;
 
         // Determine the name of the page (which may be null)
-        String pageName = extractPageFromParameter( defaultContext, request );
+        String pageName = extractPageFromParameter(defaultContext, request);
 
         // Can we find a special-page command matching the extracted page?
-        if ( pageName != null )
-        {
-            command = m_specialPages.get( pageName );
+        if (pageName != null) {
+            command = m_specialPages.get(pageName);
         }
 
         // If we haven't found a matching command yet, extract the JSP path
         // and compare to our list of special pages
-        if ( command == null )
-        {
-            command = extractCommandFromPath( request );
+        if (command == null) {
+            command = extractCommandFromPath(request);
 
             // Otherwise: use the default context
-            if ( command == null )
-            {
-                command = CONTEXTS.get( defaultContext );
-                if ( command == null )
-                {
-                    throw new IllegalArgumentException( "Wiki context " + defaultContext + " is illegal." );
+            if (command == null) {
+                command = CONTEXTS.get(defaultContext);
+                if (command == null) {
+                    throw new IllegalArgumentException("Wiki context "
+                            + defaultContext + " is illegal.");
                 }
             }
         }
 
         // For PageCommand.VIEW, default to front page if a page wasn't supplied
-        if( PageCommand.VIEW.equals( command ) && pageName == null )
-        {
+        if (PageCommand.VIEW.equals(command) && pageName == null) {
             pageName = m_engine.getFrontPage();
         }
 
         // These next blocks handle targeting requirements
 
         // If we were passed a page parameter, try to resolve it
-        if ( command instanceof PageCommand && pageName != null )
-        {
+        if (command instanceof PageCommand && pageName != null) {
             // If there's a matching WikiPage, "wrap" the command
-            WikiPage page = resolvePage( request, pageName );
-            if ( page != null )
-            {
-                return command.targetedCommand( page );
+            WikiPage page = resolvePage(request, pageName);
+            if (page != null) {
+                return command.targetedCommand(page);
             }
         }
 
         // If "create group" command, target this wiki
         String wiki = BeanHolder.getApplicationName();
-        if ( WikiCommand.CREATE_GROUP.equals( command ) )
-        {
-            return WikiCommand.CREATE_GROUP.targetedCommand( wiki );
+        if (WikiCommand.CREATE_GROUP.equals(command)) {
+            return WikiCommand.CREATE_GROUP.targetedCommand(wiki);
         }
 
         // If group command, see if we were passed a group name
-        if ( command instanceof GroupCommand )
-        {
-            String groupName = request.getParameter( "group" );
-            groupName = TextUtil.replaceEntities( groupName );
-            if ( groupName != null && groupName.length() > 0 )
-            {
-                GroupPrincipal group = new GroupPrincipal( groupName );
-                return command.targetedCommand( group );
+        if (command instanceof GroupCommand) {
+            String groupName = request.getParameter("group");
+            groupName = TextUtil.replaceEntities(groupName);
+            if (groupName != null && groupName.length() > 0) {
+                GroupPrincipal group = new GroupPrincipal(groupName);
+                return command.targetedCommand(group);
             }
         }
 
@@ -281,8 +282,8 @@ public final class CommandResolver implements Serializable
 
     /**
      * <p>
-     * Returns the correct page name, or <code>null</code>, if no such page can be found.
-     * Aliases are considered.
+     * Returns the correct page name, or <code>null</code>, if no such page can
+     * be found. Aliases are considered.
      * </p>
      * <p>
      * In some cases, page names can refer to other pages. For example, when you
@@ -295,48 +296,42 @@ public final class CommandResolver implements Serializable
      * This facility can also be used to rewrite any page name, for example, by
      * using aliases. It can also be used to check the existence of any page.
      * </p>
+     * 
      * @since 2.4.20
-     * @param page the page name.
-     * @return The rewritten page name, or <code>null</code>, if the page does not exist.
-     * @throws ProviderException if the underlyng page provider that locates pages
-     * throws an exception
+     * @param page
+     *            the page name.
+     * @return The rewritten page name, or <code>null</code>, if the page does
+     *         not exist.
+     * @throws ProviderException
+     *             if the underlyng page provider that locates pages throws an
+     *             exception
      */
-    public final String getFinalPageName( String page ) throws ProviderException
-    {
-        boolean isThere = simplePageExists( page );
-        String  finalName = page;
+    public final String getFinalPageName(String page) throws ProviderException {
+        boolean isThere = simplePageExists(page);
+        String finalName = page;
 
-        if ( !isThere && m_matchEnglishPlurals )
-        {
-            if ( page.endsWith( "s" ) )
-            {
-                finalName = page.substring( 0, page.length() - 1 );
-            }
-            else
-            {
+        if (!isThere && m_matchEnglishPlurals) {
+            if (page.endsWith("s")) {
+                finalName = page.substring(0, page.length() - 1);
+            } else {
                 finalName += "s";
             }
 
-            isThere = simplePageExists( finalName );
+            isThere = simplePageExists(finalName);
         }
 
-        if( !isThere )
-        {
-            finalName = MarkupParser.wikifyLink( page );
+        if (!isThere) {
+            finalName = MarkupParser.wikifyLink(page);
             isThere = simplePageExists(finalName);
 
-            if( !isThere && m_matchEnglishPlurals )
-            {
-                if( finalName.endsWith( "s" ) )
-                {
-                    finalName = finalName.substring( 0, finalName.length() - 1 );
-                }
-                else
-                {
+            if (!isThere && m_matchEnglishPlurals) {
+                if (finalName.endsWith("s")) {
+                    finalName = finalName.substring(0, finalName.length() - 1);
+                } else {
                     finalName += "s";
                 }
 
-                isThere = simplePageExists( finalName );
+                isThere = simplePageExists(finalName);
             }
         }
 
@@ -354,65 +349,62 @@ public final class CommandResolver implements Serializable
      * always be redirected to "RecentChanges.jsp" instead of trying to find a
      * Wiki page called "RecentChanges".
      * </p>
-     * @param page the page name ro search for
-     * @return the URL of the special page, if the supplied page is one, or <code>null</code>
+     * 
+     * @param page
+     *            the page name ro search for
+     * @return the URL of the special page, if the supplied page is one, or
+     *         <code>null</code>
      */
-    public final String getSpecialPageReference( String page )
-    {
-        Command command = m_specialPages.get( page );
+    public final String getSpecialPageReference(String page) {
+        Command command = m_specialPages.get(page);
 
-        if ( command != null )
-        {
-            return m_engine.getURLConstructor()
-                    .makeURL( command.getRequestContext(), command.getURLPattern(), true, null );
+        if (command != null) {
+            URLConstructor u = BeanHolder.getURLConstructor();
+            return u.makeURL(command.getRequestContext(),
+                    command.getURLPattern(), true, null);
         }
 
         return null;
     }
 
     /**
-     * Extracts a Command based on the JSP path of an HTTP request.
-     * If the JSP requested matches a Command's <code>getJSP()</code>
-     * value, that Command is returned.
-     * @param request the HTTP request
+     * Extracts a Command based on the JSP path of an HTTP request. If the JSP
+     * requested matches a Command's <code>getJSP()</code> value, that Command
+     * is returned.
+     * 
+     * @param request
+     *            the HTTP request
      * @return the resolved Command, or <code>null</code> if not found
      */
-    protected final Command extractCommandFromPath( HttpServletRequest request )
-    {
+    protected final Command extractCommandFromPath(HttpServletRequest request) {
         String jsp = request.getServletPath();
 
         // Take everything to right of initial / and left of # or ?
-        int hashMark = jsp.indexOf( '#' );
-        if ( hashMark != -1 )
-        {
-            jsp = jsp.substring( 0, hashMark );
+        int hashMark = jsp.indexOf('#');
+        if (hashMark != -1) {
+            jsp = jsp.substring(0, hashMark);
         }
-        int questionMark = jsp.indexOf( '?' );
-        if ( questionMark != -1 )
-        {
-            jsp = jsp.substring( 0, questionMark );
+        int questionMark = jsp.indexOf('?');
+        if (questionMark != -1) {
+            jsp = jsp.substring(0, questionMark);
         }
-        if ( jsp.startsWith( "/" ) )
-        {
-            jsp = jsp.substring( 1 );
+        if (jsp.startsWith("/")) {
+            jsp = jsp.substring(1);
         }
 
         // Find special page reference?
-        for( Iterator i = m_specialPages.entrySet().iterator(); i.hasNext(); )
-        {
+        for (Iterator i = m_specialPages.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             Command specialCommand = (Command) entry.getValue();
-            if ( specialCommand.getJSP().equals( jsp ) )
-            {
+            if (specialCommand.getJSP().equals(jsp)) {
                 return specialCommand;
             }
         }
 
         // Still haven't found a matching command?
         // Ok, see if we match against our standard list of JSPs
-        if ( jsp.length() > 0 && JSPS.containsKey( jsp ) )
-        {
-            return JSPS.get( jsp );
+        if (jsp.length() > 0 && JSPS.containsKey(jsp)) {
+            return JSPS.get(jsp);
         }
 
         return null;
@@ -424,51 +416,49 @@ public final class CommandResolver implements Serializable
      * user, taking into acccount special pages. The resolution algorithm will:
      * <ul>
      * <li>Extract the page name from the URL according to the rules for the
-     * current {@link URLConstructor}. If a page name was
-     * passed in the request, return the correct name after taking into account
-     * potential plural matches.</li>
-     * <li>If the extracted page name is <code>null</code>, attempt to see
-     * if a "special page" was intended by examining the servlet path. For
-     * example, the request path "/UserPreferences.jsp" will resolve to
+     * current {@link URLConstructor}. If a page name was passed in the request,
+     * return the correct name after taking into account potential plural
+     * matches.</li>
+     * <li>If the extracted page name is <code>null</code>, attempt to see if a
+     * "special page" was intended by examining the servlet path. For example,
+     * the request path "/UserPreferences.jsp" will resolve to
      * "UserPreferences."</li>
      * <li>If neither of these methods work, this method returns
      * <code>null</code></li>
      * </ul>
-     * @param requestContext the request context
-     * @param request the HTTP request
+     * 
+     * @param requestContext
+     *            the request context
+     * @param request
+     *            the HTTP request
      * @return the resolved page name
      */
-    protected final String extractPageFromParameter( String requestContext, HttpServletRequest request )
-    {
+    protected final String extractPageFromParameter(String requestContext,
+            HttpServletRequest request) {
         String page;
 
         // Extract the page name from the URL directly
-        try
-        {
-            page = m_engine.getURLConstructor().parsePage( requestContext, request, m_engine.getContentEncoding() );
-            if ( page != null )
-            {
-                try
-                {
+        try {
+            URLConstructor u = BeanHolder.getURLConstructor();
+            page = u.parsePage(requestContext, request,
+                    m_engine.getContentEncoding());
+            if (page != null) {
+                try {
                     // Look for singular/plural variants; if one
                     // not found, take the one the user supplied
-                    String finalPage = getFinalPageName( page );
-                    if ( finalPage != null )
-                    {
+                    String finalPage = getFinalPageName(page);
+                    if (finalPage != null) {
                         page = finalPage;
                     }
-                }
-                catch( ProviderException e )
-                {
+                } catch (ProviderException e) {
                     // FIXME: Should not ignore!
                 }
                 return page;
             }
-        }
-        catch( IOException e )
-        {
-            m_log.error( "Unable to create context", e );
-            throw new InternalWikiException( "Big internal booboo, please check logs." );
+        } catch (IOException e) {
+            m_log.error("Unable to create context", e);
+            throw new InternalWikiException(
+                    "Big internal booboo, please check logs.");
         }
 
         // Didn't resolve; return null
@@ -480,37 +470,34 @@ public final class CommandResolver implements Serializable
      * page name and optional <code>version</code> parameter passed in an HTTP
      * request. If the <code>version</code> parameter does not exist in the
      * request, the latest version is returned.
-     * @param request the HTTP request
-     * @param page the name of the page to look up; this page <em>must</em> exist
+     * 
+     * @param request
+     *            the HTTP request
+     * @param page
+     *            the name of the page to look up; this page <em>must</em> exist
      * @return the wiki page
      */
-    protected final WikiPage resolvePage( HttpServletRequest request, String page )
-    {
+    protected final WikiPage resolvePage(HttpServletRequest request, String page) {
         // See if the user included a version parameter
         WikiPage wikipage;
         int version = WikiProvider.LATEST_VERSION;
-        String rev = request.getParameter( "version" );
+        String rev = request.getParameter("version");
 
-        if ( rev != null )
-        {
-            try
-            {
-                version = Integer.parseInt( rev );
-            }
-            catch( NumberFormatException e )
-            {
+        if (rev != null) {
+            try {
+                version = Integer.parseInt(rev);
+            } catch (NumberFormatException e) {
                 // This happens a lot with bots or other guys who are trying
-                // to test if we are vulnerable to e.g. XSS attacks.  We catch
+                // to test if we are vulnerable to e.g. XSS attacks. We catch
                 // it here so that the admin does not get tons of mail.
             }
         }
 
-        wikipage = m_engine.getPage( page, version );
+        wikipage = m_engine.getPage(page, version);
 
-        if ( wikipage == null )
-        {
-            page = MarkupParser.cleanLink( page );
-            wikipage = new WikiPage( page );
+        if (wikipage == null) {
+            page = MarkupParser.cleanLink(page);
+            wikipage = new WikiPage(page);
         }
         return wikipage;
     }
@@ -518,19 +505,21 @@ public final class CommandResolver implements Serializable
     /**
      * Determines whether a "page" exists by examining the list of special pages
      * and querying the page manager.
-     * @param page the page to seek
+     * 
+     * @param page
+     *            the page to seek
      * @return <code>true</code> if the page exists, <code>false</code>
      *         otherwise
-     * @throws ProviderException if the underlyng page provider that locates pages
-     * throws an exception
+     * @throws ProviderException
+     *             if the underlyng page provider that locates pages throws an
+     *             exception
      */
-    protected final boolean simplePageExists( String page ) throws ProviderException
-    {
-        if ( m_specialPages.containsKey( page ) )
-        {
+    protected final boolean simplePageExists(String page)
+            throws ProviderException {
+        if (m_specialPages.containsKey(page)) {
             return true;
         }
-        return BeanHolder.getPageManager().pageExists( page );
+        return BeanHolder.getPageManager().pageExists(page);
     }
 
 }

@@ -30,57 +30,58 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.spring.BeanHolder;
+import org.apache.wiki.url.URLConstructor;
 
 /**
- *  <p>Prints the groups managed by this wiki, separated by commas.
- *  <br>The groups are sorted in ascending order, and are hyperlinked to the page that displays the group's members.
- *  </p>
- *  <p>Parameters : </p>
- *  NONE
- *  
- *  
- *  @since 2.4.19
+ * <p>
+ * Prints the groups managed by this wiki, separated by commas. <br>
+ * The groups are sorted in ascending order, and are hyperlinked to the page
+ * that displays the group's members.
+ * </p>
+ * <p>
+ * Parameters :
+ * </p>
+ * NONE
+ * 
+ * 
+ * @since 2.4.19
  */
-public class Groups
-    implements WikiPlugin
-{
+public class Groups implements WikiPlugin {
     private static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
-    
+
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
-        throws PluginException
-    {
+    public String execute(WikiContext context, Map params)
+            throws PluginException {
         // Retrieve groups, and sort by name
-        WikiEngine engine = context.getEngine();
-//        GroupManager groupMgr = engine.getGroupManager();
-		GroupManager groupMgr = BeanHolder.getGroupManager();
+        // GroupManager groupMgr = engine.getGroupManager();
+        GroupManager groupMgr = BeanHolder.getGroupManager();
 
         Principal[] groups = groupMgr.getRoles();
-        Arrays.sort( groups, COMPARATOR );
+        Arrays.sort(groups, COMPARATOR);
 
         StringBuffer s = new StringBuffer();
-        
-        for ( int i = 0; i < groups.length; i++ )
-        {
+        URLConstructor u = BeanHolder.getURLConstructor();
+
+        for (int i = 0; i < groups.length; i++) {
             String name = groups[i].getName();
-            
+
             // Make URL
-            String url = engine.getURLConstructor().makeURL( WikiContext.VIEW_GROUP, name, false, null );
-            
+            String url = u.makeURL(
+                    WikiContext.VIEW_GROUP, name, false, null);
+
             // Create hyperlink
-            s.append( "<a href=\"" );
-            s.append( url );
-            s.append( "\">" );
-            s.append( name );
-            s.append( "</a>" );
-            
+            s.append("<a href=\"");
+            s.append(url);
+            s.append("\">");
+            s.append(name);
+            s.append("</a>");
+
             // If not the last one, add a comma and space
-            if ( i < ( groups.length - 1 ) )
-            {
-                s.append( ',' );
-                s.append( ' ' );
+            if (i < (groups.length - 1)) {
+                s.append(',');
+                s.append(' ');
             }
         }
         return s.toString();

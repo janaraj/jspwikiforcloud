@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
 
@@ -45,7 +46,7 @@ public class EditorIteratorTag extends IteratorTag {
 		m_wikiContext = WikiContext.findContext(pageContext);
 
 		WikiEngine engine = m_wikiContext.getEngine();
-		EditorManager mgr = engine.getEditorManager();
+		EditorManager mgr = BeanHolder.getEditorManager();
 
 		String[] editorList = mgr.getEditorList();
 

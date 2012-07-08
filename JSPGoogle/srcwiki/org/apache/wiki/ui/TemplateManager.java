@@ -52,6 +52,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
@@ -131,10 +133,14 @@ public class TemplateManager extends ModuleManager {
 
 	// private Cache m_propertyCache;
 
-	protected static final Log log = LogFactory.getLog(TemplateManager.class);
+    protected static final Log log = LogFactory.getLog(TemplateManager.class);
 
 	/** Requests a HTTP header. Value is {@value} . */
 	public static final String RESOURCE_HTTPHEADER = "httpheader";
+	
+    public TemplateManager(WikiEngine engine) throws WikiException {
+	    initialize(engine);
+	}
 
 	/**
 	 * Check the existence of a template.

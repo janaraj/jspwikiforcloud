@@ -21,11 +21,11 @@
 
 package org.apache.wiki.diff;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -37,90 +37,101 @@ import org.apache.wiki.util.ClassUtil;
  * 
  */
 @SuppressWarnings("serial")
-public class DifferenceManager implements Serializable {
-	private static final Log log = LogFactory.getLog(DifferenceManager.class);
+public class DifferenceManager extends AbstractWikiProvider {
+    private static final Log log = LogFactory.getLog(DifferenceManager.class);
 
-	/** Property value for storing a diff provider. Value is {@value} . */
-	public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";
+    /** Property value for storing a diff provider. Value is {@value} . */
+    public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";
 
-	private DiffProvider m_provider;
+    private DiffProvider m_provider;
+    
+    public void setDiffProvider(DiffProvider d) {
+        this.m_provider = d;
+    }
 
-	/**
-	 * Creates a new DifferenceManager for the given engine.
-	 * 
-	 * @param engine
-	 *            The WikiEngine.
-	 * @param props
-	 *            A set of properties.
-	 */
-	public DifferenceManager(WikiEngine engine, Properties props) {
-		loadProvider(props);
+    /**
+     * Creates a new DifferenceManager for the given engine.
+     * 
+     * @param engine
+     *            The WikiEngine.
+     * @param props
+     *            A set of properties.
+     * @throws WikiException
+     */
+    public DifferenceManager(WikiEngine engine) throws WikiException {
+        initialize(engine);
+    }
 
-		initializeProvider(engine, props);
+    @Override
+    public void initialize(WikiEngine engine, Properties properties) {
 
-		log.info("Using difference provider: " + m_provider.getProviderInfo());
-	}
+//        loadProvider(properties);
 
-	private void loadProvider(Properties props) {
-		String providerClassName = props.getProperty(PROP_DIFF_PROVIDER,
-				TraditionalDiffProvider.class.getName());
+//        initializeProvider(engine, properties);
 
-		try {
-			Class providerClass = ClassUtil.findClass("org.apache.wiki.diff",
-					providerClassName);
-			m_provider = (DiffProvider) providerClass.newInstance();
-		} catch (ClassNotFoundException e) {
-			log.warn("Failed loading DiffProvider, will use NullDiffProvider.",
-					e);
-		} catch (InstantiationException e) {
-			log.warn("Failed loading DiffProvider, will use NullDiffProvider.",
-					e);
-		} catch (IllegalAccessException e) {
-			log.warn("Failed loading DiffProvider, will use NullDiffProvider.",
-					e);
-		}
+//        log.info("Using difference provider: " + m_provider.getProviderInfo());
+    }
 
-		if (null == m_provider) {
-			m_provider = new DiffProvider.NullDiffProvider();
-		}
-	}
+    private void loadProvider(Properties props) {
+        String providerClassName = props.getProperty(PROP_DIFF_PROVIDER,
+                TraditionalDiffProvider.class.getName());
 
-	private void initializeProvider(WikiEngine engine, Properties props) {
-		try {
-			m_provider.initialize(engine, props);
-		} catch (WikiException e1) {
-			log.warn(
-					"Failed initializing DiffProvider, will use NullDiffProvider.",
-					e1);
-			m_provider = new DiffProvider.NullDiffProvider(); // doesn't need
-																// init'd
-		}
-	}
+        try {
+            Class providerClass = ClassUtil.findClass("org.apache.wiki.diff",
+                    providerClassName);
+            m_provider = (DiffProvider) providerClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            log.warn("Failed loading DiffProvider, will use NullDiffProvider.",
+                    e);
+        } catch (InstantiationException e) {
+            log.warn("Failed loading DiffProvider, will use NullDiffProvider.",
+                    e);
+        } catch (IllegalAccessException e) {
+            log.warn("Failed loading DiffProvider, will use NullDiffProvider.",
+                    e);
+        }
 
-	/**
-	 * Returns valid XHTML string to be used in any way you please.
-	 * 
-	 * @param context
-	 *            The Wiki Context
-	 * @param firstWikiText
-	 *            The old text
-	 * @param secondWikiText
-	 *            the new text
-	 * @return XHTML, or empty string, if no difference detected.
-	 */
-	public String makeDiff(WikiContext context, String firstWikiText,
-			String secondWikiText) {
-		String diff = null;
-		try {
-			diff = m_provider.makeDiffHtml(context, firstWikiText,
-					secondWikiText);
+        if (null == m_provider) {
+            m_provider = new DiffProvider.NullDiffProvider();
+        }
+    }
 
-			if (diff == null)
-				diff = "";
-		} catch (Exception e) {
-			diff = "Failed to create a diff, check the logs.";
-			log.warn(diff, e);
-		}
-		return diff;
-	}
+    private void initializeProvider(WikiEngine engine, Properties props) {
+        try {
+            m_provider.initialize(engine, props);
+        } catch (WikiException e1) {
+            log.warn(
+                    "Failed initializing DiffProvider, will use NullDiffProvider.",
+                    e1);
+            m_provider = new DiffProvider.NullDiffProvider(); // doesn't need
+                                                              // init'd
+        }
+    }
+
+    /**
+     * Returns valid XHTML string to be used in any way you please.
+     * 
+     * @param context
+     *            The Wiki Context
+     * @param firstWikiText
+     *            The old text
+     * @param secondWikiText
+     *            the new text
+     * @return XHTML, or empty string, if no difference detected.
+     */
+    public String makeDiff(WikiContext context, String firstWikiText,
+            String secondWikiText) {
+        String diff = null;
+        try {
+            diff = m_provider.makeDiffHtml(context, firstWikiText,
+                    secondWikiText);
+
+            if (diff == null)
+                diff = "";
+        } catch (Exception e) {
+            diff = "Failed to create a diff, check the logs.";
+            log.warn(diff, e);
+        }
+        return diff;
+    }
 }

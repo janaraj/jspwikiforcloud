@@ -31,7 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.url.DefaultURLConstructor;
+import org.apache.wiki.url.URLConstructor;
 
 /**
  * This provides a master servlet for dealing with short urls. It mostly does
@@ -103,7 +105,8 @@ public class WikiServlet extends HttpServlet {
 			pageName = m_engine.getFrontPage(); // FIXME: Add special pages as
 												// well
 
-		String jspPage = m_engine.getURLConstructor().getForwardPage(req);
+        URLConstructor u = BeanHolder.getURLConstructor();
+		String jspPage = u.getForwardPage(req);
 
 		RequestDispatcher dispatcher = req.getRequestDispatcher("/" + jspPage
 				+ "?page=" + m_engine.encodeName(pageName) + "&"

@@ -33,6 +33,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
+import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.downup.IDownloadWiki;
 import org.apache.wiki.downup.IUploadWiki;
 import org.apache.wiki.event.WikiEventManager;
@@ -43,7 +44,9 @@ import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.security.WikiSubject;
+import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
+import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.PageSorter;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -220,6 +223,23 @@ public class BeanHolder {
     public static TemplateManager getTemplateManager() {
         TemplateManager t = (TemplateManager) getObject("templateManager");
         return t;
+    }
+
+    public static DifferenceManager getDifferenceManager() {
+        DifferenceManager d = (DifferenceManager) getObject("differenceManager");
+        return d;
+    }
+
+    public static EditorManager getEditorManager() {
+        EditorManager e = (EditorManager) getObject("editorManager");
+        return e;
+    }
+
+    // urlConstructor
+    public static URLConstructor getURLConstructor() {
+        URLConstructor u = (URLConstructor) getObject("urlConstructor");
+        return u;
+
     }
 
 }

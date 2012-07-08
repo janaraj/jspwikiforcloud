@@ -14,6 +14,7 @@ package org.apache.wiki.spring;
 
 import java.util.ArrayList;
 
+import org.apache.wiki.IObjectPersist;
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -30,7 +31,8 @@ public class ReferenceFactoryProvider {
     private final ReferenceManager rManager;
     private final RenderingManager rendManager;
 
-    public ReferenceFactoryProvider(WikiEngine engine) throws WikiException {
+    public ReferenceFactoryProvider(WikiEngine engine,
+            IObjectPersist objectPersist) throws WikiException {
         FilterListContainer fContainer = BeanHolder.getFiltrListContainer();
         fManager = new FilterManager(engine);
         fManager.setFiltrListContainer(fContainer);
@@ -39,12 +41,12 @@ public class ReferenceFactoryProvider {
         sManager = new SearchManager(engine);
         sManager.initializeProvider();
 
-        rManager = new ReferenceManager(engine);
+        rManager = new ReferenceManager(engine, objectPersist);
         rManager.initializeProvider();
 
         fContainer.addPageFilter(rManager, -1001);
         fContainer.addPageFilter(sManager, -1002);
-        
+
         sManager.initializeSearchManager(fManager);
 
         rendManager = new RenderingManager(engine);

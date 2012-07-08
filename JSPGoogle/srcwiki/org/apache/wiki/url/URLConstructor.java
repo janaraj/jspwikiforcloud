@@ -21,12 +21,10 @@
 package org.apache.wiki.url;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 
 /**
  *  Provides an interface through which JSPWiki constructs URLs.
@@ -37,19 +35,8 @@ import org.apache.wiki.WikiEngine;
  *  
  *  @since 2.2
  */
-public interface URLConstructor extends Serializable
+public interface URLConstructor extends WikiProvider
 {
-    /**
-     *  Initializes.  Note that the engine is not fully initialized
-     *  at this point, so don't do anything fancy here - use lazy
-     *  init, if you have to.
-     *  
-     *  @param  engine The WikiEngine that this URLConstructor belongs to
-     *  @param properties Properties used to initialize
-     */
-    public void initialize( WikiEngine engine, 
-                            Properties properties );
-
     /**
      *  Constructs the URL with a bunch of parameters.
      *  
