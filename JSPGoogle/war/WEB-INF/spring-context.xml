@@ -200,7 +200,7 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="editorManager" class="org.apache.wiki.ui.TraditionalDiffProvider"
+	<bean id="editorManager" class="org.apache.wiki.ui.EditorManager"
 		init-method="initializeProvider" scope="request">
 		<constructor-arg>
 			<ref bean="wikiEngine" />
