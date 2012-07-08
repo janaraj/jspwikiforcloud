@@ -48,7 +48,7 @@ public class DownloadWiki extends AbstractWikiProvider implements IDownloadWiki 
     }
 
     private void addTag(StringBuffer sb, String tag, boolean beg) {
-        sb.append(beg ? "<" : "</" + IWikiTag.WIKI + ">");
+        sb.append((beg ? "<" : "</") + tag + ">");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DownloadWiki extends AbstractWikiProvider implements IDownloadWiki 
                     String content = pageManager.getPageText(ver.getName(),
                             ver.getVersion());
                     addTag(sb,IWikiTag.CONTENT,true);
-                    sb.append(" <![CDATA[");
+                    sb.append("<![CDATA[");
                     sb.append(content);
                     sb.append("]]>");
                     addTag(sb,IWikiTag.CONTENT,false);
@@ -89,7 +89,7 @@ public class DownloadWiki extends AbstractWikiProvider implements IDownloadWiki 
                 sb.append("</page>");
                 sb.append('\n');
             }
-            addTag(sb, IWikiTag.WIKI, true);
+            addTag(sb, IWikiTag.WIKI, false);
             return new StringReader(sb.toString());
         } catch (ProviderException e) {
             log.error(e);

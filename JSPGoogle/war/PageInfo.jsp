@@ -2,6 +2,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
@@ -21,7 +22,7 @@
     
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+    String contentPage = BeanHolder.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

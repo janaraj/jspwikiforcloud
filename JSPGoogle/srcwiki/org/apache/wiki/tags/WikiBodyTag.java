@@ -39,42 +39,42 @@ import org.apache.wiki.WikiContext;
  * 
  */
 public abstract class WikiBodyTag extends BodyTagSupport implements
-		TryCatchFinally {
-	protected WikiContext m_wikiContext;
-	static final protected Log log = LogFactory.getLog(WikiBodyTag.class);
+        TryCatchFinally {
+    protected WikiContext m_wikiContext;
+    static final protected Log log = LogFactory.getLog(WikiBodyTag.class);
 
-	public int doStartTag() throws JspException {
-		try {
-			m_wikiContext = (WikiContext) pageContext.getAttribute(
-					WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE);
+    public int doStartTag() throws JspException {
+        try {
+            m_wikiContext = (WikiContext) pageContext.getAttribute(
+                    WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE);
 
-			if (m_wikiContext == null) {
-				throw new JspException(
-						"WikiContext may not be NULL - serious internal problem!");
-			}
+            if (m_wikiContext == null) {
+                throw new JspException(
+                        "WikiContext may not be NULL - serious internal problem!");
+            }
 
-			return doWikiStartTag();
-		} catch (Exception e) {
-			log.error("Tag failed", e);
-			throw new JspException("Tag failed, check logs: " + e.getMessage());
-		}
-	}
+            return doWikiStartTag();
+        } catch (Exception e) {
+            log.error("Tag failed", e);
+            throw new JspException("Tag failed, check logs: " + e.getMessage());
+        }
+    }
 
-	/**
-	 * A local stub for doing tags. This is just called after the local
-	 * variables have been set.
-	 * 
-	 * @return As doStartTag()
-	 * @throws JspException
-	 * @throws IOException
-	 */
-	public abstract int doWikiStartTag() throws JspException, IOException;
+    /**
+     * A local stub for doing tags. This is just called after the local
+     * variables have been set.
+     * 
+     * @return As doStartTag()
+     * @throws JspException
+     * @throws IOException
+     */
+    public abstract int doWikiStartTag() throws JspException, IOException;
 
-	public void doCatch(Throwable arg0) throws Throwable {
-	}
+    public void doCatch(Throwable arg0) throws Throwable {
+    }
 
-	public void doFinally() {
-		m_wikiContext = null;
-	}
+    public void doFinally() {
+        m_wikiContext = null;
+    }
 
 }

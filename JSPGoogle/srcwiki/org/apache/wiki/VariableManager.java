@@ -20,7 +20,6 @@
  */
 package org.apache.wiki;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Date;
@@ -58,7 +57,7 @@ public class VariableManager extends AbstractWikiProvider {
      * here in lower case.
      */
 
-    static final String[] THE_BIG_NO_NO_LIST = { "jspwiki.auth.masterpassword" };
+    private static final String[] THE_BIG_NO_NO_LIST = { "jspwiki.auth.masterpassword" };
 
     /**
      * Creates a VariableManager object using the property list given.

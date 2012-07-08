@@ -350,7 +350,7 @@ public abstract class AbstractFileProvider extends AbstractWikiProvider implemen
 		File wikipagedir = new File(m_pageDirectory);
 		TreeSet<SearchResult> res = new TreeSet<SearchResult>(
 				new SearchResultComparator());
-		SearchMatcher matcher = new SearchMatcher(m_engine, query);
+		SearchMatcher matcher = new SearchMatcher(query);
 
 		File[] wikipages = wikipagedir.listFiles(new WikiFileFilter());
 

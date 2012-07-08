@@ -9,6 +9,7 @@
 <%@ page import="org.apache.wiki.workflow.NoSuchOutcomeException" %>
 <%@ page import="org.apache.wiki.workflow.Outcome" %>
 <%@ page import="org.apache.wiki.workflow.Workflow" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -87,7 +88,7 @@
     request.setAttribute("wikiSession", wikiSession);
     
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+    String contentPage = BeanHolder.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

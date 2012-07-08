@@ -13,7 +13,7 @@
 	WikiContext c = WikiContext.findContext(pageContext);
 	String progressId = c.getEngine().getProgressManager()
 			.getNewProgressIdentifier();
-	String downloadWikiAction = wiki.getTemplateManager().findJSP( pageContext,
+	String downloadWikiAction = BeanHolder.getTemplateManager().findJSP( pageContext,
             c.getTemplate(),
             "DownloadWikiAction.jsp" );
 %>

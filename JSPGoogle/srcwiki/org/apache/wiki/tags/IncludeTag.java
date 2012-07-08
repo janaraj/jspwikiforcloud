@@ -29,79 +29,63 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
- *  Includes an another JSP page, making sure that we actually pass
- *  the WikiContext correctly.
- *
- *  @since 2.0
+ * Includes an another JSP page, making sure that we actually pass the
+ * WikiContext correctly.
+ * 
+ * @since 2.0
  */
 // FIXME: Perhaps unnecessary?
-public class IncludeTag
-    extends WikiTagBase
-{
+public class IncludeTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
-    
-	private static final Log log = LogFactory.getLog(IncludeTag.class);
 
-    
+    private static final Log log = LogFactory.getLog(IncludeTag.class);
+
     protected String m_page;
 
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_page = null;
     }
 
-    public void setPage( String page )
-    {
-    	log.debug("setPage=" + page);
+    public void setPage(String page) {
+        log.debug("setPage=" + page);
         m_page = page;
     }
 
-    public String getPage()
-    {
-        return m_page;        
+    public String getPage() {
+        return m_page;
     }
 
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
+    public final int doWikiStartTag() throws IOException, ProviderException {
         // WikiEngine engine = m_wikiContext.getEngine();
 
         return SKIP_BODY;
     }
 
-    public final int doEndTag()
-        throws JspException
-    {
-        try
-        {
-            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_wikiContext.getTemplate(),
-                                                                                  m_page );
-            
-            if( page == null )
-            {
-                pageContext.getOut().println("No template file called '"+TextUtil.replaceEntities(m_page)+"'");
+    public final int doEndTag() throws JspException {
+        try {
+            String page = BeanHolder.getTemplateManager().findJSP(pageContext,
+                    m_wikiContext.getTemplate(), m_page);
+
+            if (page == null) {
+                pageContext.getOut().println(
+                        "No template file called '"
+                                + TextUtil.replaceEntities(m_page) + "'");
+            } else {
+                pageContext.include(page);
             }
-            else
-            {
-                pageContext.include( page );
-            }
-        }
-        catch( ServletException e )
-        {
-            log.warn( "Including failed, got a servlet exception from sub-page. "+
-                      "Rethrowing the exception to the JSP engine.", e );
-            throw new JspException( e.getMessage() );
-        }
-        catch( IOException e )
-        {
-            log.warn( "I/O exception - probably the connection was broken. "+
-                      "Rethrowing the exception to the JSP engine.", e );
-            throw new JspException( e.getMessage() );
+        } catch (ServletException e) {
+            log.warn(
+                    "Including failed, got a servlet exception from sub-page. "
+                            + "Rethrowing the exception to the JSP engine.", e);
+            throw new JspException(e.getMessage());
+        } catch (IOException e) {
+            log.warn("I/O exception - probably the connection was broken. "
+                    + "Rethrowing the exception to the JSP engine.", e);
+            throw new JspException(e.getMessage());
         }
 
         return EVAL_PAGE;

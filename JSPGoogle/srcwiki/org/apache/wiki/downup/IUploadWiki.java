@@ -18,6 +18,11 @@ import org.apache.wiki.WikiProvider;
 
 public interface IUploadWiki extends WikiProvider {
     
-    void uploadWiki(InputStream in);
+    /**
+     * Uploads wiki content
+     * @param in InputStream containing source xml file witk wiki conent
+     * @return null: ok, != null, error message
+     */
+    String uploadWiki(InputStream in);
 
 }

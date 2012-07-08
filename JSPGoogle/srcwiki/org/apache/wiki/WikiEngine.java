@@ -27,7 +27,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -47,41 +46,33 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.DefaultAclManager;
-import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.filters.FilterException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
-import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
-import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.spring.WikiSetContext;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.EditorManager;
-import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
-import org.apache.wiki.util.PageSorter;
 import org.apache.wiki.util.WatchDog;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -115,7 +106,7 @@ public class WikiEngine implements Serializable {
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
     // to run defines where the log goes. Not what we want.
-    private static boolean c_configured = false;
+//    private static boolean c_configured = false;
 
     /** Stores properties. */
     private Properties m_properties;
@@ -135,8 +126,6 @@ public class WikiEngine implements Serializable {
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL = "jspwiki.baseURL";
 
-    private static final String PROP_OBJECTPERSIST = "jspwiki.objectPerists";
-
     /**
      * The name for the property which allows you to set the current reference
      * style. The value is {@value} .
@@ -145,6 +134,8 @@ public class WikiEngine implements Serializable {
 
     /** Property name for the "spaces in titles" -hack. */
     public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
+    
+    public static final String WIKIACTIONRESULT = "wikiactionresult";
 
     /**
      * Property name for where the jspwiki work directory should be. If not
@@ -239,7 +230,7 @@ public class WikiEngine implements Serializable {
     private CommandResolver m_commandResolver = null;
 
     // private TemplateManager m_templateManager = null;
-    private CreateProviderManager<TemplateManager> mTemplate;
+//    private CreateProviderManager<TemplateManager> mTemplate;
 
     /** Does all our diffs for us. */
     private DifferenceManager m_differenceManager;
@@ -312,7 +303,7 @@ public class WikiEngine implements Serializable {
             .synchronizedMap(new HashMap<String, Object>());
 
     private boolean isInitialized() {
-        return mTemplate != null;
+        return m_workflowMgr != null;
     }
 
     // private IObjectPersist m_objectPersist = null;
@@ -680,8 +671,8 @@ public class WikiEngine implements Serializable {
 
             // m_templateManager = (TemplateManager) ClassUtil.getMappedObject(
             // TemplateManager.class.getName(), this, props);
-            mTemplate = new CreateProviderManager<TemplateManager>(this, props,
-                    "templateManager");
+//            mTemplate = new CreateProviderManager<TemplateManager>(this, props,
+//                    "templateManager");
 
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event
@@ -899,9 +890,9 @@ public class WikiEngine implements Serializable {
      * 
      * @return A TemplateManager instance.
      */
-    public TemplateManager getTemplateManager() {
-        return mTemplate.getManager();
-    }
+//    public TemplateManager getTemplateManager() {
+//        return mTemplate.getManager();
+//    }
 
     /**
      * Returns the base URL, telling where this Wiki actually lives.

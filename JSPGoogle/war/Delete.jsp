@@ -3,6 +3,7 @@
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="org.apache.wiki.attachment.Attachment" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -77,7 +78,7 @@
     // Set the content type and include the response content
     // FIXME: not so.
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+    String contentPage = BeanHolder.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

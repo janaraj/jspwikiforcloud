@@ -78,7 +78,7 @@
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+    String contentPage = BeanHolder.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 

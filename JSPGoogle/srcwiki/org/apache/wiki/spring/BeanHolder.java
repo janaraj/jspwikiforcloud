@@ -43,6 +43,7 @@ import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.security.WikiSubject;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.PageSorter;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -214,6 +215,11 @@ public class BeanHolder {
     public static SearchManager getSearchManager() {
         SearchManager s = (SearchManager) getObject("searchManager");
         return s;
+    }
+
+    public static TemplateManager getTemplateManager() {
+        TemplateManager t = (TemplateManager) getObject("templateManager");
+        return t;
     }
 
 }

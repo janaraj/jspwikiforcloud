@@ -12,26 +12,35 @@
  */
 package org.apache.wiki;
 
-import java.util.Properties;
+public class WikiActionResult {
 
-public class CreateProviderManager<T extends WikiProvider> {
-	
-	private final CreateModuleManager pManager;
-	
-	public CreateProviderManager(WikiEngine engine, Properties props,
-			String beanName) {
-		pManager = new CreateModuleManager(engine,props,beanName);
-	}
-	
-	public T getManager() {
-		@SuppressWarnings("unchecked")
-		T ma = (T) pManager.getBeanObject();
-		if (!pManager.isInitialized()) {
-			ma.initializeProvider();
-			pManager.setInitialized(true);
-		}
-		return ma;
-	}
+    private boolean success;
+    private String messageId;
+    private String message;
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String message) {
+        this.messageId = message;
+    }
+    
 
 }

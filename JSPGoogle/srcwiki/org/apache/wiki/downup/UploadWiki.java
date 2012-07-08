@@ -35,6 +35,7 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
     private static final Log log = LogFactory.getLog(UploadWiki.class);
 
     private PageManager pageManager;
+    private String errMess;
 
     public void setPageManager(PageManager pageManager) {
         this.pageManager = pageManager;
@@ -100,30 +101,38 @@ public class UploadWiki extends AbstractWikiProvider implements IUploadWiki {
                 throws SAXException {
             if (qName.equals(IWikiTag.VER))
                 try {
-                    WikiPage page = new WikiPage(pageName);
+                    // put page direct
+                    WikiPage page = new WikiPage(pageName,true);
                     page.setAuthor(author);
                     page.setVersion(pVer);
+                    page.setLastModified(date);
                     log.info("Add page: " + pageName + " " + author + " version=" + pVer); 
                     pageManager.putPageText(page, sb.toString());
 
                 } catch (ProviderException e) {
                     log.fatal(e);
+                    errMess = e.getMessage();
                 }
         }
     }
 
     @Override
-    public void uploadWiki(InputStream in) {
+    public String uploadWiki(InputStream in) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
+        errMess = null;
         try {
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(in, new Handler());
+            return errMess;
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            log.fatal(e);
+            return e.getMessage();
         } catch (SAXException e) {
-            e.printStackTrace();
+            log.fatal(e);
+            return e.getMessage();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.fatal(e);
+            return e.getMessage();
         }
 
     }

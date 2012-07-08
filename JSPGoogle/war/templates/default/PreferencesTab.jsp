@@ -4,7 +4,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.jar.*" %>
-
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.preferences.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -18,7 +18,7 @@
 <%
   //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
   WikiContext c = WikiContext.findContext( pageContext );
-  TemplateManager t = c.getEngine().getTemplateManager();
+  TemplateManager t = BeanHolder.getTemplateManager();
   pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
   pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
   pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );

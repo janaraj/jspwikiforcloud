@@ -40,68 +40,67 @@ import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.spring.BeanHolder;
 
 /**
- *  Interface for the search providers that handle searching the Wiki
- *
- *  @since 2.2.21.
+ * Interface for the search providers that handle searching the Wiki
+ * 
+ * @since 2.2.21.
  */
-public class BasicSearchProvider extends AbstractWikiProvider implements SearchProvider
-{
+public class BasicSearchProvider extends AbstractWikiProvider implements
+        SearchProvider {
     private static final Log log = LogFactory.getLog(BasicSearchProvider.class);
 
+    /**
+     * {@inheritDoc}
+     */
+    public void pageRemoved(WikiPage page) {
+    }
 
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
-    public void pageRemoved(WikiPage page) {}
+    public void reindexPage(WikiPage page) {
+    }
 
     /**
-     *  {@inheritDoc}
+     * Parses a query into something that we can use.
+     * 
+     * @param query
+     *            A query string.
+     * @return A parsed array.
      */
-    public void reindexPage(WikiPage page) {}
-
-    /**
-     *  Parses a query into something that we can use.
-     *  
-     *  @param query A query string.
-     *  @return A parsed array.
-     */
-    public  QueryItem[] parseQuery(String query)
-    {
-        StringTokenizer st = new StringTokenizer( query, " \t," );
+    public QueryItem[] parseQuery(String query) {
+        StringTokenizer st = new StringTokenizer(query, " \t,");
 
         QueryItem[] items = new QueryItem[st.countTokens()];
         int word = 0;
 
-        log.debug("Expecting "+items.length+" items");
+        log.debug("Expecting " + items.length + " items");
 
         //
-        //  Parse incoming search string
+        // Parse incoming search string
         //
 
-        while( st.hasMoreTokens() )
-        {
-            log.debug("Item "+word);
+        while (st.hasMoreTokens()) {
+            log.debug("Item " + word);
             String token = st.nextToken().toLowerCase();
 
             items[word] = new QueryItem();
 
-            switch( token.charAt(0) )
-            {
-              case '+':
+            switch (token.charAt(0)) {
+            case '+':
                 items[word].type = QueryItem.REQUIRED;
                 token = token.substring(1);
-                log.debug("Required word: "+token);
+                log.debug("Required word: " + token);
                 break;
 
-              case '-':
+            case '-':
                 items[word].type = QueryItem.FORBIDDEN;
                 token = token.substring(1);
-                log.debug("Forbidden word: "+token);
+                log.debug("Forbidden word: " + token);
                 break;
 
-              default:
+            default:
                 items[word].type = QueryItem.REQUESTED;
-                log.debug("Requested word: "+token);
+                log.debug("Requested word: " + token);
                 break;
             }
 
@@ -111,27 +110,22 @@ public class BasicSearchProvider extends AbstractWikiProvider implements SearchP
         return items;
     }
 
-    private String attachmentNames(WikiPage page, String separator)
-    {
-        if(BeanHolder.getAttachmentManager().hasAttachments(page))
-        {
+    private String attachmentNames(WikiPage page, String separator) {
+        if (BeanHolder.getAttachmentManager().hasAttachments(page)) {
             Collection attachments;
-            try
-            {
-                attachments = BeanHolder.getAttachmentManager().listAttachments(page);
-            }
-            catch (ProviderException e)
-            {
+            try {
+                attachments = BeanHolder.getAttachmentManager()
+                        .listAttachments(page);
+            } catch (ProviderException e) {
                 log.error("Unable to get attachments for page", e);
                 return "";
             }
 
             StringBuffer attachmentNames = new StringBuffer();
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
-            {
+            for (Iterator it = attachments.iterator(); it.hasNext();) {
                 Attachment att = (Attachment) it.next();
                 attachmentNames.append(att.getName());
-                if(it.hasNext())
+                if (it.hasNext())
                     attachmentNames.append(separator);
             }
             return attachmentNames.toString();
@@ -140,48 +134,40 @@ public class BasicSearchProvider extends AbstractWikiProvider implements SearchP
         return "";
     }
 
-    private Collection findPages( QueryItem[] query )
-    {
-        TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
-        SearchMatcher matcher = new SearchMatcher( m_engine, query );
+    private Collection findPages(QueryItem[] query) {
+        TreeSet<SearchResult> res = new TreeSet<SearchResult>(
+                new SearchResultComparator());
+        SearchMatcher matcher = new SearchMatcher(query);
 
         Collection allPages = null;
-        try
-        {
+        try {
             allPages = BeanHolder.getPageManager().getAllPages();
-        }
-        catch( ProviderException pe )
-        {
-            log.error( "Unable to retrieve page list", pe );
+        } catch (ProviderException pe) {
+            log.error("Unable to retrieve page list", pe);
             return null;
         }
 
         Iterator it = allPages.iterator();
-        while( it.hasNext() )
-        {
-            try
-            {
+        while (it.hasNext()) {
+            try {
                 WikiPage page = (WikiPage) it.next();
-                if (page != null)
-                {
+                if (page != null) {
                     String pageName = page.getName();
-                    String pageContent = BeanHolder.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
-                                         attachmentNames(page, " ");
-                    SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
+                    String pageContent = BeanHolder.getPageManager()
+                            .getPageText(pageName,
+                                    WikiPageProvider.LATEST_VERSION)
+                            + attachmentNames(page, " ");
+                    SearchResult comparison = matcher.matchPageContent(
+                            pageName, pageContent);
 
-                    if( comparison != null )
-                    {
-                        res.add( comparison );
+                    if (comparison != null) {
+                        res.add(comparison);
                     }
                 }
-            }
-            catch( ProviderException pe )
-            {
-                log.error( "Unable to retrieve page from cache", pe );
-            }
-            catch( IOException ioe )
-            {
-                log.error( "Failed to search page", ioe );
+            } catch (ProviderException pe) {
+                log.error("Unable to retrieve page from cache", pe);
+            } catch (IOException ioe) {
+                log.error("Failed to search page", ioe);
             }
         }
 
@@ -189,18 +175,16 @@ public class BasicSearchProvider extends AbstractWikiProvider implements SearchP
     }
 
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
-    public Collection findPages(String query)
-    {
+    public Collection findPages(String query) {
         return findPages(parseQuery(query));
     }
 
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
-    public String getProviderInfo()
-    {
+    public String getProviderInfo() {
         return "BasicSearchProvider";
     }
 

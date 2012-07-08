@@ -264,7 +264,7 @@
         session.setAttribute( "lock-"+pagereq, lock );
     }
 
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+    String contentPage = BeanHolder.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
 

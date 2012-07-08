@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.ui.EditorManager;
 
 /**
@@ -57,7 +58,7 @@ public class EditorTag
         
         try
         {
-            String page = engine.getTemplateManager().findJSP( pageContext,
+            String page = BeanHolder.getTemplateManager().findJSP( pageContext,
                                                                m_wikiContext.getTemplate(),
                                                                editorPath );
             

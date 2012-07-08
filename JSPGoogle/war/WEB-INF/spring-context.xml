@@ -31,28 +31,6 @@
 		scope="request">
 	</bean>
 
-<!-- 
-	<bean id="referenceManager" class="org.apache.wiki.ReferenceManager"
-		scope="request">
-	</bean>
--->	
-
-<!-- 
-	<bean id="filterManager" class="org.apache.wiki.filters.FilterManager"
-		scope="request">
-		<property name="filtrListContainer" ref="filtrListContainer"></property>
-		
-	</bean>
--->	
-
-<!--
-	<bean id="renderManager" class="org.apache.wiki.render.RenderingManager"
-		init-method="initializeProvider" scope="request">
-		<constructor-arg>
-			<ref bean="wikiEngine" />
-		</constructor-arg>
-	</bean>
--->	
 
 	<bean id="pageManager" class="org.apache.wiki.PageManager"
 		init-method="initializeProvider" scope="request">
@@ -62,11 +40,6 @@
 		<property name="pageProvider" ref="pageProvider"></property>
 	</bean>
 
-<!-- 
-	<bean id="searchManager" class="org.apache.wiki.search.SearchManager"
-		scope="request">
-	</bean>
--->
  	<bean id="searchManager" scope="request"
       factory-bean="referenceFactoryProvider"
       factory-method="getsManager">
@@ -209,7 +182,7 @@
 	<bean id="pageRenamer" class="org.apache.wiki.content.PageRenamer"
 		scope="request">
 	</bean>
-	
+		
 	<bean id="filtrListContainer" class="org.apache.wiki.filters.FilterListContainer"
 		scope="request">
 	</bean>
@@ -220,5 +193,6 @@
 			<ref bean="wikiEngine" />
 		</constructor-arg>
 	</bean>
+	
 
 </beans>

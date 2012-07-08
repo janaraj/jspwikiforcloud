@@ -27,80 +27,79 @@ import java.util.Map;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
- * Outputs an image with the supplied text as the <tt>title</tt> which is shown as a tooltip by
- * most browsers. This is intended for short one line comments.
+ * Outputs an image with the supplied text as the <tt>title</tt> which is shown
+ * as a tooltip by most browsers. This is intended for short one line comments.
  * <p>
- * See http://www.456bereastreet.com/archive/200412/the_alt_and_title_attributes/ for discussion on
- * alt and title attributes.
+ * See
+ * http://www.456bereastreet.com/archive/200412/the_alt_and_title_attributes/
+ * for discussion on alt and title attributes.
  * <p>
- * Adaption of the CommentPlugin written by Scott Hulbert, cleaned up and generalized, but basically
- * his concept.
+ * Adaption of the CommentPlugin written by Scott Hulbert, cleaned up and
+ * generalized, but basically his concept.
  * <p>
  * 
- *  <p>Parameters : </p>
- *  <ul>
- *  <li><b>_cmdline</b> - the commentText</li>
- *  </ul>
- *  
+ * <p>
+ * Parameters :
+ * </p>
+ * <ul>
+ * <li><b>_cmdline</b> - the commentText</li>
+ * </ul>
+ * 
  */
-public class Note implements WikiPlugin
-{
+public class Note implements WikiPlugin {
     /**
-     *  Property name for setting the image for the note.  Value is <tt>{@value}</tt>.
+     * Property name for setting the image for the note. Value is
+     * <tt>{@value}</tt>.
      */
-    public static final String PROP_NOTE_IMAGE    = "notePlugin.imageName";
-    
+    public static final String PROP_NOTE_IMAGE = "notePlugin.imageName";
+
     /**
-     *  The default name for the note.  Value is <tt>{@value}</tt>.
+     * The default name for the note. Value is <tt>{@value}</tt>.
      */
     public static final String DEFAULT_NOTE_IMAGE = "note.png";
 
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
-    public String execute(WikiContext context, Map params) throws PluginException
-    {
+    public String execute(WikiContext context, Map params)
+            throws PluginException {
         String commandline = (String) params.get(PluginManager.PARAM_CMDLINE);
-        if (commandline == null || commandline.length() == 0)
-        {
-            return "Unable to obtain plugin command line from parameter'" + PluginManager.PARAM_CMDLINE + "'"; // I18N
+        if (commandline == null || commandline.length() == 0) {
+            return "Unable to obtain plugin command line from parameter'"
+                    + PluginManager.PARAM_CMDLINE + "'"; // I18N
         }
 
         String commentImage = imageUrl(context);
 
         String commentText = clean(commandline);
 
-        return "<img src='" + commentImage + "' alt=\"Comment: " + 
-               commentText + "\" title=\"" + commentText + "\"/>";
+        return "<img src='" + commentImage + "' alt=\"Comment: " + commentText
+                + "\" title=\"" + commentText + "\"/>";
     }
 
-    private String imageUrl( WikiContext ctx )
-    {
+    private String imageUrl(WikiContext ctx) {
         WikiEngine engine = ctx.getEngine();
-        String commentImage = engine.getWikiProperties().getProperty(PROP_NOTE_IMAGE,
-                                                                     DEFAULT_NOTE_IMAGE);
+        String commentImage = engine.getWikiProperties().getProperty(
+                PROP_NOTE_IMAGE, DEFAULT_NOTE_IMAGE);
 
-        commentImage = "images/"+commentImage;
-        
-        String resource = engine.getTemplateManager().findResource( ctx, 
-                                                                    engine.getTemplateDir(), 
-                                                                    commentImage );
+        commentImage = "images/" + commentImage;
 
-        return ctx.getURL( WikiContext.NONE, resource );
+        String resource = BeanHolder.getTemplateManager().findResource(ctx,
+                engine.getTemplateDir(), commentImage);
+
+        return ctx.getURL(WikiContext.NONE, resource);
     }
-
 
     /**
-     *  Cleans the side.
+     * Cleans the side.
      * 
      * @param commandline
      */
-    private String clean(String commandline)
-    {
-        return TextUtil.replaceEntities( commandline );
+    private String clean(String commandline) {
+        return TextUtil.replaceEntities(commandline);
     }
 
 }
-

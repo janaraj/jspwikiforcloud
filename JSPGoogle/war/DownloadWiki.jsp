@@ -1,6 +1,7 @@
 <%@ page import="org.apache.commons.logging.*"%>
 <%@ page import="org.apache.wiki.*"%>
 <%@ page import="org.apache.wiki.tags.WikiTagBase"%>
+<%@ page import="org.apache.wiki.spring.BeanHolder" %>
 <%@ page errorPage="/Error.jsp"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%!
@@ -21,7 +22,7 @@
 
 	response.setContentType("text/html; charset="
 			+ wiki.getContentEncoding());
-	String contentPage = wiki.getTemplateManager().findJSP(pageContext,
+	String contentPage = BeanHolder.getTemplateManager().findJSP(pageContext,
 			wikiContext.getTemplate(), "DownloadWikiTemplate.jsp");
 	log.debug("Download wiki content is: " + contentPage);
 %><wiki:Include page="<%=contentPage%>" />

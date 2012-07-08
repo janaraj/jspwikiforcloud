@@ -136,7 +136,7 @@
     response.setDateHeader("Expires", new Date().getTime());
     response.setDateHeader("Last-Modified", new Date().getTime());
 
-    String contentPage = wiki.getTemplateManager().findJSP(pageContext,
+    String contentPage = BeanHolder.getTemplateManager().findJSP(pageContext,
             wikiContext.getTemplate(), "ViewTemplate.jsp");
 %>
 <wiki:Include page="<%=contentPage%>" />

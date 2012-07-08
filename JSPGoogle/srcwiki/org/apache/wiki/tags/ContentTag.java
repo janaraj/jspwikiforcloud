@@ -20,15 +20,18 @@
  */
 package org.apache.wiki.tags;
 
-import java.util.*;
-
 import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.ServletException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.*;
+import org.apache.wiki.spring.BeanHolder;
 
 /**
  * Is used as a "super include" tag, which can include the proper context based
@@ -37,162 +40,159 @@ import org.apache.wiki.*;
  * @since 2.2
  */
 public class ContentTag extends WikiTagBase {
-	private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 0L;
 
-	private Map<String, String> m_mappings = new HashMap<String, String>();
+    private Map<String, String> m_mappings = new HashMap<String, String>();
 
-	private static Log log = LogFactory.getLog(ContentTag.class);
+    private static Log log = LogFactory.getLog(ContentTag.class);
 
-	/**
-	 * Set the template for the VIEW context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setView(String s) {
-		m_mappings.put(WikiContext.VIEW, s);
-	}
+    /**
+     * Set the template for the VIEW context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setView(String s) {
+        m_mappings.put(WikiContext.VIEW, s);
+    }
 
-	/**
-	 * Set the template for the DIFF context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setDiff(String s) {
-		m_mappings.put(WikiContext.DIFF, s);
-	}
+    /**
+     * Set the template for the DIFF context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setDiff(String s) {
+        m_mappings.put(WikiContext.DIFF, s);
+    }
 
-	/**
-	 * Set the template for the INFO context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setInfo(String s) {
-		m_mappings.put(WikiContext.INFO, s);
-	}
+    /**
+     * Set the template for the INFO context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setInfo(String s) {
+        m_mappings.put(WikiContext.INFO, s);
+    }
 
-	/**
-	 * Set the template for the PREVIEW context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setPreview(String s) {
-		m_mappings.put(WikiContext.PREVIEW, s);
-	}
+    /**
+     * Set the template for the PREVIEW context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setPreview(String s) {
+        m_mappings.put(WikiContext.PREVIEW, s);
+    }
 
-	/**
-	 * Set the template for the CONFLICT context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setConflict(String s) {
-		m_mappings.put(WikiContext.CONFLICT, s);
-	}
+    /**
+     * Set the template for the CONFLICT context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setConflict(String s) {
+        m_mappings.put(WikiContext.CONFLICT, s);
+    }
 
-	/**
-	 * Set the template for the FIND context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setFind(String s) {
-		m_mappings.put(WikiContext.FIND, s);
-	}
+    /**
+     * Set the template for the FIND context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setFind(String s) {
+        m_mappings.put(WikiContext.FIND, s);
+    }
 
-	/**
-	 * Set the template for the PREFS context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setPrefs(String s) {
-		m_mappings.put(WikiContext.PREFS, s);
-	}
+    /**
+     * Set the template for the PREFS context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setPrefs(String s) {
+        m_mappings.put(WikiContext.PREFS, s);
+    }
 
-	/**
-	 * Set the template for the ERROR context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setError(String s) {
-		m_mappings.put(WikiContext.ERROR, s);
-	}
+    /**
+     * Set the template for the ERROR context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setError(String s) {
+        m_mappings.put(WikiContext.ERROR, s);
+    }
 
-	/**
-	 * Set the template for the EDIT context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setEdit(String s) {
-		m_mappings.put(WikiContext.EDIT, s);
-	}
+    /**
+     * Set the template for the EDIT context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setEdit(String s) {
+        m_mappings.put(WikiContext.EDIT, s);
+    }
 
-	/**
-	 * Set the template for the COMMENT context.
-	 * 
-	 * @param s
-	 *            The template name.
-	 */
-	public void setComment(String s) {
-		m_mappings.put(WikiContext.COMMENT, s);
-	}
+    /**
+     * Set the template for the COMMENT context.
+     * 
+     * @param s
+     *            The template name.
+     */
+    public void setComment(String s) {
+        m_mappings.put(WikiContext.COMMENT, s);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final int doWikiStartTag() throws IOException, ProviderException {
-		return SKIP_BODY;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final int doWikiStartTag() throws IOException, ProviderException {
+        return SKIP_BODY;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final int doEndTag() throws JspException {
-		try {
-			// Check the overridden templates first
-			String requestContext = m_wikiContext.getRequestContext();
-			String contentTemplate = m_mappings.get(requestContext);
+    /**
+     * {@inheritDoc}
+     */
+    public final int doEndTag() throws JspException {
+        try {
+            // Check the overridden templates first
+            String requestContext = m_wikiContext.getRequestContext();
+            String contentTemplate = m_mappings.get(requestContext);
 
-			// If not found, use the defaults
-			if (contentTemplate == null) {
-				contentTemplate = m_wikiContext.getContentTemplate();
-			}
+            // If not found, use the defaults
+            if (contentTemplate == null) {
+                contentTemplate = m_wikiContext.getContentTemplate();
+            }
 
-			// If still no, something fishy is going on
-			if (contentTemplate == null) {
-				throw new JspException(
-						"This template uses <wiki:Content/> in an unsupported context: "
-								+ requestContext);
-			}
+            // If still no, something fishy is going on
+            if (contentTemplate == null) {
+                throw new JspException(
+                        "This template uses <wiki:Content/> in an unsupported context: "
+                                + requestContext);
+            }
 
-			log.debug("Content tag contentTemplate=" + contentTemplate);
-			String page = m_wikiContext
-					.getEngine()
-					.getTemplateManager()
-					.findJSP(pageContext, m_wikiContext.getTemplate(),
-							contentTemplate);
+            log.debug("Content tag contentTemplate=" + contentTemplate);
+            String page = BeanHolder.getTemplateManager().findJSP(pageContext,
+                    m_wikiContext.getTemplate(), contentTemplate);
 
-			log.debug("Content tag page=" + page);
-			pageContext.include(page);
-			log.debug("Content tag after context include");
+            log.debug("Content tag page=" + page);
+            pageContext.include(page);
+            log.debug("Content tag after context include");
 
-		} catch (ServletException e) {
-			log.warn(
-					"Including failed, got a servlet exception from sub-page. "
-							+ "Rethrowing the exception to the JSP engine.", e);
-			throw new JspException(e.getMessage());
-		} catch (IOException e) {
-			log.warn("I/O exception - probably the connection was broken. "
-					+ "Rethrowing the exception to the JSP engine.", e);
-			throw new JspException(e.getMessage());
-		}
+        } catch (ServletException e) {
+            log.warn(
+                    "Including failed, got a servlet exception from sub-page. "
+                            + "Rethrowing the exception to the JSP engine.", e);
+            throw new JspException(e.getMessage());
+        } catch (IOException e) {
+            log.warn("I/O exception - probably the connection was broken. "
+                    + "Rethrowing the exception to the JSP engine.", e);
+            throw new JspException(e.getMessage());
+        }
 
-		return EVAL_PAGE;
-	}
+        return EVAL_PAGE;
+    }
 }

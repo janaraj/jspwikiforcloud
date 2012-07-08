@@ -69,6 +69,8 @@ public class WikiPage implements Cloneable, Comparable {
 
     private Acl m_accessList = null;
 
+    private final boolean putdirect;
+
     /**
      * Create a new WikiPage using a given engine and name.
      * 
@@ -80,6 +82,23 @@ public class WikiPage implements Cloneable, Comparable {
     public WikiPage(String name) {
         m_name = name;
         m_wiki = BeanHolder.getApplicationName();
+        putdirect = false;
+    }
+
+    /**
+     * Create a new WikiPage using a given engine and name.
+     * 
+     * @param engine
+     *            The WikiEngine that owns this page.
+     * @param name
+     *            The name of the page.
+     * @param purdirect
+     *            : only impacts save page, put page with version and modiftime
+     */
+    public WikiPage(String name, boolean putdirect) {
+        m_name = name;
+        m_wiki = BeanHolder.getApplicationName();
+        this.putdirect = putdirect;
     }
 
     /**
@@ -373,4 +392,10 @@ public class WikiPage implements Cloneable, Comparable {
     public int hashCode() {
         return m_name.hashCode() * m_version;
     }
+
+    public boolean isPutdirect() {
+        return putdirect;
+    }
+    
+    
 }

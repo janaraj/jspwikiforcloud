@@ -35,7 +35,6 @@ import java.io.StringReader;
 // FIXME: Move to the "search" -package in 3.0
 public class SearchMatcher {
     private QueryItem[] m_queries;
-    private WikiEngine m_engine;
 
     /**
      * Creates a new SearchMatcher.
@@ -45,8 +44,7 @@ public class SearchMatcher {
      * @param queries
      *            A list of queries
      */
-    public SearchMatcher(WikiEngine engine, QueryItem[] queries) {
-        m_engine = engine;
+    public SearchMatcher(QueryItem[] queries) {
         m_queries = queries;
     }
 
