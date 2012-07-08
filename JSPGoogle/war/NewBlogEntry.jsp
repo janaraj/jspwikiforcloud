@@ -1,6 +1,7 @@
 <%@ page import="org.apache.commons.logging.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.plugin.*" %>
+<%@ page import="org.apache.wiki.spring.BeanHolder"%>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 

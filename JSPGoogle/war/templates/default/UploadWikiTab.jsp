@@ -10,8 +10,6 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default" />
 <%
-    WikiActionResult res = (WikiActionResult) request
-            .getAttribute(WikiEngine.WIKIACTIONRESULT);
     String returnPage = request.getServletPath() + "?"
             + request.getQueryString();
     WikiEngine wiki = BeanHolder.getWikiEngine();

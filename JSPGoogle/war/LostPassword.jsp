@@ -52,7 +52,7 @@
             Object[] args = {
                     profile.getLoginName(),
                     randomPassword,
-                    wiki.getURLConstructor().makeURL(WikiContext.NONE,
+                    BeanHolder.getURLConstructor().makeURL(WikiContext.NONE,
                             "Login.jsp", true, ""),
                     BeanHolder.getApplicationName() };
 
