@@ -23,14 +23,26 @@
 		</constructor-arg>
 	</bean>
 
+<!-- 
 	<bean id="groupProvider" class="org.apache.wiki.providers.WikiGaeGroupDatabase"
 		scope="request">
 	</bean>
+-->	
+	
+	<bean id="groupProvider" class="org.apache.wiki.providers.WikiBlobGroupDatabase"
+		scope="request">
+	</bean>
+		
 
+<!-- 
 	<bean id="userProvider" class="org.apache.wiki.providers.WikiGaeUserDatabase"
 		scope="request">
 	</bean>
+-->	
 
+	<bean id="userProvider" class="org.apache.wiki.providers.WikiBlobUserDatabase"
+		scope="request">
+	</bean>
 
 	<bean id="pageManager" class="org.apache.wiki.PageManager"
 		init-method="initializeProvider" scope="request">
