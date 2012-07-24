@@ -12,9 +12,6 @@
  */
 package org.apache.wiki.providers.jpa;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -28,7 +25,7 @@ import javax.persistence.NamedQuery;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
-@Entity
+@Entity 
 @NamedQueries({
 		@NamedQuery(name = "FindGroup", query = "SELECT P FROM GroupEnt P WHERE P.name= :1"),
 		@NamedQuery(name = "AllGroups", query = "SELECT P FROM GroupEnt P") })
@@ -36,7 +33,7 @@ public class GroupEnt {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Key key;
+	private Key key; 
 
 	@Basic(optional = false)
 	private String name;

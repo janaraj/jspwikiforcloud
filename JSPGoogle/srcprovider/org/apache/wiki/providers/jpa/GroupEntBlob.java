@@ -12,32 +12,13 @@
  */
 package org.apache.wiki.providers.jpa;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
-@Entity
-public class GroupMember implements Serializable {
-	
-	private String memberName;
-	
-	private Date addDate;
+@NamedQueries({
+    @NamedQuery(name = "GetGroup", query = "SELECT P FROM GroupEntBlob P") })
+@Entity 
+public class GroupEntBlob extends AbstractEntBlob {
 
-	public String getMemberName() {
-		return memberName;
-	}
-
-	public void setMemberName(String memberName) {
-		this.memberName = memberName;
-	}
-
-	public Date getAddDate() {
-		return addDate;
-	}
-
-	public void setAddDate(Date addDate) {
-		this.addDate = addDate;
-	}		
 }
-

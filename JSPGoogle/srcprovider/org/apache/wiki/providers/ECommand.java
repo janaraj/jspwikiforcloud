@@ -16,10 +16,12 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.providers.jpa.EMF;
 
 /**
@@ -31,66 +33,78 @@ import org.apache.wiki.providers.jpa.EMF;
  */
 abstract class ECommand {
 
-	private final Log log = LogFactory.getLog(ECommand.class);
-	private final boolean transact;
+    private final Log log = LogFactory.getLog(ECommand.class);
+    private final boolean transact;
 
-	protected ECommand(boolean transact) {
-		this.transact = transact;
-	}
+    protected ECommand(boolean transact) {
+        this.transact = transact;
+    }
 
-	protected abstract void runCommand(EntityManager eF);
+    protected abstract void runCommand(EntityManager eF) throws WikiSecurityException;
 
-	/**
-	 * Encloses command. Simple gets EntityManager, run command and close.
-	 */
-	private void prunCommand(boolean transact) {
-		EntityManager eF = EMF.getF();
-		EntityTransaction tran = null;
-		if (transact) {
-			tran = eF.getTransaction();
-			tran.begin();
-		}
-		try {
-			runCommand(eF);
-			if (tran != null) {
-				tran.commit();
-			}
-		} catch (Exception e) {
-			log.fatal("JPA command", e);
-			if (tran != null) {
-				tran.rollback();
-			}
-		} finally {
-			eF.close();
-		}
-	}
+    /**
+     * Encloses command. Simple gets EntityManager, run command and close.
+     */
+    private void prunCommand(boolean transact) {
+        EntityManager eF = EMF.getF();
+        EntityTransaction tran = null;
+        if (transact) {
+            tran = eF.getTransaction();
+            tran.begin();
+        }
+        try {
+            runCommand(eF);
+            if (tran != null) {
+                tran.commit();
+            }
+        } catch (Exception e) {
+            log.fatal("JPA command", e);
+            if (tran != null) {
+                tran.rollback();
+            }
+        } finally {
+            eF.close();
+        }
+    }
 
-	void runCommand() {
-		prunCommand(transact);
-	}
+    void runCommand() {
+        prunCommand(transact);
+    }
 
-	protected Date getToday() {
-		return new Date();
-	}
+    protected Date getToday() {
+        return new Date();
+    }
 
-	/**
-	 * Helper for getting NamedQuery and setting string parameters
-	 * 
-	 * @param eF
-	 *            EntityManager
-	 * @param namedQuery
-	 *            NamedQuery names
-	 * @param Params
-	 *            Parameters (if any)
-	 * @return Query with parameters set (if exist)
-	 */
-	static Query getQuery(EntityManager eF, String namedQuery, String... Params) {
-		Query query = eF.createNamedQuery(namedQuery);
-		int i = 1;
-		for (String param : Params) {
-			query.setParameter(i++, param);
-		}
-		return query;
-	}
+    /**
+     * Helper for getting NamedQuery and setting string parameters
+     * 
+     * @param eF
+     *            EntityManager
+     * @param namedQuery
+     *            NamedQuery names
+     * @param Params
+     *            Parameters (if any)
+     * @return Query with parameters set (if exist)
+     */
+    static Query getQuery(EntityManager eF, String namedQuery, String... Params) {
+        Query query = eF.createNamedQuery(namedQuery);
+        int i = 1;
+        for (String param : Params) {
+            query.setParameter(i++, param);
+        }
+        return query;
+    }
+
+    static <T> T getSingleObject(EntityManager eF, String namedQuery,
+            String... Params) {
+        Query q = getQuery(eF, namedQuery, Params);
+        T o = null;
+        try {
+            o = (T) q.getSingleResult();
+        } catch (NoResultException e) {
+            // expected
+        }
+        return (T) o;
+    }
 
 }

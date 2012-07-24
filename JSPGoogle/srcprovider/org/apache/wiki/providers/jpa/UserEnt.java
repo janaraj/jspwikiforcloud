@@ -14,11 +14,9 @@ package org.apache.wiki.providers.jpa;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;

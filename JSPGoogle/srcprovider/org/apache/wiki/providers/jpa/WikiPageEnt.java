@@ -26,7 +26,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Text;
 
 /**
- * @author hotel
+ * @author hotel 
  * 
  */
 @Entity

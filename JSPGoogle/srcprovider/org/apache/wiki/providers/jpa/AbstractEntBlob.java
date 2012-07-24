@@ -10,7 +10,6 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-
 package org.apache.wiki.providers.jpa;
 
 import javax.persistence.Basic;
@@ -18,57 +17,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.MappedSuperclass;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
- 
-@Entity
-@NamedQueries({
-		@NamedQuery(name = "GetObject", query = "SELECT P FROM WikiObject P WHERE P.pDir= :1 AND P.pName = :2")
-})
-public class WikiObject {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Key key;
-	
-	@Basic
-	private String pDir;
-	
-	@Basic
-    private String pName;
-	
-	@Basic
-	private Blob object;
 
-	public String getpDir() {
-		return pDir;
-	}
+@Entity 
+@MappedSuperclass
+public abstract class AbstractEntBlob {
 
-	public void setpDir(String pDir) {
-		this.pDir = pDir;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Key key;
 
-	public String getpName() {
-		return pName;
-	}
+    @Basic(optional = false)
+    private Blob contentByte;
 
-	public void setpName(String pName) {
-		this.pName = pName;
-	}
+    public byte[] getContent() {
+        return contentByte.getBytes();
+    }
 
-	public Blob getObject() {
-		return object;
-	}
+    public void setContent(byte[] memberList) {
+        this.contentByte = new Blob(memberList);
+    }
 
-	public void setObject(Blob object) {
-		this.object = object;
-	}
-	
-	public void setBytes(byte[] b) {
-		setObject(new Blob(b));
-	}
-	
 }
