@@ -31,6 +31,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
@@ -239,7 +240,11 @@ public class BeanHolder {
     public static URLConstructor getURLConstructor() {
         URLConstructor u = (URLConstructor) getObject("urlConstructor");
         return u;
+    }
 
+    // TODO: change
+    public static String getWikiName() {
+        return WikiPrincipal.WIKI_NAME;
     }
 
 }
