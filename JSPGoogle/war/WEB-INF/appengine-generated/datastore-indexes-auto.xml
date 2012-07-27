@@ -1,11 +1,4 @@
-<!-- Indices written at Tue, 24 Jul 2012 22:42:02 UTC -->
+<!-- Indices written at Fri, 27 Jul 2012 21:06:16 UTC -->
 
-<datastore-indexes>
+<datastore-indexes/>
 
-    <!-- Used 862 times in query history -->
-    <datastore-index kind="WikiPageEnt" ancestor="false" source="auto">
-        <property name="name" direction="asc"/>
-        <property name="version" direction="desc"/>
-    </datastore-index>
-
-</datastore-indexes>

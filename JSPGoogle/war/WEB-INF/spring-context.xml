@@ -16,12 +16,19 @@
 		scope="request">
 	</bean>
 
+<!-- 
 	<bean id="pageProvider" class="org.apache.wiki.providers.WikiGaePageProvider"
 		init-method="initializeProvider" scope="request">
 		<constructor-arg>
 			<ref bean="wikiEngine" />
 		</constructor-arg>
 	</bean>
+-->	
+	
+	<bean id="pageProvider" class="org.apache.wiki.providers.WikiPageBlobProvider"
+		init-method="initializeProvider" scope="request">
+	</bean>
+	
 
 <!-- 
 	<bean id="groupProvider" class="org.apache.wiki.providers.WikiGaeGroupDatabase"

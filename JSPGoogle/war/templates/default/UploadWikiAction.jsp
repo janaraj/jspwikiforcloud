@@ -49,20 +49,19 @@
             String fileName = fItem.getName();
             log.info("Got file name: " + fileName + " start uploading");
             in = fItem.openStream();
+            IUploadWiki up = BeanHolder.getUploadWiki();
+            String errMess = up.uploadWiki(in);
+            WikiActionResult res = new WikiActionResult();
+            res.setSuccess(errMess == null);
+            if (errMess == null) {
+                res.setMessageId("downloadwiki.uploadwiki.resultok");
+            } else {
+                res.setMessageId("downloadwiki.uploadwiki.resulterror");
+                res.setMessage(errMess);
+            }
+            request.setAttribute(WikiEngine.WIKIACTIONRESULT, res);
         }
     } // while
-
-    IUploadWiki up = BeanHolder.getUploadWiki();
-    String errMess = up.uploadWiki(in);
-    WikiActionResult res = new WikiActionResult();
-    res.setSuccess(errMess == null);
-    if (errMess == null) {
-        res.setMessageId("downloadwiki.uploadwiki.resultok");
-    } else {
-        res.setMessageId("downloadwiki.uploadwiki.resulterror");
-        res.setMessage(errMess);
-    }
-    request.setAttribute(WikiEngine.WIKIACTIONRESULT, res);
 
     RequestDispatcher rd = context.getRequestDispatcher(returnPage);
     rd.forward(request, response);
