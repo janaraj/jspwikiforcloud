@@ -168,6 +168,7 @@ public class WikiGaePageProvider extends AbstractWikiProvider implements
 
             boolean createVersion = !pageExists(page.getName())
                     || isDifferentAuthor || isContinuationEditTimeExpired;
+            
             if (ret.ent == null) {
                 ret.ent = new WikiPageEnt();
             }

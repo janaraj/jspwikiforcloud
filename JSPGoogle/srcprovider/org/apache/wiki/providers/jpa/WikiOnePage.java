@@ -9,8 +9,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and 
  * limitations under the License.
- */
-
+ */ 
 package org.apache.wiki.providers.jpa;
 
 import javax.persistence.Basic;
@@ -21,54 +20,44 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
-    
+import com.google.appengine.api.datastore.Text;
+ 
+@NamedQueries({ @NamedQuery(name = "FindPageContent", query = "SELECT P FROM WikiOnePage P WHERE P.pageKey = :1 AND P.version = :2") })
 @Entity
-@NamedQueries({
-		@NamedQuery(name = "GetObject", query = "SELECT P FROM WikiObject P WHERE P.pDir= :1 AND P.pName = :2")
-})
-public class WikiObject {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Key key;
-	
-	@Basic
-	private String pDir;
-	
-	@Basic
-    private String pName;
-	
-	@Basic
-	private Blob object;
+public class WikiOnePage {
+  
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Key key;
 
-	public String getpDir() {
-		return pDir;
-	}
+    @Basic(optional = false)
+    private long pageKey;
 
-	public void setpDir(String pDir) {
-		this.pDir = pDir;
-	}
+    @Basic(optional = false)
+    private int version;
+    
+    @Basic(optional = false)
+    private Text content;
 
-	public String getpName() {
-		return pName;
-	}
+    public void setPageKey(long pageKey) {
+        this.pageKey = pageKey;
+    }
 
-	public void setpName(String pName) {
-		this.pName = pName;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public Blob getObject() {
-		return object;
-	}
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
-	public void setObject(Blob object) {
-		this.object = object;
-	}
-	
-	public void setBytes(byte[] b) {
-		setObject(new Blob(b));
-	}
-	
+    public String getContent() {
+        return content.getValue();
+    }
+
+    public void setContent(String content) {
+        this.content = new Text(content);
+    }
+
 }

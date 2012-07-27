@@ -35,6 +35,7 @@ abstract class ECommand {
 
     private final Log log = LogFactory.getLog(ECommand.class);
     private final boolean transact;
+    private EntityTransaction tran;
 
     protected ECommand(boolean transact) {
         this.transact = transact;
@@ -47,7 +48,7 @@ abstract class ECommand {
      */
     private void prunCommand(boolean transact) {
         EntityManager eF = EMF.getF();
-        EntityTransaction tran = null;
+        tran = null;
         if (transact) {
             tran = eF.getTransaction();
             tran.begin();
@@ -65,6 +66,14 @@ abstract class ECommand {
         } finally {
             eF.close();
         }
+    }
+    
+    protected void commit() {
+        if (tran != null) {
+            tran.commit();
+            tran.begin();            
+        }
+        
     }
 
     void runCommand() {
@@ -86,17 +95,17 @@ abstract class ECommand {
      *            Parameters (if any)
      * @return Query with parameters set (if exist)
      */
-    static Query getQuery(EntityManager eF, String namedQuery, String... Params) {
+    static Query getQuery(EntityManager eF, String namedQuery, Object... Params) {
         Query query = eF.createNamedQuery(namedQuery);
         int i = 1;
-        for (String param : Params) {
+        for (Object param : Params) {
             query.setParameter(i++, param);
         }
         return query;
     }
 
     static <T> T getSingleObject(EntityManager eF, String namedQuery,
-            String... Params) {
+            Object... Params) {
         Query q = getQuery(eF, namedQuery, Params);
         T o = null;
         try {

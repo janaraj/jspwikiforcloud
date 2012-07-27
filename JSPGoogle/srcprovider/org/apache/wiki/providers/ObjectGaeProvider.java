@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -28,8 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.IObjectPersist;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiException;
 import org.apache.wiki.providers.jpa.WikiObject;
 
 /**

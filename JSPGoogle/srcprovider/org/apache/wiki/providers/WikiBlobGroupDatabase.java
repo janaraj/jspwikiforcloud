@@ -56,51 +56,51 @@ public class WikiBlobGroupDatabase extends AbstractWikiProvider implements
 
         private Collection<GroupMember> memberList;
 
-        public String getName() {
+        String getName() {
             return name;
         }
 
-        public void setName(String name) {
+        void setName(String name) {
             this.name = name;
         }
 
-        public String getCreator() {
+        String getCreator() {
             return creator;
         }
 
-        public void setCreator(String creator) {
+        void setCreator(String creator) {
             this.creator = creator;
         }
 
-        public Date getCreated() {
+        Date getCreated() {
             return created;
         }
 
-        public void setCreated(Date created) {
+        void setCreated(Date created) {
             this.created = created;
         }
 
-        public String getModifier() {
+        String getModifier() {
             return modifier;
         }
 
-        public void setModifier(String modifier) {
+        void setModifier(String modifier) {
             this.modifier = modifier;
         }
 
-        public Date getModified() {
+        Date getModified() {
             return modified;
         }
 
-        public void setModified(Date modified) {
+        void setModified(Date modified) {
             this.modified = modified;
         }
 
-        public Collection<GroupMember> getMemberList() {
+        Collection<GroupMember> getMemberList() {
             return memberList;
         }
 
-        public void setMemberList(Collection<GroupMember> memberList) {
+        void setMemberList(Collection<GroupMember> memberList) {
             this.memberList = memberList;
         }
 

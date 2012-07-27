@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 package org.apache.wiki.providers.jpa;
-
+ 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +21,7 @@ import javax.persistence.MappedSuperclass;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
-
+ 
 @Entity 
 @MappedSuperclass
 public abstract class AbstractEntBlob {
@@ -41,4 +41,8 @@ public abstract class AbstractEntBlob {
         this.contentByte = new Blob(memberList);
     }
 
+    public Key getKey() {
+        return key;
+    }
+    
 }

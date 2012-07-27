@@ -12,6 +12,8 @@
         <class>org.apache.wiki.providers.jpa.UserEnt</class>        
         <class>org.apache.wiki.providers.jpa.GroupEntBlob</class>        
         <class>org.apache.wiki.providers.jpa.UserEntBlob</class>        
+        <class>org.apache.wiki.providers.jpa.WikiOnePage</class>        
+        <class>org.apache.wiki.providers.jpa.WikiPageBlob</class>        
         <exclude-unlisted-classes>true</exclude-unlisted-classes>        
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>

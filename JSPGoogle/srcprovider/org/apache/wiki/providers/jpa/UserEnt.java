@@ -109,7 +109,7 @@ public class UserEnt {
 
 	public String getWikiName() {
 		return wikiName;
-	}
+	} 
 
 	public void setWikiName(String wikiName) {
 		this.wikiName = wikiName;
@@ -137,7 +137,7 @@ public class UserEnt {
 
 	public void setuId(String uId) {
 		this.uId = uId;
-	}
+	} 
 
 	public Map<String, Serializable> getAttributes() throws IOException {
 		Map<String, Serializable> hMap = new HashMap<String, Serializable>();

@@ -9,16 +9,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and 
  * limitations under the License.
- */
+ */ 
 package org.apache.wiki.providers.jpa;
  
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
  
-@NamedQueries({
-    @NamedQuery(name = "GetUser", query = "SELECT P FROM UserEntBlob P") })
-@Entity 
-public class UserEntBlob extends AbstractEntBlob {
+@NamedQueries({ 
+    @NamedQuery(name = "FindListOfPages", query = "SELECT P FROM WikiPageBlob P"),
+    @NamedQuery(name = "FindPage", query = "SELECT P FROM WikiPageBlob P WHERE P.pageName = :1 ") })
+@Entity
+public class WikiPageBlob extends AbstractEntBlob {
     
+    @Basic(optional = false)
+    private String pageName;
+
+    public String getPageName() {
+        return pageName;
+    }
+
+    public void setPageName(String pageName) {
+        this.pageName = pageName;
+    }      
+
 }

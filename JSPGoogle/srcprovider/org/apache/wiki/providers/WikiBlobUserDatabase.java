@@ -57,67 +57,67 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
 
         private String sAttributes;
 
-        public String getLoginName() {
+        String getLoginName() {
             return loginName;
         }
 
-        public void setLoginName(String loginName) {
+        void setLoginName(String loginName) {
             this.loginName = loginName;
         }
 
-        public String getFullName() {
+        String getFullName() {
             return fullName;
         }
 
-        public void setFullName(String fullName) {
+        void setFullName(String fullName) {
             this.fullName = fullName;
         }
 
-        public String getEmail() {
+        String getEmail() {
             return email;
         }
 
-        public void setEmail(String email) {
+        void setEmail(String email) {
             this.email = email;
         }
 
-        public String getPassword() {
+        String getPassword() {
             return password;
         }
 
-        public void setPassword(String password) {
+        void setPassword(String password) {
             this.password = password;
         }
 
-        public String getWikiName() {
+        String getWikiName() {
             return wikiName;
         }
 
-        public void setWikiName(String wikiName) {
+        void setWikiName(String wikiName) {
             this.wikiName = wikiName;
         }
 
-        public Date getCreated() {
+        Date getCreated() {
             return created;
         }
 
-        public void setCreated(Date created) {
+        void setCreated(Date created) {
             this.created = created;
         }
 
-        public Date getModified() {
+        Date getModified() {
             return modified;
         }
 
-        public void setModified(Date modified) {
+        void setModified(Date modified) {
             this.modified = modified;
         }
 
-        public String getuId() {
+        String getuId() {
             return uId;
         }
 
-        public void setuId(String uId) {
+        void setuId(String uId) {
             this.uId = uId;
         }
 
@@ -251,8 +251,14 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
             e.setFullName(profile.getFullname());
             e.setLockExpiry(profile.getLockExpiry());
             e.setModified(getToday());
-            String cryptedPassword = getHash(profile.getPassword());
-            e.setPassword(cryptedPassword);
+            // do not change password
+            if (profile.getPassword() != null) {
+              String cryptedPassword = getHash(profile.getPassword());
+              e.setPassword(cryptedPassword);
+              log.trace("User: " + profile.getLoginName() + ". Password has been changed.");
+            } else {
+                log.trace("User: " + profile.getLoginName() + ". Modify profile without password chaning.");
+            }
             e.setuId(profile.getUid());
             e.setWikiName(profile.getWikiName());
         }

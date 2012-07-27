@@ -10,12 +10,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-package org.apache.wiki.providers.jpa;
-
+package org.apache.wiki.providers.jpa; 
+ 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-
+ 
 @NamedQueries({
     @NamedQuery(name = "GetGroup", query = "SELECT P FROM GroupEntBlob P") })
 @Entity 

@@ -24,14 +24,14 @@ import javax.persistence.NamedQuery;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
-
+  
 @Entity 
 @NamedQueries({
 		@NamedQuery(name = "FindGroup", query = "SELECT P FROM GroupEnt P WHERE P.name= :1"),
 		@NamedQuery(name = "AllGroups", query = "SELECT P FROM GroupEnt P") })
 public class GroupEnt {
-
-	@Id
+ 
+	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Key key; 
 
@@ -50,8 +50,6 @@ public class GroupEnt {
 	@Basic(optional = false)
 	private Date modified;
 
-	// @Lob
-	// private Collection<GroupMember> memberList;
 	@Basic(optional = false)
 	private Blob memberList;
 
