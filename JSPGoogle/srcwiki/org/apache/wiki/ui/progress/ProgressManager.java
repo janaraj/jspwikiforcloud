@@ -25,90 +25,92 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.logging.Log; import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.rpc.RPCCallable;
 import org.apache.wiki.rpc.json.JSONRPCManager;
 
 /**
- *  Manages progressing items.  In general this class is used whenever JSPWiki
- *  is doing something which may require a long time.  In addition, this manager
- *  provides a JSON interface for finding remotely what the progress is.  The
- *  JSON object name is JSON_PROGRESSTRACKER = "{@value #JSON_PROGRESSTRACKER}".
- *
- *  @since  2.6
+ * Manages progressing items. In general this class is used whenever JSPWiki is
+ * doing something which may require a long time. In addition, this manager
+ * provides a JSON interface for finding remotely what the progress is. The JSON
+ * object name is JSON_PROGRESSTRACKER = "{@value #JSON_PROGRESSTRACKER}".
+ * 
+ * @since 2.6
  */
 // FIXME: Needs synchronization, I think
 @SuppressWarnings("serial")
-public class ProgressManager implements Serializable
-{
-    private Map<String,ProgressItem> m_progressingTasks = new HashMap<String,ProgressItem>();
+public class ProgressManager implements Serializable {
+    private Map<String, ProgressItem> m_progressingTasks = new HashMap<String, ProgressItem>();
 
     /**
-     *  The name of the progress tracker JSON object.  The current value is "{@value}",
+     * The name of the progress tracker JSON object. The current value is
+     * "{@value} ",
      */
     public static final String JSON_PROGRESSTRACKER = "progressTracker";
 
-    private static Log log = LogFactory.getLog( ProgressManager.class );
+    private static Log log = LogFactory.getLog(ProgressManager.class);
 
     /**
-     *  Creates a new ProgressManager.
+     * Creates a new ProgressManager.
      */
-    public ProgressManager()
-    {
-        JSONRPCManager.registerGlobalObject( JSON_PROGRESSTRACKER, new JSONTracker() );
+    public ProgressManager() {
+        JSONRPCManager.registerGlobalObject(JSON_PROGRESSTRACKER,
+                new JSONTracker());
     }
 
     /**
-     *  You can use this to get an unique process identifier.
-     *  @return A new random value
+     * You can use this to get an unique process identifier.
+     * 
+     * @return A new random value
      */
-    public String getNewProgressIdentifier()
-    {
+    public String getNewProgressIdentifier() {
         return UUID.randomUUID().toString();
     }
 
     /**
-     *  Call this method to get your ProgressItem into the ProgressManager queue.
-     *  The ProgressItem will be moved to state STARTED.
-     *
-     *  @param pi ProgressItem to start
-     *  @param id The progress identifier
+     * Call this method to get your ProgressItem into the ProgressManager queue.
+     * The ProgressItem will be moved to state STARTED.
+     * 
+     * @param pi
+     *            ProgressItem to start
+     * @param id
+     *            The progress identifier
      */
-    public void startProgress( ProgressItem pi, String id )
-    {
-        log.debug("Adding "+id+" to progress queue");
-        m_progressingTasks.put( id, pi );
-        pi.setState( ProgressItem.STARTED );
+    public void startProgress(ProgressItem pi, String id) {
+        log.debug("Adding " + id + " to progress queue");
+        m_progressingTasks.put(id, pi);
+        pi.setState(ProgressItem.STARTED);
     }
 
     /**
-     *  Call this method to remove your ProgressItem from the queue (after which
-     *  getProgress() will no longer find it.  The ProgressItem will be moved to state
-     *  STOPPED.
-     *
-     *  @param id The progress identifier
+     * Call this method to remove your ProgressItem from the queue (after which
+     * getProgress() will no longer find it. The ProgressItem will be moved to
+     * state STOPPED.
+     * 
+     * @param id
+     *            The progress identifier
      */
-    public void stopProgress( String id )
-    {
-        log.debug("Removed "+id+" from progress queue");
-        ProgressItem pi = m_progressingTasks.remove( id );
-        if( pi != null ) pi.setState( ProgressItem.STOPPED );
+    public void stopProgress(String id) {
+        log.debug("Removed " + id + " from progress queue");
+        ProgressItem pi = m_progressingTasks.remove(id);
+        if (pi != null)
+            pi.setState(ProgressItem.STOPPED);
     }
 
     /**
-     *  Get the progress in percents.
-     *
-     *  @param id The progress identifier.
-     *  @return a value between 0 to 100 indicating the progress
-     *  @throws IllegalArgumentException If no such progress item exists.
+     * Get the progress in percents.
+     * 
+     * @param id
+     *            The progress identifier.
+     * @return a value between 0 to 100 indicating the progress
+     * @throws IllegalArgumentException
+     *             If no such progress item exists.
      */
-    public int getProgress( String id )
-        throws IllegalArgumentException
-    {
-        ProgressItem pi = m_progressingTasks.get( id );
+    public int getProgress(String id) throws IllegalArgumentException {
+        ProgressItem pi = m_progressingTasks.get(id);
 
-        if( pi != null )
-        {
+        if (pi != null) {
             return pi.getProgress();
         }
 
@@ -116,21 +118,21 @@ public class ProgressManager implements Serializable
     }
 
     /**
-     *  Provides access to a progress indicator, assuming you know the ID.
-     *  Progress of zero (0) means that the progress has just started, and a progress of
-     *  100 means that it is complete.
+     * Provides access to a progress indicator, assuming you know the ID.
+     * Progress of zero (0) means that the progress has just started, and a
+     * progress of 100 means that it is complete.
      */
-    public class JSONTracker implements RPCCallable
-    {
+    public class JSONTracker implements RPCCallable {
         /**
-         *  Returns upload progress in percents so far.
-         *  @param progressId The string representation of the progress ID that you want to know the
-         *                    progress of.
-         *  @return a value between 0 to 100 indicating the progress
+         * Returns upload progress in percents so far.
+         * 
+         * @param progressId
+         *            The string representation of the progress ID that you want
+         *            to know the progress of.
+         * @return a value between 0 to 100 indicating the progress
          */
-        public int getProgress( String progressId )
-        {
-            return ProgressManager.this.getProgress( progressId );
+        public int getProgress(String progressId) {
+            return ProgressManager.this.getProgress(progressId);
         }
     }
 }

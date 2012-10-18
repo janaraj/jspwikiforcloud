@@ -726,4 +726,10 @@ public class VersioningFileProvider extends AbstractFileProvider implements
         Properties m_props;
         long m_lastModified;
     }
+
+    @Override
+    public void clearWiki() throws ProviderException {
+        // TODO Auto-generated method stub
+        
+    }
 }

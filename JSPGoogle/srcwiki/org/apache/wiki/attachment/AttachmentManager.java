@@ -28,14 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.AbstractWikiProvider;
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
@@ -45,7 +42,6 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.spring.BeanHolder;
-import org.apache.wiki.util.ClassUtil;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -62,10 +58,6 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  */
 @SuppressWarnings("serial")
 public class AttachmentManager extends AbstractWikiProvider {
-    /**
-     * The property name for defining the attachment provider class name.
-     */
-    public static final String PROP_PROVIDER = "jspwiki.attachmentProvider";
 
     /**
      * The maximum size of attachments that can be uploaded.
@@ -85,78 +77,8 @@ public class AttachmentManager extends AbstractWikiProvider {
     static Log log = LogFactory.getLog(AttachmentManager.class);
     private WikiAttachmentProvider m_provider;
 
-    /**
-     * Creates a new AttachmentManager. Note that creation will never fail, but
-     * it's quite likely that attachments do not function.
-     * <p>
-     * <b>DO NOT CREATE</b> an AttachmentManager on your own, unless you really
-     * know what you're doing. Just use WikiEngine.getAttachmentManager() if
-     * you're making a module for JSPWiki.
-     * 
-     * @param engine
-     *            The wikiengine that owns this attachment manager.
-     * @param props
-     *            A list of properties from which the AttachmentManager will
-     *            seek its configuration. Typically this is the
-     *            "jspwiki.properties".
-     */
-
-    // FIXME: Perhaps this should fail somehow.
-
-    @Override
-    public void initialize(WikiEngine engine, Properties props)
-            throws WikiException {
-        String classname;
-
-        m_engine = engine;
-
-        //
-        // If user wants to use a cache, then we'll use the CachingProvider.
-        //
-        boolean useCache = "true".equals(props
-                .getProperty(PageManager.PROP_USECACHE));
-
-        if (useCache) {
-            classname = "org.apache.wiki.providers.CachingAttachmentProvider";
-        } else {
-            classname = props.getProperty(PROP_PROVIDER);
-        }
-
-        //
-        // If no class defined, then will just simply fail.
-        //
-        if (classname == null) {
-            log.info("No attachment provider defined - disabling attachment support.");
-            return;
-        }
-
-        //
-        // Create and initialize the provider.
-        //
-        try {
-            Class<?> providerclass = ClassUtil.findClass(
-                    "org.apache.wiki.providers", classname);
-
-            m_provider = (WikiAttachmentProvider) providerclass.newInstance();
-
-            m_provider.initialize(m_engine, props);
-        } catch (ClassNotFoundException e) {
-            log.error("Attachment provider class not found", e);
-        } catch (InstantiationException e) {
-            log.error("Attachment provider could not be created", e);
-        } catch (IllegalAccessException e) {
-            log.error("You may not access the attachment provider class", e);
-        } catch (NoRequiredPropertyException e) {
-            log.error(
-                    "Attachment provider did not find a property that it needed: "
-                            + e.getMessage(), e);
-            m_provider = null; // No, it did not work.
-        } catch (WikiException e) {
-            log.error(
-                    "Attachment provider did not find a property that it needed: "
-                            + e.getMessage(), e);
-            m_provider = null; // No, it did not work.
-        }
+    public void setAttachmentProvider(WikiAttachmentProvider m_provider) {
+        this.m_provider = m_provider;
     }
 
     public AttachmentManager(WikiEngine engine) throws WikiException {

@@ -663,4 +663,10 @@ public class RCSFileProvider extends AbstractFileProvider {
 
         fromRCSFile.renameTo(toRCSFile);
     }
+
+    @Override
+    public void clearWiki() throws ProviderException {
+        // TODO Auto-generated method stub
+        
+    }
 }

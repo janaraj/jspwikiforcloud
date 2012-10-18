@@ -108,8 +108,9 @@ public class CachingAttachmentProvider extends AbstractWikiProvider
         //
         //  Find and initialize real provider.
         //
-        String classname = WikiEngine.getRequiredProperty( properties, 
-                                                           AttachmentManager.PROP_PROVIDER );
+//        String classname = WikiEngine.getRequiredProperty( properties, 
+//                                                           AttachmentManager.PROP_PROVIDER );
+        String classname = "";
         
         try
         {            

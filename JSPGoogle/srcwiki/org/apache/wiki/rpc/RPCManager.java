@@ -20,12 +20,14 @@
  */
 package org.apache.wiki.rpc;
 
+import java.io.Serializable;
+
 /**
  *  A base class for managing RPC calls.
  *  
  *  @since 2.5.4
  */
-public class RPCManager
+public class RPCManager implements Serializable
 {
     /**
      *  Private constructor to prevent initialization.

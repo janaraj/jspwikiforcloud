@@ -20,14 +20,16 @@
  */
 package org.apache.wiki.attachment;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.SocketException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -36,20 +38,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.LogFactory;
+import org.apache.wiki.CommonProgressListener;
 import org.apache.wiki.TextUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiException;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -64,7 +65,6 @@ import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.spring.BeanHolder;
-import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.util.HttpUtil;
 
 /**
@@ -93,7 +93,7 @@ public class AttachmentServlet extends WebdavServlet {
     /** Default expiry period is 1 day */
     protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000;
 
-    private String m_tmpDir;
+    // private String m_tmpDir;
 
     private DavProvider m_attachmentProvider;
 
@@ -129,7 +129,7 @@ public class AttachmentServlet extends WebdavServlet {
         Properties props = m_engine.getWikiProperties();
 
         m_attachmentProvider = new AttachmentDavProvider(m_engine);
-        m_tmpDir = m_engine.getWorkDir() + File.separator + "attach-tmp";
+        // m_tmpDir = m_engine.getWorkDir() + File.separator + "attach-tmp";
 
         m_maxSize = TextUtil.getIntegerProperty(props,
                 AttachmentManager.PROP_MAXSIZE, Integer.MAX_VALUE);
@@ -150,16 +150,16 @@ public class AttachmentServlet extends WebdavServlet {
         else
             m_forbiddenPatterns = new String[0];
 
-        File f = new File(m_tmpDir);
-        if (!f.exists()) {
-            f.mkdirs();
-        } else if (!f.isDirectory()) {
-            log.fatal("A file already exists where the temporary dir is supposed to be: "
-                    + m_tmpDir + ".  Please remove it.");
-        }
-
-        log.debug("UploadServlet initialized. Using " + m_tmpDir
-                + " for temporary storage.");
+        // File f = new File(m_tmpDir);
+        // if (!f.exists()) {
+        // f.mkdirs();
+        // } else if (!f.isDirectory()) {
+        // log.fatal("A file already exists where the temporary dir is supposed to be: "
+        // + m_tmpDir + ".  Please remove it.");
+        // }
+        //
+        // log.debug("UploadServlet initialized. Using " + m_tmpDir
+        // + " for temporary storage.");
     }
 
     private boolean isTypeAllowed(String name) {
@@ -523,6 +523,24 @@ public class AttachmentServlet extends WebdavServlet {
         return nextPage;
     }
 
+    private String getString(FileItemStream fItem) throws IOException {
+        InputStream ins = fItem.openStream();
+        InputStreamReader is = new InputStreamReader(ins);
+        BufferedReader br = new BufferedReader(is);
+        return br.readLine();
+    }
+
+    private InputStream copyInputStream(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] arr = new byte[4096];
+        int rea;
+        while ((rea = in.read(arr)) != -1) {
+            out.write(arr, 0, rea);
+        }
+        ByteArrayInputStream inB = new ByteArrayInputStream(out.toByteArray());
+        return inB;
+    }
+
     /**
      * Uploads a specific mime multipart input set, intercepts exceptions.
      * 
@@ -552,6 +570,8 @@ public class AttachmentServlet extends WebdavServlet {
             throw new RedirectException("Not a file upload", errorPage);
         }
 
+        CommonProgressListener pl = new CommonProgressListener();
+        pl.startProgress(progressId);
         try {
             FileItemFactory factory = new DiskFileItemFactory();
 
@@ -560,23 +580,26 @@ public class AttachmentServlet extends WebdavServlet {
             WikiContext context = m_engine.createContext(req,
                     WikiContext.ATTACH);
 
-            UploadListener pl = new UploadListener();
+            // m_engine.getProgressManager().startProgress(pl, progressId);
+            // mana.startProgress(pl, progressId);
 
-            m_engine.getProgressManager().startProgress(pl, progressId);
-
-            ServletFileUpload upload = new ServletFileUpload(factory);
+            // ServletFileUpload upload = new ServletFileUpload(factory);
+            ServletFileUpload upload = new ServletFileUpload();
             upload.setHeaderEncoding("UTF-8");
             if (!context.hasAdminPermissions()) {
                 upload.setFileSizeMax(m_maxSize);
             }
             upload.setProgressListener(pl);
-            List<FileItem> items = upload.parseRequest(req);
+            // List<FileItem> items = upload.parseRequest(req);
+            FileItemIterator iterator = upload.getItemIterator(req);
 
             String wikipage = null;
             String changeNote = null;
-            FileItem actualFile = null;
+            FileItemStream actualFile = null;
+            InputStream in = null;
 
-            for (FileItem item : items) {
+            while (iterator.hasNext()) {
+                FileItemStream item = iterator.next();
                 if (item.isFormField()) {
                     if (item.getFieldName().equals("page")) {
                         //
@@ -585,22 +608,25 @@ public class AttachmentServlet extends WebdavServlet {
                         // if this is an upload of a new revision
                         //
 
-                        wikipage = item.getString("UTF-8");
+                        // wikipage = item.getString("UTF-8");
+                        wikipage = getString(item);
                         int x = wikipage.indexOf("/");
 
                         if (x != -1)
                             wikipage = wikipage.substring(0, x);
                     } else if (item.getFieldName().equals("changenote")) {
-                        changeNote = item.getString("UTF-8");
+                        // changeNote = item.getString("UTF-8");
+                        changeNote = getString(item);
                         if (changeNote != null) {
                             changeNote = TextUtil.replaceEntities(changeNote);
                         }
                     } else if (item.getFieldName().equals("nextpage")) {
-                        nextPage = validateNextPage(item.getString("UTF-8"),
-                                errorPage);
+                        // nextPage = validateNextPage(item.getString("UTF-8"),
+                        nextPage = validateNextPage(getString(item), errorPage);
                     }
                 } else {
                     actualFile = item;
+                    in = copyInputStream(actualFile.openStream());
                 }
             }
 
@@ -621,8 +647,8 @@ public class AttachmentServlet extends WebdavServlet {
             // at a time.
             //
             String filename = actualFile.getName();
-            long fileSize = actualFile.getSize();
-            InputStream in = actualFile.getInputStream();
+            // long fileSize = actualFile.getSize();
+            long fileSize = 1;
 
             try {
                 executeUpload(context, in, filename, nextPage, wikipage,
@@ -652,7 +678,8 @@ public class AttachmentServlet extends WebdavServlet {
 
             throw new IOException(msg);
         } finally {
-            m_engine.getProgressManager().stopProgress(progressId);
+            // m_engine.getProgressManager().stopProgress(progressId);
+            pl.stopProgress();
             // FIXME: In case of exceptions should absolutely
             // remove the uploaded file.
         }
@@ -791,25 +818,6 @@ public class AttachmentServlet extends WebdavServlet {
         }
 
         return created;
-    }
-
-    /**
-     * Provides tracking for upload progress.
-     * 
-     */
-    private static class UploadListener extends ProgressItem implements
-            ProgressListener {
-        public long m_currentBytes;
-        public long m_totalBytes;
-
-        public void update(long recvdBytes, long totalBytes, int item) {
-            m_currentBytes = recvdBytes;
-            m_totalBytes = totalBytes;
-        }
-
-        public int getProgress() {
-            return (int) (((float) m_currentBytes / m_totalBytes) * 100 + 0.5);
-        }
     }
 
 }

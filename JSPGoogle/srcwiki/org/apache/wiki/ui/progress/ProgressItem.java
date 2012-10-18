@@ -23,51 +23,51 @@ package org.apache.wiki.ui.progress;
 import java.io.Serializable;
 
 /**
- *  Provides access to an progress item.
- *
- *  @since  2.6
+ * Provides access to an progress item.
+ * 
+ * @since 2.6
  */
 @SuppressWarnings("serial")
-public abstract class ProgressItem implements Serializable
-{
+public abstract class ProgressItem implements Serializable {
     /**
-     *  Status: The PI is created.
+     * Status: The PI is created.
      */
-    public static final int CREATED  = 0;
-    
+    public static final int CREATED = 0;
+
     /** Status: The PI is started. */
-    public static final int STARTED  = 1;
-    
+    public static final int STARTED = 1;
+
     /** Status: The PI is stopped. */
-    public static final int STOPPED  = 2;
-    
+    public static final int STOPPED = 2;
+
     /** Status: The PI is finished. */
     public static final int FINISHED = 3;
 
     protected int m_state = CREATED;
 
     /**
-     *  Get the state of the ProgressItem.
-     *  @return CREATED, STARTED, STOPPED or FINISHED.
+     * Get the state of the ProgressItem.
+     * 
+     * @return CREATED, STARTED, STOPPED or FINISHED.
      */
-    public int getState()
-    {
+    public int getState() {
         return m_state;
     }
 
     /**
-     *  Sets the state of the ProgressItem.
-     *  
-     *  @param state One of the CREATED, STARTED, STOPPED or FINISHED.
+     * Sets the state of the ProgressItem.
+     * 
+     * @param state
+     *            One of the CREATED, STARTED, STOPPED or FINISHED.
      */
-    public void setState( int state )
-    {
+    public void setState(int state) {
         m_state = state;
     }
 
     /**
-     *  Returns the progress in percents.
-     *  @return An integer 0-100.
+     * Returns the progress in percents.
+     * 
+     * @return An integer 0-100.
      */
     public abstract int getProgress();
 }

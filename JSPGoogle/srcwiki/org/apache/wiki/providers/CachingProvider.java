@@ -865,4 +865,10 @@ public class CachingProvider extends AbstractWikiProvider implements WikiPagePro
 			}
 		}
 	}
+
+    @Override
+    public void clearWiki() throws ProviderException {
+        // TODO Auto-generated method stub
+        
+    }
 }

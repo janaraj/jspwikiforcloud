@@ -194,6 +194,9 @@ public interface WikiPageProvider
       */
      public void movePage(String from, String to)
          throws ProviderException;
+     
+     
+     public void clearWiki() throws ProviderException;
 
 }
 

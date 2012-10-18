@@ -41,12 +41,14 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.filters.FilterListContainer;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.plugin.PluginManager;
+import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.security.WikiSubject;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
+import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.PageSorter;
 import org.springframework.web.context.WebApplicationContext;
@@ -242,9 +244,23 @@ public class BeanHolder {
         return u;
     }
 
+    public static ProgressManager getProgressManager() {
+        ProgressManager m = (ProgressManager) getObject("progressManager");
+        return m;
+    }
+
     // TODO: change
     public static String getWikiName() {
         return WikiPrincipal.WIKI_NAME;
+    }
+
+    public static String getRootURL() {
+        return getServletContext().getRealPath("/");
+    }
+
+    public static WikiAttachmentProvider getAttachmentProvider() {
+        WikiAttachmentProvider m = (WikiAttachmentProvider) getObject("attachmentProvider");
+        return m;
     }
 
 }

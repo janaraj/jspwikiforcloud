@@ -30,6 +30,7 @@ import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.spring.BeanHolder;
 
 public class ResourceUtil {
 
@@ -51,8 +52,9 @@ public class ResourceUtil {
 	public static URL findConfigFile(WikiEngine engine, String name) {
 		// Try creating an absolute path first
 		File defaultFile = null;
-		if (engine.getRootPath() != null) {
-			defaultFile = new File(engine.getRootPath() + "/WEB-INF/" + name);
+		String rootPath = BeanHolder.getRootURL();
+		if (rootPath != null) {
+			defaultFile = new File(rootPath + "/WEB-INF/" + name);
 		}
 		if (defaultFile != null && defaultFile.exists()) {
 			try {

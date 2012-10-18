@@ -24,10 +24,10 @@ public class ActionResultTag extends WikiTagBase {
     public int doWikiStartTag() throws Exception {
         WikiActionResult res = (WikiActionResult) pageContext.getRequest()
                 .getAttribute(WikiEngine.WIKIACTIONRESULT);
+        JspWriter out = pageContext.getOut();
         if (res == null) {
             return SKIP_BODY;
         }
-        JspWriter out = pageContext.getOut();
         String localizeMessage = LocaleSupport.getLocalizedMessage(pageContext,
                 res.getMessageId());
         String htmlstart, htmlend;
@@ -40,7 +40,8 @@ public class ActionResultTag extends WikiTagBase {
         }
         out.print(htmlstart + localizeMessage + (res.getMessage() == null ? ""
                 : " " + res.getMessage()) + htmlend);
-        return EVAL_PAGE;
+        out.flush();
+        return SKIP_BODY;
     }
 
 }

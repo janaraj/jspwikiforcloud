@@ -20,7 +20,6 @@
  */
 package org.apache.wiki.attachment;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 
 /**

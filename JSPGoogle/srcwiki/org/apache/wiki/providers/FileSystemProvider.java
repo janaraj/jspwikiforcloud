@@ -181,4 +181,10 @@ public class FileSystemProvider
         
         fromPage.renameTo( toPage );
     }
+
+    @Override
+    public void clearWiki() throws ProviderException {
+        // TODO Auto-generated method stub
+        
+    }
 }

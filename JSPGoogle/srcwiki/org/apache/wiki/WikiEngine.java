@@ -69,7 +69,6 @@ import org.apache.wiki.spring.BeanHolder;
 import org.apache.wiki.spring.WikiSetContext;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
-import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.WatchDog;
@@ -101,11 +100,6 @@ public class WikiEngine implements Serializable {
     // "org.apache.wiki.WikiEngine";
 
     private static final Log log = LogFactory.getLog(WikiEngine.class);
-
-    /** True, if log4j has been configured. */
-    // FIXME: If you run multiple applications, the first application
-    // to run defines where the log goes. Not what we want.
-    // private static boolean c_configured = false;
 
     /** Stores properties. */
     private Properties m_properties;
@@ -164,12 +158,6 @@ public class WikiEngine implements Serializable {
      */
     public static final String PROP_RUNFILTERS = "jspwiki.runFilters";
 
-    /** Compares pages by name */
-    // private PageSorter m_pageSorter = null;
-
-    /** Does the work in renaming pages. */
-    // private PageRenamer m_pageRenamer = null;
-
     /**
      * The name of the property containing the ACLManager implementing class.
      * The value is {@value} .
@@ -191,88 +179,19 @@ public class WikiEngine implements Serializable {
     /** Stores the base URL. */
     private String m_baseURL;
 
-    /**
-     * Store the file path to the basic URL. When we're not running as a
-     * servlet, it defaults to the user's current directory.
-     */
-    private String m_rootPath = System.getProperty("user.dir");
-
-    /** Stores references between wikipages. */
-    // private ReferenceManager m_referenceManager = null;
-    // private CreateModuleManager rManager = null;
-
-    /** Stores the Plugin manager */
-    // private PluginManager m_pluginManager;
-    // private CreateProviderManager<PluginManager> mPlugin;
-
-    /** Stores the Variable manager */
-    // private VariableManager m_variableManager;
-
-    /** Stores the Attachment manager */
-    // private AttachmentManager m_attachmentManager = null;
-
-    /** Stores the Page manager */
-    // private PageManager BeanHolder.getPageManager() = null;
-    // private CreateModuleManager pManager;
-    // private CreateProviderManager<PageManager> pManager;
-
-    /** Stores the authorization manager */
-    // private AuthorizationManager m_authorizationManager = null;
-
-    /** Stores the authentication manager. */
-    // / private AuthenticationManager m_authenticationManager = null;
-
     /** Stores the ACL manager. */
     private AclManager m_aclManager = null;
 
     /** Resolves wiki actions, JSPs and special pages. */
     private CommandResolver m_commandResolver = null;
 
-    // private TemplateManager m_templateManager = null;
-    // private CreateProviderManager<TemplateManager> mTemplate;
-
-    /** Does all our diffs for us. */
-    // private DifferenceManager m_differenceManager;
-
-    /** Handlers page filters. */
-    // private FilterManager m_filterManager;
-    // private CreateModuleManager fFilter = null;
-
-    /** Stores the Search manager */
-    // private SearchManager m_searchManager = null;
-    // private CreateModuleManager mSearch = null;
-
-    /** Facade for managing users */
-    // private UserManager m_userManager = null;
-    // private CreateModuleManager mUser = null;
-
-    /** Facade for managing users */
-    // private GroupManager m_groupManager = null;
-    // private CreateModuleManager mGroup = null;
-
-    // private RenderingManager m_renderingManager;
-    // private CreateModuleManager cRender;
-
-    // private EditorManager m_editorManager;
-
     private InternationalizationManager m_internationalizationManager;
-
-    private ProgressManager m_progressManager;
-
-    /** Constructs URLs */
-    // private URLConstructor m_urlConstructor;
 
     /** Generates RSS feed when requested. */
     private RSSGenerator m_rssGenerator;
 
     /** The RSS file to generate. */
     private String m_rssFile;
-
-    /**
-     * Store the ServletContext that we're in. This may be null if WikiEngine is
-     * not running inside a servlet container (i.e. when testing).
-     */
-    // private ServletContext m_servletContext = null;
 
     /** If true, all titles will be cleaned. */
     private boolean m_beautifyTitle = false;
@@ -304,8 +223,6 @@ public class WikiEngine implements Serializable {
     private boolean isInitialized() {
         return m_workflowMgr != null;
     }
-
-    // private IObjectPersist m_objectPersist = null;
 
     /**
      * Gets a WikiEngine related to this servlet. Since this method is only
@@ -375,9 +292,6 @@ public class WikiEngine implements Serializable {
     public static synchronized WikiEngine getInstance(ServletContext context,
             Properties props) throws InternalWikiException {
         WikiSetContext.setContext(context, "WikiEngine");
-        // WikiEngine engine = (WikiEngine)
-        // context.getAttribute(ATTR_WIKIENGINE);
-        // WikiEngine engine = (WikiEngine) BeanHolder.getObject("wikiEngine");
         WikiEngine engine = BeanHolder.getWikiEngine();
         if (!engine.isInitialized()) {
             String appid = Integer.toString(context.hashCode()); // FIXME:
@@ -388,13 +302,10 @@ public class WikiEngine implements Serializable {
             context.log(" Assigning new engine to " + appid);
             try {
                 if (props == null) {
-                    // props = PropertyReader.loadWebAppProps(context);
                     props = BeanHolder.getWikiProperties();
                 }
 
-                // engine = new WikiEngine(context, appid, props);
-                engine.initializeWikiEngine(context, appid, props);
-                // context.setAttribute(ATTR_WIKIENGINE, engine);
+                engine.initializeWikiEngine(appid, props);
             } catch (Exception e) {
                 context.log("ERROR: Failed to create a Wiki engine: "
                         + e.getMessage());
@@ -408,19 +319,6 @@ public class WikiEngine implements Serializable {
 
         return engine;
     }
-
-    /**
-     * Instantiate the WikiEngine using a given set of properties. Use this
-     * constructor for testing purposes only.
-     * 
-     * @param properties
-     *            A set of properties to use to initialize this WikiEngine.
-     * @throws WikiException
-     *             If the initialization fails.
-     */
-    // public WikiEngine(Properties properties) throws WikiException {
-    // initialize(properties, null);
-    // }
 
     /**
      * Instantiate using this method when you're running as a servlet and
@@ -437,31 +335,23 @@ public class WikiEngine implements Serializable {
      * @throws WikiException
      *             If the WikiEngine construction fails.
      */
-    private void initializeWikiEngine(ServletContext context, String appid,
+    private void initializeWikiEngine(String appid,
             Properties props) throws WikiException {
         // super();
         // m_servletContext = context;
         m_appid = appid;
 
         // Stash the WikiEngine in the servlet context
-        if (context != null) {
-            // context.setAttribute(ATTR_WIKIENGINE, this);
-            m_rootPath = context.getRealPath("/");
-        }
 
         try {
             //
             // Note: May be null, if JSPWiki has been deployed in a WAR file.
             //
-            initialize(props, context);
-            log.info("Root path for this Wiki is: '" + m_rootPath + "'");
+            initialize(props);
         } catch (Exception e) {
             String msg = Release.APPNAME
                     + ": Unable to load and setup properties from jspwiki.properties. "
                     + e.getMessage();
-            if (context != null) {
-                context.log(msg);
-            }
             throw new WikiException(msg, e);
         }
     }
@@ -469,31 +359,13 @@ public class WikiEngine implements Serializable {
     /**
      * Does all the real initialization.
      */
-    private void initialize(Properties props, ServletContext context)
-            throws WikiException {
+    private void initialize(Properties props) throws WikiException {
         m_startTime = new Date();
         m_properties = props;
-
-        //
-        // Initialized log4j. However, make sure that
-        // we don't initialize it multiple times. Also, if
-        // all of the log4j statements have been removed from
-        // the property file, we do not do any property setting
-        // either.q
-        //
-        // if (!c_configured) {
-        // if (props.getProperty("log4j.rootCategory") != null) {
-        // PropertyConfigurator.configure(props);
-        // }
-        // c_configured = true;
-        // }
 
         log.info("*******************************************");
         log.info(Release.APPNAME + " " + Release.getVersionString()
                 + " starting. Whee!");
-
-        // TODO: just remove for a moment
-        // fireEvent(WikiEngineEvent.INITIALIZING); // begin initialization
 
         log.debug("Java version: " + System.getProperty("java.runtime.version"));
         log.debug("Java vendor: " + System.getProperty("java.vm.vendor"));
@@ -504,70 +376,10 @@ public class WikiEngine implements Serializable {
         log.debug("Default server timezone: "
                 + TimeZone.getDefault().getDisplayName(true, TimeZone.LONG));
 
-        /*
-         * if (m_servletContext != null) { log.info("Servlet container: " +
-         * m_servletContext.getServerInfo()); if
-         * (m_servletContext.getMajorVersion() < 2 ||
-         * (m_servletContext.getMajorVersion() == 2 && m_servletContext
-         * .getMinorVersion() < 4)) { throw new InternalWikiException(
-         * "I require a container which supports at least version 2.4 of Servlet specification"
-         * ); } }
-         */
-
         log.debug("Configuring WikiEngine...");
 
         // Initializes the CommandResolver
         m_commandResolver = new CommandResolver(this, props);
-
-        // m_objectPersist = ClassProviderFactory.construct(this, props,
-        // PROP_OBJECTPERSIST);
-
-        //
-        // Create and find the default working directory.
-        //
-
-        // TODO: do something
-        // does not work in Google App Engine
-        if (false) {
-            m_workDir = TextUtil.getStringProperty(props, PROP_WORKDIR, null);
-
-            if (m_workDir == null) {
-                m_workDir = System.getProperty("java.io.tmpdir", ".");
-                m_workDir += File.separator + Release.APPNAME + "-" + m_appid;
-            }
-
-            try {
-                File f = new File(m_workDir);
-                f.mkdirs();
-
-                //
-                // A bunch of sanity checks
-                //
-                if (!f.exists())
-                    throw new WikiException("Work directory does not exist: "
-                            + m_workDir);
-                if (!f.canRead())
-                    throw new WikiException(
-                            "No permission to read work directory: "
-                                    + m_workDir);
-                if (!f.canWrite())
-                    throw new WikiException(
-                            "No permission to write to work directory: "
-                                    + m_workDir);
-                if (!f.isDirectory())
-                    throw new WikiException(
-                            "jspwiki.workDir does not point to a directory: "
-                                    + m_workDir);
-            } catch (SecurityException e) {
-                log.fatal("Unable to find or create the working directory: "
-                        + m_workDir, e);
-                throw new IllegalArgumentException(
-                        "Unable to find or create the working dir: "
-                                + m_workDir);
-            }
-
-            log.info("JSPWiki working directory is '" + m_workDir + "'");
-        }
 
         m_saveUserInfo = TextUtil.getBooleanProperty(props, PROP_STOREUSERNAME,
                 m_saveUserInfo);
@@ -586,10 +398,6 @@ public class WikiEngine implements Serializable {
                 "default");
         m_frontPage = TextUtil.getStringProperty(props, PROP_FRONTPAGE, "Main");
 
-        // Initialize the page name comparator now as it may be used while
-        // initializing other modules
-        // initPageSorter(props);
-
         //
         // Initialize the important modules. Any exception thrown by the
         // managers means that we will not start up.
@@ -598,65 +406,6 @@ public class WikiEngine implements Serializable {
         // FIXME: This part of the code is getting unwieldy. We must think
         // of a better way to do the startup-sequence.
         try {
-            // Class urlclass = ClassUtil.findClass("org.apache.wiki.url",
-            // TextUtil.getStringProperty(props, PROP_URLCONSTRUCTOR,
-            // "DefaultURLConstructor"));
-            // m_urlConstructor = (URLConstructor) urlclass.newInstance();
-            // m_urlConstructor.initialize(this, props);
-
-            // BeanHolder.getPageManager() = (PageManager)
-            // ClassUtil.getMappedObject(
-            // PageManager.class.getName());
-            // BeanHolder.getPageManager().initialize(this, props);
-            // pManager = new CreateModuleManager(this, props, "pageManager");
-            // pManager = new CreateProviderManager<PageManager>(this, props,
-            // "pageManager");
-            // m_pluginManager = (PluginManager) ClassUtil.getMappedObject(
-            // PluginManager.class.getName(), this, props);
-            // mPlugin = new CreateProviderManager<PluginManager>(this, props,
-            // "pluginManager");
-            // m_differenceManager = (DifferenceManager) ClassUtil
-            // .getMappedObject(DifferenceManager.class.getName(), this,
-            // props);
-            // m_attachmentManager = (AttachmentManager) ClassUtil
-            // .getMappedObject(AttachmentManager.class.getName(), this,
-            // props);
-            // m_variableManager = (VariableManager) ClassUtil.getMappedObject(
-            // VariableManager.class.getName(), props);
-            // m_filterManager =
-            // (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(),
-            // this, props );
-            // / m_renderingManager = (RenderingManager) ClassUtil
-            // .getMappedObject(RenderingManager.class.getName());
-
-            // m_searchManager = (SearchManager) ClassUtil.getMappedObject(
-            // SearchManager.class.getName(), this, props);
-            // mSearch = new CreateModuleManager(this, props, "searchManager");
-
-            // m_authenticationManager = (AuthenticationManager) ClassUtil
-            // .getMappedObject(AuthenticationManager.class.getName());
-            // m_authorizationManager = (AuthorizationManager) ClassUtil
-            // .getMappedObject(AuthorizationManager.class.getName());
-            // m_userManager = (UserManager) ClassUtil
-            // .getMappedObject(UserManager.class.getName());
-            // mUser = new CreateModuleManager(this, props, "userManager");
-            // m_groupManager = (GroupManager) ClassUtil
-            // .getMappedObject(GroupManager.class.getName());
-            // mGroup = new CreateModuleManager(this, props, "groupManager");
-
-            // m_editorManager = (EditorManager) ClassUtil
-            // .getMappedObject(EditorManager.class.getName());
-            // m_editorManager.initialize(this, props);
-
-            m_progressManager = new ProgressManager();
-
-            // Initialize the authentication, authorization, user and acl
-            // managers
-
-            // m_authenticationManager.initialize(this, props);
-            // m_authorizationManager.initialize(this, props);
-            // m_userManager.initialize(this, props);
-            // m_groupManager.initialize(this, props);
             m_aclManager = getAclManager();
 
             // Start the Workflow manager
@@ -668,43 +417,8 @@ public class WikiEngine implements Serializable {
                     .getMappedObject(
                             InternationalizationManager.class.getName(), this);
 
-            // m_templateManager = (TemplateManager) ClassUtil.getMappedObject(
-            // TemplateManager.class.getName(), this, props);
-            // mTemplate = new CreateProviderManager<TemplateManager>(this,
-            // props,
-            // "templateManager");
-
-            // Since we want to use a page filters initilize() method
-            // as a engine startup listener where we can initialize global event
-            // listeners,
-            // it must be called lastly, so that all object references in the
-            // engine
-            // are availabe to the initialize() method
-            // m_filterManager = (FilterManager) ClassUtil.getMappedObject(
-            // FilterManager.class.getName(), this, props);
-
-            // RenderingManager depends on FilterManager events.
-            // fFilter = new CreateModuleManager(this, props, "filterManager");
-            // cRender = new CreateModuleManager(this, props, "renderManager");
-
-            // m_renderingManager.initialize(this, props);
-
-            //
-            // ReferenceManager has the side effect of loading all
-            // pages. Therefore after this point, all page attributes
-            // are available.
-            //
-            // initReferenceManager is indirectly using m_filterManager,
-            // therefore
-            // it has to be called after it was initialized.
-            //
             initReferenceManager();
 
-            //
-            // Hook the different manager routines into the system.
-            //
-            // getFilterManager().addPageFilter(m_referenceManager, -1001);
-            // getFilterManager().addPageFilter(m_searchManager, -1002);
         }
 
         catch (RuntimeException e) {
@@ -713,24 +427,6 @@ public class WikiEngine implements Serializable {
             e.printStackTrace();
             throw new WikiException("Failed to start managers: "
                     + e.getMessage(), e);
-            // } catch (ClassNotFoundException e) {
-            // log.fatal(
-            // "JSPWiki could not start, URLConstructor was not found: ",
-            // e);
-            // e.printStackTrace();
-            // throw new WikiException(e.getMessage(), e);
-            // } catch (InstantiationException e) {
-            // log.fatal(
-            // "JSPWiki could not start, URLConstructor could not be instantiated: ",
-            // e);
-            // e.printStackTrace();
-            // throw new WikiException(e.getMessage(), e);
-            // } catch (IllegalAccessException e) {
-            // log.fatal(
-            // "JSPWiki could not start, URLConstructor cannot be accessed: ",
-            // e);
-            // e.printStackTrace();
-            // throw new WikiException(e.getMessage(), e);
         } catch (Exception e) {
             // Final catch-all for everything
             log.fatal(
@@ -752,8 +448,6 @@ public class WikiEngine implements Serializable {
                         RSSGenerator.class.getName(), this, props);
             }
 
-            // m_pageRenamer = (PageRenamer) ClassUtil.getMappedObject(
-            // PageRenamer.class.getName(), this, props);
         } catch (Exception e) {
             log.error(
                     "Unable to start RSS generator - JSPWiki will still work, "
@@ -770,16 +464,14 @@ public class WikiEngine implements Serializable {
                 rssFile = new File(m_rssFile);
             } else {
                 // relative path names are anchored from the webapp root path:
-                rssFile = new File(getRootPath(), m_rssFile);
+                String rootPath = BeanHolder.getRootURL();
+                rssFile = new File(rootPath, m_rssFile);
             }
             int rssInterval = TextUtil.getIntegerProperty(props,
                     RSSGenerator.PROP_INTERVAL, 3600);
             RSSThread rssThread = new RSSThread(this, rssFile, rssInterval);
             rssThread.start();
         }
-
-        // TODO: disable for e moment
-        // fireEvent(WikiEngineEvent.INITIALIZED); // initialization complete
 
         log.info("WikiEngine configured.");
         m_isConfigured = true;
@@ -794,23 +486,6 @@ public class WikiEngine implements Serializable {
      */
     @SuppressWarnings("unchecked")
     private void initReferenceManager() throws WikiException {
-        // try {
-        // ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
-        // pages.addAll(BeanHolder.getPageManager().getAllPages());
-        // pages.addAll(m_attachmentManager.getAllAttachments());
-
-        // Build a new manager with default key lists.
-        // if (m_referenceManager == null) {
-        // m_referenceManager = (ReferenceManager) ClassUtil
-        // .getMappedObject(ReferenceManager.class.getName(), this);
-        // m_referenceManager.initialize(pages);
-        // }
-
-        // } catch (ProviderException e) {
-        // log.fatal("PageProvider is unable to list pages: ", e);
-        // }
-        // rManager = new CreateModuleManager(this, this.m_properties,
-        // "referenceManager");
     }
 
     /**
@@ -884,15 +559,6 @@ public class WikiEngine implements Serializable {
     public String getTemplateDir() {
         return m_templateDir;
     }
-
-    /**
-     * Returns the current TemplateManager.
-     * 
-     * @return A TemplateManager instance.
-     */
-    // public TemplateManager getTemplateManager() {
-    // return mTemplate.getManager();
-    // }
 
     /**
      * Returns the base URL, telling where this Wiki actually lives.
@@ -973,8 +639,7 @@ public class WikiEngine implements Serializable {
      */
     public String getAttachmentURL(String attName) {
         URLConstructor u = BeanHolder.getURLConstructor();
-        return u.makeURL(WikiContext.ATTACH, attName, false,
-                null);
+        return u.makeURL(WikiContext.ATTACH, attName, false, null);
     }
 
     /**
@@ -1166,20 +831,6 @@ public class WikiEngine implements Serializable {
     public String getSpecialPageReference(String original) {
         return m_commandResolver.getSpecialPageReference(original);
     }
-
-    /**
-     * Returns the name of the application.
-     * 
-     * @return A string describing the name of this application.
-     */
-
-    // FIXME: Should use servlet context as a default instead of a constant.
-    // public String getApplicationName() {
-    // String appName = TextUtil.getStringProperty(m_properties, PROP_APPNAME,
-    // Release.APPNAME);
-
-    // return MarkupParser.cleanLink(appName);
-    // }
 
     /**
      * Beautifies the title of the page by appending spaces in suitable places,
@@ -1431,14 +1082,6 @@ public class WikiEngine implements Serializable {
     public String getText(String page, int version) {
         String result = getPureText(page, version);
 
-        //
-        // Replace ampersand first, or else all quotes and stuff
-        // get replaced as well with &quot; etc.
-        //
-        /*
-         * result = TextUtil.replaceString( result, "&", "&amp;" );
-         */
-
         result = TextUtil.replaceEntities(result);
 
         return result;
@@ -1564,44 +1207,6 @@ public class WikiEngine implements Serializable {
     }
 
     /**
-     * Converts raw page data to HTML.
-     * 
-     * @param pagedata
-     *            Raw page data to convert to HTML
-     * @param context
-     *            The WikiContext in which the page is to be rendered
-     * @return Rendered page text
-     */
-    // public String textToHTML(WikiContext context, String pagedata) {
-    // String result = "";
-    //
-    // boolean runFilters = "true".equals(m_variableManager.getValue(context,
-    // PROP_RUNFILTERS, "true"));
-    //
-    // StopWatch sw = new StopWatch();
-    // sw.start();
-    // try {
-    // if (runFilters)
-    // pagedata = getFilterManager().doPreTranslateFiltering(context,
-    // pagedata);
-    //
-    // result = getRenderingManager().getHTML(context, pagedata);
-    //
-    // if (runFilters)
-    // result = getFilterManager().doPostTranslateFiltering(context,
-    // result);
-    // } catch (FilterException e) {
-    // // FIXME: Don't yet know what to do
-    // }
-    // sw.stop();
-    // if (log.isDebugEnabled())
-    // log.debug("Page " + context.getRealPage().getName()
-    // + " rendered, took " + sw);
-    //
-    // return result;
-    // }
-
-    /**
      * Protected method that signals that the WikiEngine will be shut down by
      * the servlet container. It is called by {@link WikiServlet#destroy()}.
      * When this method is called, it fires a "shutdown" WikiEngineEvent to all
@@ -1611,25 +1216,6 @@ public class WikiEngine implements Serializable {
         fireEvent(WikiEngineEvent.SHUTDOWN);
         BeanHolder.getFilterManager().destroy();
     }
-
-    /**
-     * Reads a WikiPageful of data from a String and returns all links internal
-     * to this Wiki in a Collection.
-     * 
-     * @param page
-     *            The WikiPage to scan
-     * @param pagedata
-     *            The page contents
-     * @return a Collection of Strings
-     */
-    // public Collection scanWikiLinks(WikiPage page, String pagedata) {
-    // LinkCollector localCollector = new LinkCollector();
-
-    // textToHTML(new WikiContext(this, page), pagedata, localCollector, null,
-    // localCollector, false, true);
-
-    // return localCollector.getLinks();
-    // }
 
     /**
      * Just convert WikiText to HTML.
@@ -1676,83 +1262,6 @@ public class WikiEngine implements Serializable {
         return TextToHtml.textToHTML(context, fManager, pagedata,
                 localLinkHook, extLinkHook, attLinkHook, true, false);
     }
-
-    /**
-     * Helper method for doing the HTML translation.
-     * 
-     * @param context
-     *            The WikiContext in which to do the conversion
-     * @param pagedata
-     *            The data to render
-     * @param localLinkHook
-     *            Is called whenever a wiki link is found
-     * @param extLinkHook
-     *            Is called whenever an external link is found
-     * @param parseAccessRules
-     *            Parse the access rules if we encounter them
-     * @param justParse
-     *            Just parses the pagedata, does not actually render. In this
-     *            case, this methods an empty string.
-     * @return HTML-rendered page text.
-     */
-    // private String textToHTML(WikiContext context, String pagedata,
-    // StringTransmutator localLinkHook, StringTransmutator extLinkHook,
-    // StringTransmutator attLinkHook, boolean parseAccessRules,
-    // boolean justParse) {
-    // String result = "";
-    //
-    // if (pagedata == null) {
-    // log.error("NULL pagedata to textToHTML()");
-    // return null;
-    // }
-    //
-    // boolean runFilters = "true".equals(m_variableManager.getValue(context,
-    // PROP_RUNFILTERS, "true"));
-    //
-    // try {
-    // StopWatch sw = new StopWatch();
-    // sw.start();
-    //
-    // if (runFilters)
-    // pagedata = getFilterManager().doPreTranslateFiltering(context,
-    // pagedata);
-    //
-    // MarkupParser mp = getRenderingManager()
-    // .getParser(context, pagedata);
-    // mp.addLocalLinkHook(localLinkHook);
-    // mp.addExternalLinkHook(extLinkHook);
-    // mp.addAttachmentLinkHook(attLinkHook);
-    //
-    // if (!parseAccessRules)
-    // mp.disableAccessRules();
-    //
-    // WikiDocument doc = mp.parse();
-    //
-    // //
-    // // In some cases it's better just to parse, not to render
-    // //
-    // if (!justParse) {
-    // result = getRenderingManager().getHTML(context, doc);
-    //
-    // if (runFilters) {
-    // result = getFilterManager().doPostTranslateFiltering(
-    // context, result);
-    // }
-    // }
-    //
-    // sw.stop();
-    //
-    // if (log.isDebugEnabled())
-    // log.debug("Page " + context.getRealPage().getName()
-    // + " rendered, took " + sw);
-    // } catch (IOException e) {
-    // log.error("Failed to scan page data: ", e);
-    // } catch (FilterException e) {
-    // // FIXME: Don't yet know what to do
-    // }
-    //
-    // return result;
-    // }
 
     /**
      * Updates all references for the given page.
@@ -1856,16 +1365,6 @@ public class WikiEngine implements Serializable {
     public int getPageCount() {
         return BeanHolder.getPageManager().getTotalPageCount();
     }
-
-    /**
-     * Returns the provider name.
-     * 
-     * @return The full class name of the current page provider.
-     */
-
-    // public String getCurrentProvider() {
-    // return BeanHolder.getPageManager().getProvider().getClass().getName();
-    // }
 
     /**
      * Return information about current provider. This method just calls the
@@ -2046,63 +1545,6 @@ public class WikiEngine implements Serializable {
     }
 
     /**
-     * Returns this object's ReferenceManager.
-     * 
-     * @return The current ReferenceManager instance.
-     * 
-     * @since 1.6.1
-     */
-    // public ReferenceManager getReferenceManager() {
-    // ReferenceManager re = (ReferenceManager) rManager.getBeanObject();
-    // if (!rManager.isInitialized()) {
-    // ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
-    // try {
-    // pages.addAll(BeanHolder.getPageManager().getAllPages());
-    // pages.addAll(BeanHolder.getAttachmentManager()
-    // .getAllAttachments());
-    // re.initializePages(pages);
-    // // pages.addAll(m_attachmentManager.getAllAttachments());
-    // } catch (ProviderException e) {
-    // log.fatal("Error while starting refrenceManager", e);
-    // return null;
-    // }
-    // rManager.setInitialized(true);
-    // }
-    // return re;
-    // }
-
-    /**
-     * Returns the current rendering manager for this wiki application.
-     * 
-     * @since 2.3.27
-     * @return A RenderingManager object.
-     */
-    // public RenderingManager getRenderingManager() {
-    // return (RenderingManager) cRender.getBeanObject();
-    // }
-
-    /**
-     * Returns the current plugin manager.
-     * 
-     * @since 1.6.1
-     * @return The current PluginManager instance
-     */
-
-    // public PluginManager getPluginManager() {
-    // return mPlugin.getManager();
-    // }
-
-    /**
-     * Returns the current variable manager.
-     * 
-     * @return The current VariableManager.
-     */
-
-    // public VariableManager getVariableManager() {
-    // return m_variableManager;
-    // }
-
-    /**
      * Shortcut to getVariableManager().getValue(). However, this method does
      * not throw a NoSuchVariableException, but returns null in case the
      * variable does not exist.
@@ -2124,95 +1566,12 @@ public class WikiEngine implements Serializable {
     }
 
     /**
-     * Returns the current PageManager which is responsible for storing and
-     * managing WikiPages.
-     * 
-     * @return The current PageManager instance.
-     */
-    // public PageManager BeanHolder.getPageManager() {
-    // return pManager.getManager();
-    // }
-
-    /**
      * Returns the CommandResolver for this wiki engine.
      * 
      * @return the resolver
      */
     public CommandResolver getCommandResolver() {
         return m_commandResolver;
-    }
-
-    /**
-     * Returns the current AttachmentManager, which is responsible for storing
-     * and managing attachments.
-     * 
-     * @since 1.9.31.
-     * @return The current AttachmentManager instance
-     */
-    // public AttachmentManager getAttachmentManager() {
-    // return m_attachmentManager;
-    // }
-
-    /**
-     * Returns the currently used authorization manager.
-     * 
-     * @return The current AuthorizationManager instance
-     */
-    // public AuthorizationManager getAuthorizationManager() {
-    // return m_authorizationManager;
-    // }
-
-    /**
-     * Returns the currently used authentication manager.
-     * 
-     * @return The current AuthenticationManager instance.
-     */
-    // public AuthenticationManager getAuthenticationManager() {
-    // return m_authenticationManager;
-    // }
-
-    /**
-     * Returns the manager responsible for the filters.
-     * 
-     * @since 2.1.88
-     * @return The current FilterManager instance
-     */
-    // private FilterManager getFilterManager() {
-    // // return m_filterManager;
-    // FilterManager fi = (FilterManager) fFilter.getBeanObject();
-    // if (!fFilter.isInitialized()) {
-    // fi.initializeFilter();
-    // fi.addPageFilter(getReferenceManager(), -1001);
-    // fi.addPageFilter(getSearchManager(), -1002);
-    // fFilter.setInitialized(true);
-    // }
-    // return fi;
-    // }
-
-    /**
-     * Returns the manager responsible for searching the Wiki.
-     * 
-     * @since 2.2.21
-     * @return The current SearchManager instance
-     */
-    // public SearchManager getSearchManager() {
-    // // return m_searchManager;
-    // SearchManager ma = (SearchManager) mSearch.getBeanObject();
-    // if (!mSearch.isInitialized()) {
-    // ma.initSearchManager();
-    // mSearch.setInitialized(true);
-    // }
-    // return ma;
-    // }
-
-    /**
-     * Returns the progress manager we're using
-     * 
-     * @return A ProgressManager
-     * @since 2.6
-     */
-    public ProgressManager getProgressManager() {
-        return m_progressManager;
     }
 
     /**
@@ -2321,25 +1680,6 @@ public class WikiEngine implements Serializable {
     }
 
     /**
-     * Returns the root path. The root path is where the WikiEngine is located
-     * in the file system.
-     * 
-     * @since 2.2
-     * @return A path to where the Wiki is installed in the local filesystem.
-     */
-    public String getRootPath() {
-        return m_rootPath;
-    }
-
-    /**
-     * @since 2.2.6
-     * @return the URL constructor
-     */
-    // public URLConstructor getURLConstructor() {
-    // return m_urlConstructor;
-    // }
-
-    /**
      * Returns the RSSGenerator. If the property
      * <code>jspwiki.rss.generate</code> has not been set to <code>true</code>,
      * this method will return <code>null</code>,
@@ -2351,73 +1691,6 @@ public class WikiEngine implements Serializable {
     public RSSGenerator getRSSGenerator() {
         return m_rssGenerator;
     }
-
-    /**
-     * Renames, or moves, a wiki page. Can also alter referring wiki links to
-     * point to the renamed page.
-     * 
-     * @param context
-     *            The context during which this rename takes place.
-     * @param renameFrom
-     *            Name of the source page.
-     * @param renameTo
-     *            Name of the destination page.
-     * @param changeReferrers
-     *            If true, then changes any referring links to point to the
-     *            renamed page.
-     * 
-     * @return The name of the page that the source was renamed to.
-     * 
-     * @throws WikiException
-     *             In the case of an error, such as the destination page already
-     *             existing.
-     */
-    // public String renamePage(WikiContext context, String renameFrom,
-    // String renameTo, boolean changeReferrers) throws WikiException {
-    // return m_pageRenamer.renamePage(context, renameFrom, renameTo,
-    // changeReferrers);
-    // }
-
-    /**
-     * Returns the PageRenamer employed by this WikiEngine.
-     * 
-     * @since 2.5.141
-     * @return The current PageRenamer instance.
-     */
-    // public PageRenamer getPageRenamer() {
-    // return m_pageRenamer;
-    // }
-
-    /**
-     * Returns the UserManager employed by this WikiEngine.
-     * 
-     * @since 2.3
-     * @return The current UserManager instance.
-     */
-    // public UserManager getUserManager() {
-    // // return m_userManager;
-    // UserManager ma = (UserManager) mUser.getBeanObject();
-    // if (!mUser.isInitialized()) {
-    // ma.initializeProvider();
-    // mUser.setInitialized(true);
-    // }
-    // return ma;
-    // }
-
-    /**
-     * Returns the GroupManager employed by this WikiEngine.
-     * 
-     * @since 2.3
-     * @return The current GroupManager instance
-     */
-    // public GroupManager getGroupManager() {
-    // GroupManager ma = (GroupManager) mGroup.getBeanObject();
-    // if (!mGroup.isInitialized()) {
-    // ma.initializeProvider();
-    // mGroup.setInitialized(true);
-    // }
-    // return ma;
-    // }
 
     /**
      * Returns the AclManager employed by this WikiEngine. The AclManager is
@@ -2435,17 +1708,18 @@ public class WikiEngine implements Serializable {
             try {
                 String s = m_properties.getProperty(PROP_ACL_MANAGER_IMPL,
                         DefaultAclManager.class.getName());
-                m_aclManager = (AclManager) ClassUtil.getMappedObject(s); // TODO:
-                                                                          // I
-                                                                          // am
-                                                                          // not
-                                                                          // sure
-                                                                          // whether
-                                                                          // this
-                                                                          // is
-                                                                          // the
-                                                                          // right
-                                                                          // call
+                m_aclManager = (AclManager) ClassUtil.getMappedObject(s);
+                // TODO:
+                // I
+                // am
+                // not
+                // sure
+                // whether
+                // this
+                // is
+                // the
+                // right
+                // call
                 m_aclManager.initialize(this, m_properties);
             } catch (WikiException we) {
                 log.fatal("unable to instantiate class for AclManager: "
@@ -2456,24 +1730,6 @@ public class WikiEngine implements Serializable {
         }
         return m_aclManager;
     }
-
-    /**
-     * Returns the DifferenceManager so that texts can be compared.
-     * 
-     * @return the difference manager
-     */
-    // public DifferenceManager getDifferenceManager() {
-    // return m_differenceManager;
-    // }
-
-    /**
-     * Returns the current EditorManager instance.
-     * 
-     * @return The current EditorManager.
-     */
-    // public EditorManager getEditorManager() {
-    // return m_editorManager;
-    // }
 
     /**
      * Returns the current i18n manager.
@@ -2563,26 +1819,5 @@ public class WikiEngine implements Serializable {
     public WatchDog getCurrentWatchDog() {
         return WatchDog.getCurrentWatchDog(this);
     }
-
-    /**
-     * Initialize the page name comparator.
-     */
-    // private void initPageSorter(Properties props) {
-    // m_pageSorter = new PageSorter();
-    // m_pageSorter.initialize(props);
-    // }
-
-    /**
-     * Get this engine's page name comparator.
-     * 
-     * @return the PageSorter used to sort pages by name in this engine
-     */
-    // public PageSorter getPageSorter() {
-    // return m_pageSorter;
-    // }
-
-    // public IObjectPersist getObjectPersist() {
-    // return BeanHolder.getObjectPersist();
-    // }
 
 }
