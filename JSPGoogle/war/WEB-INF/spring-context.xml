@@ -16,36 +16,23 @@
 		scope="request">
 	</bean>
 
-<!-- 
-	<bean id="pageProvider" class="org.apache.wiki.providers.WikiGaePageProvider"
-		init-method="initializeProvider" scope="request">
-		<constructor-arg>
-			<ref bean="wikiEngine" />
-		</constructor-arg>
-	</bean>
--->	
-	
+
 	<bean id="pageProvider" class="org.apache.wiki.providers.WikiPageBlobProvider"
 		init-method="initializeProvider" scope="request">
 	</bean>
-	
 
-<!-- 
-	<bean id="groupProvider" class="org.apache.wiki.providers.WikiGaeGroupDatabase"
-		scope="request">
-	</bean>
--->	
-	
+
 	<bean id="groupProvider" class="org.apache.wiki.providers.WikiBlobGroupDatabase"
 		scope="request">
 	</bean>
-		
-
-<!-- 
-	<bean id="userProvider" class="org.apache.wiki.providers.WikiGaeUserDatabase"
+	
+	<bean id="attachmentProvider" class="org.apache.wiki.providers.WikiGaeAttachment"
 		scope="request">
 	</bean>
--->	
+
+
+	<!-- <bean id="userProvider" class="org.apache.wiki.providers.WikiGaeUserDatabase" 
+		scope="request"> </bean> -->
 
 	<bean id="userProvider" class="org.apache.wiki.providers.WikiBlobUserDatabase"
 		scope="request">
@@ -148,6 +135,7 @@
 		<constructor-arg>
 			<ref bean="wikiEngine" />
 		</constructor-arg>
+		<property name="attachmentProvider" ref="attachmentProvider"></property>
 	</bean>
 
 	<bean id="authorizationManager" class="org.apache.wiki.auth.AuthorizationManager"
@@ -211,14 +199,14 @@
 		</constructor-arg>
 		<property name="diffProvider" ref="traditionalDiffProvider"></property>
 	</bean>
-	
+
 	<bean id="traditionalDiffProvider" class="org.apache.wiki.diff.TraditionalDiffProvider"
 		init-method="initializeProvider" scope="request">
 		<constructor-arg>
 			<ref bean="wikiEngine" />
 		</constructor-arg>
 	</bean>
-	
+
 	<bean id="editorManager" class="org.apache.wiki.ui.EditorManager"
 		init-method="initializeProvider" scope="request">
 		<constructor-arg>
@@ -244,5 +232,8 @@
 		</constructor-arg>
 	</bean>
 
+	<bean id="progressManager" class="org.apache.wiki.ui.progress.ProgressManager"
+		scope="request">
+	</bean>
 
 </beans>

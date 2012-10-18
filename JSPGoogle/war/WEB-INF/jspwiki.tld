@@ -808,6 +808,7 @@
 	<tag>
 		<name>ActionResult</name>
 		<tagclass>org.apache.wiki.tags.ActionResultTag</tagclass>
+		<bodycontent>empty</bodycontent>
 	</tag>
 
 

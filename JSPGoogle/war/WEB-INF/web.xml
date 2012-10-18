@@ -175,6 +175,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
        <servlet-name>DAVServlet</servlet-name>
        <servlet-class>org.apache.wiki.dav.WikiDavServlet</servlet-class>
    </servlet>
+   
+   <servlet>
+       <servlet-name>RemoveWikiNotWise</servlet-name>
+       <servlet-class>org.apache.wiki.RemoveWikiNotWise</servlet-class>
+   </servlet>
 
    <!--
        Attachment exchange handler.
@@ -184,6 +189,13 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
        <servlet-name>AttachmentServlet</servlet-name>
        <servlet-class>org.apache.wiki.attachment.AttachmentServlet</servlet-class>
    </servlet>
+   
+   <servlet>
+       <servlet-name>DownloadWikiServlet</servlet-name>
+       <servlet-class>org.apache.wiki.downup.DownloadWikiServlet</servlet-class>
+   </servlet>
+   
+   
 
    <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->
 
@@ -213,10 +225,22 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
    </servlet-mapping>
 
    AND REMOVE ME TOO -->
-
-   <servlet-mapping>
+   
+      <servlet-mapping>
        <servlet-name>AttachmentServlet</servlet-name>
        <url-pattern>/attach/*</url-pattern>
+   </servlet-mapping>
+
+      <servlet-mapping>
+       <servlet-name>DownloadWikiServlet</servlet-name>
+       <url-pattern>/DownloadWiki</url-pattern>
+   </servlet-mapping>
+   
+   
+
+   <servlet-mapping>
+       <servlet-name>RemoveWikiNotWise</servlet-name>
+       <url-pattern>/RemoveJSPWikiNotWise</url-pattern>
    </servlet-mapping>
 
    <servlet-mapping>
