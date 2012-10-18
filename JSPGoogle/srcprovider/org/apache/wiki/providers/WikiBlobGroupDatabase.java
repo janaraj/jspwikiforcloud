@@ -13,11 +13,6 @@
 
 package org.apache.wiki.providers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -169,7 +164,11 @@ public class WikiBlobGroupDatabase extends AbstractWikiProvider implements
     @Override
     public void delete(Group group) throws WikiSecurityException {
         DeleteGroup dCommand = new DeleteGroup(group);
-        dCommand.runCommand();
+        try {
+            dCommand.runCommand();
+        } catch (ProviderException e) {
+            throw new WikiSecurityException(e.getMessage());
+        }
     }
 
     public class SaveGroup extends SaveOrDeleteCommand {
@@ -223,7 +222,11 @@ public class WikiBlobGroupDatabase extends AbstractWikiProvider implements
     public void save(Group group, Principal modifier)
             throws WikiSecurityException {
         SaveGroup saveCommand = new SaveGroup(group, modifier);
-        saveCommand.runCommand();
+        try {
+            saveCommand.runCommand();
+        } catch (ProviderException e) {
+            throw new WikiSecurityException(e.getMessage());
+        }
     }
 
     private class GetGroup extends ECommand {
@@ -248,7 +251,12 @@ public class WikiBlobGroupDatabase extends AbstractWikiProvider implements
     @Override
     public Group[] groups() throws WikiSecurityException {
         GetGroup gCommand = new GetGroup();
-        gCommand.runCommand();
+        try {
+            gCommand.runCommand();
+        } catch (ProviderException e) {
+            log.error("Get groups",e);
+            throw new WikiSecurityException(e.getMessage());
+        }
         Collection<OneGroup> c = toGroups(gCommand.getG());
         Group[] list = new Group[c.size()];
         int i = 0;

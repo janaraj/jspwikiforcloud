@@ -290,7 +290,11 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
     public void deleteByLoginName(String loginName)
             throws NoSuchPrincipalException, WikiSecurityException {
         DeleteByLoginName dCommand = new DeleteByLoginName(loginName);
-        dCommand.runCommand();
+        try {
+            dCommand.runCommand();
+        } catch (ProviderException e) {
+            throw new WikiSecurityException(e.getMessage());
+        }
     }
 
     private class GetAll extends GetUser {
@@ -314,7 +318,11 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
     @Override
     public Principal[] getWikiNames() throws WikiSecurityException {
         GetAll command = new GetAll();
-        command.runCommand();
+        try {
+            command.runCommand();
+        } catch (ProviderException e) {
+            throw new WikiSecurityException(e.getMessage());
+        }
         Set<Principal> principals = new HashSet<Principal>();
         for (User u : command.getUList()) {
             Principal principal = new WikiPrincipal(u.getWikiName(),
@@ -395,7 +403,11 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
             WikiSecurityException {
 
         RenameCommand command = new RenameCommand(loginName, newName);
-        command.runCommand();
+        try {
+            command.runCommand();
+        } catch (ProviderException e) {
+            throw new WikiSecurityException(e.getMessage());
+        }
         if (command.duplicatedError) {
             throw new DuplicateUserException(newName);
         }
@@ -404,7 +416,12 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
     private UserProfile findUser(String index, FindMethod m)
             throws NoSuchPrincipalException {
         FindUser command = new FindUser(index, m);
-        command.runCommand();
+        try {
+            command.runCommand();
+        } catch (ProviderException e) {
+            log.error(index,e);
+            throw new NoSuchPrincipalException(index);
+        }
         if (command.notFound) {
             throw new NoSuchPrincipalException(index);
         }
@@ -462,7 +479,11 @@ public class WikiBlobUserDatabase extends AbstractUserDatabase {
     @Override
     public void save(UserProfile profile) throws WikiSecurityException {
         SaveUser command = new SaveUser(profile);
-        command.runCommand();
+        try {
+            command.runCommand();
+        } catch (ProviderException e) {
+            throw new WikiSecurityException(e.getMessage());
+        }
     }
 
 }

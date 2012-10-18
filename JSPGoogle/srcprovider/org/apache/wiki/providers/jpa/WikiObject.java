@@ -24,7 +24,7 @@ import javax.persistence.NamedQuery;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
     
-@Entity
+@Entity 
 @NamedQueries({
 		@NamedQuery(name = "GetObject", query = "SELECT P FROM WikiObject P WHERE P.pDir= :1 AND P.pName = :2")
 })

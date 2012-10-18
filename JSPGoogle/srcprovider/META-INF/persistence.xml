@@ -6,14 +6,13 @@
 
     <persistence-unit name="transactions-optional">
         <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
-        <class>org.apache.wiki.providers.jpa.WikiPageEnt</class>
         <class>org.apache.wiki.providers.jpa.WikiObject</class>        
-        <class>org.apache.wiki.providers.jpa.GroupEnt</class>        
-        <class>org.apache.wiki.providers.jpa.UserEnt</class>        
         <class>org.apache.wiki.providers.jpa.GroupEntBlob</class>        
         <class>org.apache.wiki.providers.jpa.UserEntBlob</class>        
         <class>org.apache.wiki.providers.jpa.WikiOnePage</class>        
-        <class>org.apache.wiki.providers.jpa.WikiPageBlob</class>        
+        <class>org.apache.wiki.providers.jpa.WikiPageBlob</class>  
+        <class>org.apache.wiki.providers.jpa.AttachmentEnt</class>  
+        <class>org.apache.wiki.providers.jpa.AttachmentOneEnt</class>  
         <exclude-unlisted-classes>true</exclude-unlisted-classes>        
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>

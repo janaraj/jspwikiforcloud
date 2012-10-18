@@ -45,8 +45,9 @@ abstract class ECommand {
 
     /**
      * Encloses command. Simple gets EntityManager, run command and close.
+     * @throws ProviderException 
      */
-    private void prunCommand(boolean transact) {
+    private void prunCommand(boolean transact) throws ProviderException {
         EntityManager eF = EMF.getF();
         tran = null;
         if (transact) {
@@ -63,6 +64,7 @@ abstract class ECommand {
             if (tran != null) {
                 tran.rollback();
             }
+            throw new ProviderException(e.getMessage()); 
         } finally {
             eF.close();
         }
@@ -76,7 +78,7 @@ abstract class ECommand {
         
     }
 
-    void runCommand() {
+    void runCommand() throws ProviderException {
         prunCommand(transact);
     }
 

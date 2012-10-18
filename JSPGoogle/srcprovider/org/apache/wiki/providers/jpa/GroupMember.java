@@ -17,7 +17,6 @@ import java.util.Date;
 
 import javax.persistence.Entity;
   
-@Entity
 public class GroupMember implements Serializable {
 	
 	private String memberName;

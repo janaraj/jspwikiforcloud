@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wiki.AbstractWikiProvider;
 import org.apache.wiki.IObjectPersist;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.providers.jpa.WikiObject;
 
 /**
@@ -35,208 +36,219 @@ import org.apache.wiki.providers.jpa.WikiObject;
  */
 
 @SuppressWarnings("serial")
-public class ObjectGaeProvider extends AbstractWikiProvider implements IObjectPersist {
+public class ObjectGaeProvider extends AbstractWikiProvider implements
+        IObjectPersist {
 
-	private final Log log = LogFactory.getLog(ObjectGaeProvider.class);
+    private final Log log = LogFactory.getLog(ObjectGaeProvider.class);
 
-	@Override
-	public String getProviderInfo() {
-		return this.getClass().getSimpleName();
-	}
+    @Override
+    public String getProviderInfo() {
+        return this.getClass().getSimpleName();
+    }
 
-	/**
-	 * Helper for ECommand. Keeps pDir and pName parameters.
-	 * 
-	 * @author stanislawbartkowski@gmail.com
-	 * 
-	 */
-	private abstract class EObject extends ECommand {
+    /**
+     * Helper for ECommand. Keeps pDir and pName parameters.
+     * 
+     * @author stanislawbartkowski@gmail.com
+     * 
+     */
+    private abstract class EObject extends ECommand {
 
-		/** pDir parameter. */
-		protected final String pDir;
-		/** pName parameter. */
-		protected final String pName;
+        /** pDir parameter. */
+        protected final String pDir;
+        /** pName parameter. */
+        protected final String pName;
 
-		/**
-		 * Constructor
-		 * 
-		 * @param pDir
-		 *            pDir (can be null)
-		 * @param pName
-		 *            pName data parameter
-		 */
-		EObject(boolean transact, String pDir, String pName) {
-			super(transact);
-			this.pDir = pDir;
-			this.pName = pName;
-		}
+        /**
+         * Constructor
+         * 
+         * @param pDir
+         *            pDir (can be null)
+         * @param pName
+         *            pName data parameter
+         */
+        EObject(boolean transact, String pDir, String pName) {
+            super(transact);
+            this.pDir = pDir;
+            this.pName = pName;
+        }
 
-		/**
-		 * Gets WikiObject related to pDir and pName
-		 * 
-		 * @param eF
-		 *            EntityManager
-		 * @return WikiObject (or null if not exists)
-		 */
-		protected WikiObject getW(EntityManager eF) {
-			Query q = ECommand.getQuery(eF, "GetObject", pDir, pName);
-			Object o = null;
-			try {
-				o = q.getSingleResult();
-			} catch (NoResultException e) {
-				// expected
-			}
-			return (WikiObject) o;
-		}
-	}
+        /**
+         * Gets WikiObject related to pDir and pName
+         * 
+         * @param eF
+         *            EntityManager
+         * @return WikiObject (or null if not exists)
+         */
+        protected WikiObject getW(EntityManager eF) {
+            Query q = ECommand.getQuery(eF, "GetObject", pDir, pName);
+            Object o = null;
+            try {
+                o = q.getSingleResult();
+            } catch (NoResultException e) {
+                // expected
+            }
+            return (WikiObject) o;
+        }
+    }
 
-	/**
-	 * Gets WikiObject and bytes
-	 * 
-	 * @author stanislawbartkowski@gmail.com
-	 * 
-	 */
-	private class GetObject extends EObject {
+    /**
+     * Gets WikiObject and bytes
+     * 
+     * @author stanislawbartkowski@gmail.com
+     * 
+     */
+    private class GetObject extends EObject {
 
-		/** output parameter. */
-		ByteArrayInputStream b = null;
+        /** output parameter. */
+        ByteArrayInputStream b = null;
 
-		GetObject(String pDir, String pName) {
-			super(false, pDir, pName);
-		}
+        GetObject(String pDir, String pName) {
+            super(false, pDir, pName);
+        }
 
-		@Override
-		protected void runCommand(EntityManager eF) {
-			// Get object
-			WikiObject w = getW(eF);
-			if (w == null) {
-				// if not exist then set b as null
-				return;
-			}
-			// set b ByteArrayInputStream filled with bytes read
-			b = new ByteArrayInputStream(w.getObject().getBytes());
-		}
-	}
+        @Override
+        protected void runCommand(EntityManager eF) {
+            // Get object
+            WikiObject w = getW(eF);
+            if (w == null) {
+                // if not exist then set b as null
+                return;
+            }
+            // set b ByteArrayInputStream filled with bytes read
+            b = new ByteArrayInputStream(w.getObject().getBytes());
+        }
+    }
 
-	@Override
-	public ObjectInputStream constructInput(String pDir, String pName) {
+    @Override
+    public ObjectInputStream constructInput(String pDir, String pName) {
 
-		// Get object from datastore
-		GetObject o = new GetObject(pDir, pName);
-		o.runCommand();
-		if (o.b == null) {
-			// if not exist return null
-			return null;
-		}
-		try {
-			// if exist returns ObjectInputStream
-			return new ObjectInputStream(o.b);
-		} catch (IOException e) {
-			log.error(e);
-			return null;
-		}
-	}
+        // Get object from datastore
+        GetObject o = new GetObject(pDir, pName);
+        try {
+            o.runCommand();
+            if (o.b == null) {
+                // if not exist return null
+                return null;
+            }
+            // if exist returns ObjectInputStream
+            return new ObjectInputStream(o.b);
+        } catch (IOException e) {
+            log.error(e);
+            return null;
+        } catch (ProviderException e) {
+            log.error(e);
+            return null;
+        }
+    }
 
-	/**
-	 * Implements of ObjectOutputStream.
-	 * <p>
-	 * Purpose: Override close method for saving bytes in the datastore.
-	 * </p>
-	 * 
-	 * @author stanislawbartkowski@gmail.com
-	 * 
-	 */
-	private class BlobOutputStream extends ObjectOutputStream {
+    /**
+     * Implements of ObjectOutputStream.
+     * <p>
+     * Purpose: Override close method for saving bytes in the datastore.
+     * </p>
+     * 
+     * @author stanislawbartkowski@gmail.com
+     * 
+     */
+    private class BlobOutputStream extends ObjectOutputStream {
 
-		private final String pDir;
-		private final String pName;
-		private final ByteArrayOutputStream o;
+        private final String pDir;
+        private final String pName;
+        private final ByteArrayOutputStream o;
 
-		BlobOutputStream(ByteArrayOutputStream o, String pDir, String pName)
-				throws IOException {
-			super(o);
-			this.pDir = pDir;
-			this.pName = pName;
-			this.o = o;
-		}
+        BlobOutputStream(ByteArrayOutputStream o, String pDir, String pName)
+                throws IOException {
+            super(o);
+            this.pDir = pDir;
+            this.pName = pName;
+            this.o = o;
+        }
 
-		@Override
-		public void close() throws IOException {
-			super.close();
-			// o contains all bytes. Save bytes in the datastore.
-			new SaveObject(pDir, pName, o).runCommand();
-		}
-	}
+        @Override
+        public void close() throws IOException {
+            super.close();
+            // o contains all bytes. Save bytes in the datastore.
+            try {
+                new SaveObject(pDir, pName, o).runCommand();
+            } catch (ProviderException e) {
+                throw new IOException(e);
+            }
+        }
+    }
 
-	/**
-	 * Command to persist bytes related to pDir and pName
-	 * 
-	 * @author stanislawbartkowski@gmail.com
-	 * 
-	 */
-	private class SaveObject extends EObject {
-		private final ByteArrayOutputStream o;
+    /**
+     * Command to persist bytes related to pDir and pName
+     * 
+     * @author stanislawbartkowski@gmail.com
+     * 
+     */
+    private class SaveObject extends EObject {
+        private final ByteArrayOutputStream o;
 
-		SaveObject(String pDir, String pName, ByteArrayOutputStream o) {
-			super(true, pDir, pName);
-			this.o = o;
-		}
+        SaveObject(String pDir, String pName, ByteArrayOutputStream o) {
+            super(true, pDir, pName);
+            this.o = o;
+        }
 
-		@Override
-		protected void runCommand(EntityManager eF) {
-			WikiObject w = getW(eF);
-			if (w == null) {
-				// if not exists then create
-				w = new WikiObject();
-				w.setpDir(pDir);
-				w.setpName(pName);
-			}
-			w.setBytes(o.toByteArray());
-			// the same command for inserting new record and modyfying existing
-			eF.persist(w);
-		}
-	}
+        @Override
+        protected void runCommand(EntityManager eF) {
+            WikiObject w = getW(eF);
+            if (w == null) {
+                // if not exists then create
+                w = new WikiObject();
+                w.setpDir(pDir);
+                w.setpName(pName);
+            }
+            w.setBytes(o.toByteArray());
+            // the same command for inserting new record and modyfying existing
+            eF.persist(w);
+        }
+    }
 
-	/**
-	 * Command to delete bytes related to pDir and pName if exists
-	 * 
-	 * @author stanislawbartkowski@gmail.com
-	 * 
-	 */
+    /**
+     * Command to delete bytes related to pDir and pName if exists
+     * 
+     * @author stanislawbartkowski@gmail.com
+     * 
+     */
 
-	private class RemoveObject extends EObject {
+    private class RemoveObject extends EObject {
 
-		RemoveObject(String pDir, String pName) {
-			super(true, pDir, pName);
-		}
+        RemoveObject(String pDir, String pName) {
+            super(true, pDir, pName);
+        }
 
-		@Override
-		protected void runCommand(EntityManager eF) {
-			WikiObject w = getW(eF);
-			if (w == null) {
-				// if not exists do nothing
-				return;
-			}
-			// remove
-			eF.remove(w);
-		}
+        @Override
+        protected void runCommand(EntityManager eF) {
+            WikiObject w = getW(eF);
+            if (w == null) {
+                // if not exists do nothing
+                return;
+            }
+            // remove
+            eF.remove(w);
+        }
 
-	}
+    }
 
-	@Override
-	public ObjectOutputStream constructOutput(String pDir, String pName,
-			boolean delete) {
-		if (delete) {
-			new RemoveObject(pDir, pName).runCommand();
-			return null;
-		}
-		try {
-			return new BlobOutputStream(new ByteArrayOutputStream(), pDir,
-					pName);
-		} catch (IOException e) {
-			log.error(e);
-			return null;
-		}
-	}
+    @Override
+    public ObjectOutputStream constructOutput(String pDir, String pName,
+            boolean delete) {
+        try {
+            if (delete) {
+                new RemoveObject(pDir, pName).runCommand();
+                return null;
+            }
+            return new BlobOutputStream(new ByteArrayOutputStream(), pDir,
+                    pName);
+        } catch (IOException e) {
+            log.error(e);
+            return null;
+        } catch (ProviderException e) {
+            log.error(e);
+            return null;
+        }
+    }
 
 }

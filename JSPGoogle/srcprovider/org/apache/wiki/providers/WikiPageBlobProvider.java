@@ -35,6 +35,9 @@ import org.apache.wiki.SearchResult;
 import org.apache.wiki.SearchResultComparator;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.providers.jpa.AttachmentEnt;
+import org.apache.wiki.providers.jpa.AttachmentOneEnt;
+import org.apache.wiki.providers.jpa.WikiObject;
 import org.apache.wiki.providers.jpa.WikiOnePage;
 import org.apache.wiki.providers.jpa.WikiPageBlob;
 import org.apache.wiki.util.Serializer;
@@ -49,45 +52,10 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
     /** Time out to recognize new version of the page or continuation. */
     private static final int getContinuationEditTimeout = 15 * 1000;
 
-    private static class WikiVersion implements Serializable {
 
-        private int version;
-
-        private Date changetime;
-
-        private String changeBy;
-
-        private String attributes;
-
-    }
-
-    private Collection<WikiVersion> toVersions(WikiPageBlob u)
+    private Collection<PageUtil.WikiVersion> toVersions(WikiPageBlob u)
             throws WikiSecurityException {
         return BlobUtil.toObjects(u);
-    }
-
-    private void toBlobPage(WikiPageBlob u, Collection<WikiVersion> uList)
-            throws WikiSecurityException {
-        BlobUtil.toBlob(u, uList);
-    }
-
-    private void toVersion(WikiVersion v, WikiPage page)
-            throws WikiSecurityException {
-        v.changeBy = page.getAuthor();
-        v.changetime = page.getLastModified();
-        Map<String, String> attributes = page.getAttributes();
-        if (attributes == null || attributes.isEmpty()) {
-            v.attributes = null;
-            return;
-        }
-        Map<String, Serializable> sMap = new HashMap<String, Serializable>();
-        sMap.putAll(attributes);
-        try {
-            v.attributes = Serializer.serializeToBase64(sMap);
-        } catch (IOException e) {
-            log.error(e);
-            throw new WikiSecurityException(e.getMessage());
-        }
     }
 
     private abstract class PageCommand extends ECommand {
@@ -97,8 +65,8 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
         protected String pageName;
         protected final int version;
         protected WikiPageBlob w;
-        protected WikiVersion v;
-        protected Collection<WikiVersion> vList;
+        protected PageUtil.WikiVersion v;
+        protected Collection<PageUtil.WikiVersion> vList;
         protected WikiOnePage pa;
 
         PageCommand(boolean trans, WikiPage page) {
@@ -136,24 +104,8 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
 
         protected WikiPage toWikiPage() throws WikiSecurityException {
             WikiPage ww = new WikiPage(pageName);
-            ww.setVersion(v.version);
-            ww.setLastModified(v.changetime);
-            ww.setAuthor(v.changeBy);
-            Map<String, Serializable> hMap = new HashMap<String, Serializable>();
-            if (v.attributes != null) {
-                try {
-                    hMap = (Map<String, Serializable>) Serializer
-                            .deserializeFromBase64(v.attributes);
-                } catch (IOException e1) {
-                    log.fatal(e1);
-                    throw new WikiSecurityException(e1.getMessage());
-                }
-            }
-            for (Entry<String, Serializable> e : hMap.entrySet()) {
-                ww.setAttribute(e.getKey(), e.getValue().toString());
-            }
+            PageUtil.toWikiPage(ww, v);
             return ww;
-
         }
 
         protected void getAllPages(EntityManager eF) {
@@ -164,33 +116,18 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
         protected void getPage(EntityManager eF) throws WikiSecurityException {
             w = ECommand.getSingleObject(eF, "FindPage", pageName);
             if (w == null) {
-                vList = new ArrayList<WikiVersion>();
+                vList = new ArrayList<PageUtil.WikiVersion>();
             } else {
                 vList = toVersions(w);
             }
         }
 
         protected void findVersion() {
-            if (version == WikiPageProvider.LATEST_VERSION) {
-                findLatest();
-                return;
-            }
-            v = null;
-            for (WikiVersion vv : vList) {
-                if (vv.version == version) {
-                    v = vv;
-                    break;
-                }
-            }
+            v = PageUtil.findVersion(vList, version);
         }
 
         protected void findLatest() {
-            v = null;
-            for (WikiVersion vv : vList) {
-                if ((v == null) || (v.version < vv.version)) {
-                    v = vv;
-                }
-            }
+            v = PageUtil.findLatest(vList);
         }
 
         protected void savePage(EntityManager eF) throws WikiSecurityException {
@@ -198,7 +135,7 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
                 w = new WikiPageBlob();
                 w.setPageName(pageName);
             }
-            toBlobPage(w, vList);
+            PageUtil.toBlobPage(w, vList);
             eF.persist(w);
         }
 
@@ -233,10 +170,10 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
             getPage(eF);
             findVersion();
             if (v == null) {
-                v = new WikiVersion();
+                v = new PageUtil.WikiVersion();
                 vList.add(v);
             }
-            toVersion(v, page);
+            PageUtil.toVersion(v, page);
             v.version = page.getVersion();
             savePage(eF);
             commit();
@@ -289,11 +226,11 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
                     version = v.version;
                 }
                 // Insert page
-                v = new WikiVersion();
+                v = new PageUtil.WikiVersion();
                 v.version = version;
                 v.version++;
                 vList.add(v);
-                toVersion(v, page);
+                PageUtil.toVersion(v, page);
             }
             v.changetime = getToday();
             savePage(eF);
@@ -336,7 +273,12 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
     @Override
     public boolean pageExists(String page) {
         PageExists pa = new PageExists(page);
-        pa.runCommand();
+        try {
+            pa.runCommand();
+        } catch (ProviderException e) {
+            log.error(page + " pageExists", e);
+            return false;
+        }
         return pa.exists;
     }
 
@@ -378,7 +320,12 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
     @Override
     public Collection findPages(QueryItem[] query) {
         FindPages pa = new FindPages(query);
-        pa.runCommand();
+        try {
+            pa.runCommand();
+        } catch (ProviderException e) {
+            log.error("findPages", e);
+            return null;
+        }
         return pa.res;
     }
 
@@ -482,7 +429,7 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
         protected void runCommand(EntityManager eF)
                 throws WikiSecurityException {
             getPage(eF);
-            for (WikiVersion vv : vList) {
+            for (PageUtil.WikiVersion vv : vList) {
                 v = vv;
                 col.add(toWikiPage());
             }
@@ -570,7 +517,7 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
         protected void runCommand(EntityManager eF)
                 throws WikiSecurityException {
             getPage(eF);
-            for (WikiVersion vv : vList) {
+            for (PageUtil.WikiVersion vv : vList) {
                 v = vv;
                 getContent(eF);
                 eF.remove(pa);
@@ -609,6 +556,44 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
 
         MovePage pa = new MovePage(from, to);
         pa.runCommand();
+    }
+
+    private class RemoveWikiContent extends ECommand {
+
+        RemoveWikiContent() {
+            super(true);
+        }
+
+        private void removeEntities(EntityManager eF, Class cl) {
+            String query = "SELECT P FROM " + cl.getName() + " P";
+            Query q = eF.createQuery(query);
+            while (true) {
+                List li = q.getResultList();
+                if (li.isEmpty()) {
+                    break;
+                }
+                Object o = li.get(0);
+                eF.remove(o);
+                commit();
+            }
+        }
+
+        @Override
+        protected void runCommand(EntityManager eF)
+                throws WikiSecurityException {
+            removeEntities(eF, AttachmentEnt.class);
+            removeEntities(eF, AttachmentOneEnt.class);
+            removeEntities(eF,WikiObject.class);
+            removeEntities(eF,WikiOnePage.class);
+            removeEntities(eF,WikiPageBlob.class);            
+        }
+
+    }
+
+    @Override
+    public void clearWiki() throws ProviderException {
+        RemoveWikiContent co = new RemoveWikiContent();
+        co.runCommand();
     }
 
 }
