@@ -25,7 +25,7 @@
 	<bean id="groupProvider" class="org.apache.wiki.providers.WikiBlobGroupDatabase"
 		scope="request">
 	</bean>
-	
+
 	<bean id="attachmentProvider" class="org.apache.wiki.providers.WikiGaeAttachment"
 		scope="request">
 	</bean>
@@ -234,6 +234,17 @@
 
 	<bean id="progressManager" class="org.apache.wiki.ui.progress.ProgressManager"
 		scope="request">
+	</bean>
+
+	<bean id="aclHolder" class="org.apache.wiki.aclholder.AclHolder"
+		scope="request">
+	</bean>
+
+	<bean id="aclManager" class="org.apache.wiki.auth.acl.DefaultAclManager"
+		init-method="initializeProvider" scope="request">
+		<constructor-arg>
+			<ref bean="wikiEngine" />
+		</constructor-arg>
 	</bean>
 
 </beans>
