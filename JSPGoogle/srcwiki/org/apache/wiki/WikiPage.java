@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wiki.aclholder.IAclHolder;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
@@ -53,6 +54,8 @@ public class WikiPage implements Cloneable, Comparable {
     private String m_author = null;
     private final HashMap<String, String> m_attributes = new HashMap<String, String>();
 
+    private final IAclHolder aHolder = BeanHolder.getAclHolder();
+
     /**
      * "Summary" is a short summary of the page. It is a String.
      */
@@ -67,7 +70,7 @@ public class WikiPage implements Cloneable, Comparable {
     /** A special variable name for storing a changenote. */
     public static final String CHANGENOTE = "changenote";
 
-    private Acl m_accessList = null;
+    // private Acl m_accessList = null;
 
     private final boolean putdirect;
 
@@ -234,7 +237,8 @@ public class WikiPage implements Cloneable, Comparable {
      * @return The access control list. May return null, if there is no acl.
      */
     public Acl getAcl() {
-        return m_accessList;
+        // return m_accessList;
+        return aHolder.getAcl(this);
     }
 
     /**
@@ -249,7 +253,8 @@ public class WikiPage implements Cloneable, Comparable {
      *            The Acl to set
      */
     public void setAcl(Acl acl) {
-        m_accessList = acl;
+        // m_accessList = acl;
+        aHolder.setAct(this, acl);
     }
 
     /**
@@ -343,17 +348,14 @@ public class WikiPage implements Cloneable, Comparable {
             p.m_attributes.put(entry.getKey(), entry.getValue());
         }
 
-        if (m_accessList != null) {
-            p.m_accessList = new AclImpl();
-
-            for (Enumeration entries = m_accessList.entries(); entries
-                    .hasMoreElements();) {
-                AclEntry e = (AclEntry) entries.nextElement();
-
-                p.m_accessList.addEntry(e);
-            }
-        }
-
+        /*
+         * if (m_accessList != null) { p.m_accessList = new AclImpl();
+         * 
+         * for (Enumeration entries = m_accessList.entries(); entries
+         * .hasMoreElements();) { AclEntry e = (AclEntry) entries.nextElement();
+         * 
+         * p.m_accessList.addEntry(e); } }
+         */
         return p;
     }
 
@@ -396,6 +398,5 @@ public class WikiPage implements Cloneable, Comparable {
     public boolean isPutdirect() {
         return putdirect;
     }
-    
-    
+
 }

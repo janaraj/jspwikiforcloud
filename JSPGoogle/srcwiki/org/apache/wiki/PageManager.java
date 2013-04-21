@@ -38,6 +38,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
+import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -75,7 +76,7 @@ public class PageManager extends ModuleManager implements WikiEventListener {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The property value for setting the current page provider. Value is * *
+     * The property value for setting the current page provider. Value is * * *
      * {@value} .
      */
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
@@ -112,13 +113,13 @@ public class PageManager extends ModuleManager implements WikiEventListener {
 
     /**
      * The message key for rejecting the decision to save the page. Value is * *
-     * {@value} .
+     * * {@value} .
      */
     public static final String SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
 
     /**
      * The message key of the text to finally approve a page save. Value is * *
-     * {@value} .
+     * * {@value} .
      */
     public static final String SAVE_TASK_MESSAGE_KEY = "task.saveWikiPage";
 
@@ -816,6 +817,8 @@ public class PageManager extends ModuleManager implements WikiEventListener {
             return;
         }
 
+        AclManager aManager = BeanHolder.getAclManager();
+
         WikiSecurityEvent se = (WikiSecurityEvent) event;
         if (se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED) {
             UserProfile[] profiles = (UserProfile[]) se.getTarget();
@@ -837,8 +840,9 @@ public class PageManager extends ModuleManager implements WikiEventListener {
                     if (aclChanged) {
                         // If the Acl needed changing, change it now
                         try {
-                            m_engine.getAclManager().setPermissions(page,
-                                    page.getAcl());
+                            // m_engine.getAclManager().setPermissions(page,
+                            // page.getAcl());
+                            aManager.setPermissions(page, page.getAcl());
                         } catch (WikiSecurityException e) {
                             log.error("Could not change page ACL for page "
                                     + page.getName() + ": " + e.getMessage());

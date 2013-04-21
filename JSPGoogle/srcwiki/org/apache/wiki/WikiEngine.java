@@ -179,9 +179,6 @@ public class WikiEngine implements Serializable {
     /** Stores the base URL. */
     private String m_baseURL;
 
-    /** Stores the ACL manager. */
-    private AclManager m_aclManager = null;
-
     /** Resolves wiki actions, JSPs and special pages. */
     private CommandResolver m_commandResolver = null;
 
@@ -406,7 +403,6 @@ public class WikiEngine implements Serializable {
         // FIXME: This part of the code is getting unwieldy. We must think
         // of a better way to do the startup-sequence.
         try {
-            m_aclManager = getAclManager();
 
             // Start the Workflow manager
             m_workflowMgr = (WorkflowManager) ClassUtil
@@ -1690,45 +1686,6 @@ public class WikiEngine implements Serializable {
      */
     public RSSGenerator getRSSGenerator() {
         return m_rssGenerator;
-    }
-
-    /**
-     * Returns the AclManager employed by this WikiEngine. The AclManager is
-     * lazily initialized.
-     * <p>
-     * The AclManager implementing class may be set by the System property
-     * {@link #PROP_ACL_MANAGER_IMPL}.
-     * </p>
-     * 
-     * @since 2.3
-     * @return The current AclManager.
-     */
-    public AclManager getAclManager() {
-        if (m_aclManager == null) {
-            try {
-                String s = m_properties.getProperty(PROP_ACL_MANAGER_IMPL,
-                        DefaultAclManager.class.getName());
-                m_aclManager = (AclManager) ClassUtil.getMappedObject(s);
-                // TODO:
-                // I
-                // am
-                // not
-                // sure
-                // whether
-                // this
-                // is
-                // the
-                // right
-                // call
-                m_aclManager.initialize(this, m_properties);
-            } catch (WikiException we) {
-                log.fatal("unable to instantiate class for AclManager: "
-                        + we.getMessage());
-                throw new InternalWikiException(
-                        "Cannot instantiate AclManager, please check logs.");
-            }
-        }
-        return m_aclManager;
     }
 
     /**

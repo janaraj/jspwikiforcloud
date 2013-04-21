@@ -20,26 +20,32 @@ import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 
+/**
+ * Google App Engine environment. Maps to Google App Engin memcache
+ * 
+ * @author perseus
+ * 
+ */
 public class WikiCacheImplementation implements IWikiCache {
 
-	private final Cache cache;
+    private final Cache cache;
 
-	public WikiCacheImplementation() throws CacheException {
-		Map props = new HashMap();
-		CacheFactory cacheFactory = CacheManager.getInstance()
-				.getCacheFactory();
-		cache = cacheFactory.createCache(props);
-	}
+    public WikiCacheImplementation() throws CacheException {
+        Map props = new HashMap();
+        CacheFactory cacheFactory = CacheManager.getInstance()
+                .getCacheFactory();
+        cache = cacheFactory.createCache(props);
+    }
 
-	@Override
-	public Object getObject(String key) {
-		Object o = cache.get(key);
-		return o;
-	}
+    @Override
+    public Object getObject(String key) {
+        Object o = cache.get(key);
+        return o;
+    }
 
-	@Override
-	public void setObject(String key, Object o) {
-		cache.put(key, o);
-	}
+    @Override
+    public void setObject(String key, Object o) {
+        cache.put(key, o);
+    }
 
 }

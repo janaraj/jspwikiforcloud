@@ -26,26 +26,27 @@ import java.text.Collator;
 import java.util.Comparator;
 
 /**
- * Comparator class for sorting objects of type Principal.
- * Used for sorting arrays or collections of Principals.
+ * Comparator class for sorting objects of type Principal. Used for sorting
+ * arrays or collections of Principals.
+ * 
  * @since 2.3
  */
-public class PrincipalComparator
-    implements Comparator<Principal>, Serializable
-{
+public class PrincipalComparator implements Comparator<Principal>, Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
      * Compares two Principal objects.
-     * @param o1 the first Principal
-     * @param o2 the second Principal
+     * 
+     * @param o1
+     *            the first Principal
+     * @param o2
+     *            the second Principal
      * @return the result of the comparison
      * @see java.util.Comparator#compare(Object, Object)
      */
-    public int compare( Principal o1, Principal o2 )
-    {
+    public int compare(Principal o1, Principal o2) {
         Collator collator = Collator.getInstance();
-        return collator.compare( o1.getName(), o2.getName() );
+        return collator.compare(o1.getName(), o2.getName());
     }
 
 }

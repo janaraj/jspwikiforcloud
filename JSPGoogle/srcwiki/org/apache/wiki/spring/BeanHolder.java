@@ -27,12 +27,15 @@ import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.VariableManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.aclholder.IAclHolder;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.cache.IWikiCache;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.downup.IDownloadWiki;
@@ -261,6 +264,21 @@ public class BeanHolder {
     public static WikiAttachmentProvider getAttachmentProvider() {
         WikiAttachmentProvider m = (WikiAttachmentProvider) getObject("attachmentProvider");
         return m;
+    }
+
+    public static IAclHolder getAclHolder() {
+        IAclHolder a = (IAclHolder) getObject("aclHolder");
+        return a;
+    }
+
+    public static IWikiCache getWikiCache() {
+        IWikiCache w = (IWikiCache) getObject("wikiCache");
+        return w;
+    }
+    
+    public static AclManager getAclManager() {
+        AclManager a = (AclManager) getObject("aclManager");
+        return a;
     }
 
 }

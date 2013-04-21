@@ -20,18 +20,18 @@
  */
 package org.apache.wiki.auth.acl;
 
-import java.io.Serializable;
 import java.util.Properties;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.auth.WikiSecurityException;
 
 /**
  *  Specifies how to parse and return ACLs from wiki pages.
  *  @since 2.3
  */
-public interface AclManager extends Serializable
+public interface AclManager extends WikiProvider
 {
 
     /**
@@ -39,7 +39,7 @@ public interface AclManager extends Serializable
      * @param engine the wiki engine
      * @param props the initialization properties
      */
-    public void initialize( WikiEngine engine, Properties props );
+//    public void initialize( WikiEngine engine, Properties props );
 
     /**
      * A helper method for parsing textual AccessControlLists. The line is in
