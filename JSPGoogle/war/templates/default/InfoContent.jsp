@@ -288,7 +288,7 @@
 	<wiki:PageType type="attachment">
 		<%
 		    int MAXATTACHNAMELENGTH = 30;
-		            String progressId = c.getEngine().getProgressManager()
+		            String progressId = BeanHolder.getProgressManager()
 		                    .getNewProgressIdentifier();
 		%>
 

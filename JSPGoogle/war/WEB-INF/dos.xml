@@ -21,365 +21,49 @@
     <description>spam</description>
   </blacklist>
   
-  <blacklist> 
-    <subnet>27.159.225.51</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>41.96.60.120</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>201.160.137.213</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>177.96.109.113</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>5.46.37.120</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>77.28.240.201</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>89.44.200.154</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>82.178.244.244</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>188.143.233.177</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>188.143.232.114</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>83.102.172.100</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>188.143.233.136</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>24.64.120.194</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>178.216.48.185</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>193.186.15.53</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>195.244.34.137</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>125.64.18.18</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>119.184.214.18</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>186.101.96.195</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>41.206.62.70</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>187.78.116.110</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>213.182.138.254</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>194.126.181.47</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>5.61.34.122</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>188.143.232.115</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>89.233.216.205</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>91.236.74.121</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>127.0.0.1</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>216.99.146.218</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>173.245.6.132</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>91.232.96.26</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>94.242.237.101</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>5.152.207.7</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>114.97.121.83</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>209.73.151.86</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>204.93.60.111</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>37.59.213.209</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>46.119.127.1</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>92.50.171.22</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>24.234.3.189</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>50.117.80.66</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>186.233.92.210</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>183.89.45.199</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>188.143.232.119</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>204.93.60.12</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>109.200.29.66</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>184.82.29.169</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>201.11.209.142</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>85.114.133.118</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>31.184.238.197</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>218.94.1.72</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>2.135.237.92</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>72.167.13.19</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>183.238.33.247</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>85.232.244.35</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>77.79.189.111</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>202.152.156.210</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>5.9.23.167</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>110.77.208.83</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>216.144.252.110</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>198.245.63.133</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>223.255.227.30</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>94.199.51.8</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>194.247.30.126</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>178.208.91.196</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>89.38.207.234</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>122.72.80.101</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>78.6.228.32</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>216.224.169.123</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>112.111.54.210</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>74.117.61.88</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>198.98.113.47</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>74.208.66.177</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>72.32.68.101</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>92.114.86.81</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>176.9.78.117</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>61.241.223.56</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>209.51.142.178</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>54.235.78.122</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>77.237.73.3</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>147.31.182.137</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>66.85.172.250</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>118.99.66.64</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>204.93.60.75</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>80.68.95.137</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>65.254.40.154</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>65.60.19.242</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>8.29.131.248</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>202.232.236.66</subnet> 
-    <description>spam</description> 
-  </blacklist>
-<blacklist> 
-    <subnet>198.144.116.50</subnet> 
-    <description>spam</description> 
-  </blacklist>
+  <blacklist>
+    <subnet>93.104.214.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>79.143.186.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>91.236.74.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>91.236.75.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>91.188.124.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>91.236.75.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>91.121.107.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>37.187.142.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+  
+    <blacklist>
+    <subnet>37.187.89.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
   
 </blacklistentries>

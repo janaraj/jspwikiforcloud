@@ -13,7 +13,7 @@
     WikiContext c = WikiContext.findContext(pageContext);
     String returnPage = request.getServletPath() + "?"
             + request.getQueryString();
-    String progressId = c.getEngine().getProgressManager()
+    String progressId = BeanHolder.getProgressManager()
             .getNewProgressIdentifier();
     String downloadWikiAction = BeanHolder.getTemplateManager()
             .findJSP(pageContext, c.getTemplate(),
@@ -24,25 +24,10 @@
 	<h3>
 		<fmt:message key="downloadwiki.download.header" />
 	</h3>
-	<form action="<%=downloadWikiAction%>" class="wikiform" id="uploadform"
-		method="post" enctype="multipart/form-data"
-		accept-charset="<wiki:ContentEncoding/>"
-		onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');">
 
-		<p>
-			<fmt:message key="downloadwiki.download.info" />
-		</p>
-
-		<input type="submit" name="upload" id="upload"
-			value="<fmt:message key='downloadwiki.download.submit'/>" /> <input
-			type="hidden" name="action" value="upload" />
-		<div id="progressbar">
-			<div class="ajaxprogress"></div>
-		</div>
-		<input type="hidden"
-					name="returnPage" value="<%=returnPage%>" />
-		<br>
-	</form>
+   <fmt:message key="downloadwiki.download.info" />
+   <p>
+   <a class="wikiform" href="/DownloadWiki?nextpage=DownloadWiki.jsp?action=downloadwiki" accesskey="" title="Download">Download</a>    	
 
 	<wiki:ActionResult />
 

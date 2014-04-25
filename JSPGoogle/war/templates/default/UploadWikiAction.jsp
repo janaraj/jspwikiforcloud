@@ -19,7 +19,7 @@
 <%!Log log = LogFactory.getLog("UploadWikiAction.jsp");%>
 <%
     ServletContext context = pageContext.getServletContext();
-    String returnPage = request.getParameter("xreturnPage");
+    String returnPage = request.getParameter("returnPage");
     //  String filePath = context.getInitParameter("file-upload");    
     //  String contentType = request.getContentType();
 

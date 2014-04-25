@@ -14,7 +14,7 @@
             + request.getQueryString();
     WikiEngine wiki = BeanHolder.getWikiEngine();
     WikiContext c = WikiContext.findContext(pageContext);
-    String progressId = c.getEngine().getProgressManager()
+    String progressId = BeanHolder.getProgressManager()
             .getNewProgressIdentifier();
     String uploadWikiAction = BeanHolder.getTemplateManager().findJSP(
             pageContext, c.getTemplate(), "UploadWikiAction.jsp");
@@ -50,7 +50,10 @@
 					value="<wiki:Variable var="pagename"/>" /> <input type="submit"
 					name="upload" id="upload"
 					value="<fmt:message key='attach.add.submit'/>" /> <input
-					type="hidden" name="action" value="upload" /> <input type="hidden"
+					type="hidden" name="action" value="upload" /> 
+					<input type="hidden" 
+					name="progressId" value="<%=progressId%>" />
+					<input type="hidden" 
 					name="returnPage" value="<%=returnPage%>" />
 					<div id="progressbar">
 						<div class="ajaxprogress"></div>
