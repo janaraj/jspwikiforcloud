@@ -13,14 +13,10 @@
 package org.apache.wiki.providers;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
@@ -40,7 +36,6 @@ import org.apache.wiki.providers.jpa.AttachmentOneEnt;
 import org.apache.wiki.providers.jpa.WikiObject;
 import org.apache.wiki.providers.jpa.WikiOnePage;
 import org.apache.wiki.providers.jpa.WikiPageBlob;
-import org.apache.wiki.util.Serializer;
 
 public class WikiPageBlobProvider extends AbstractWikiProvider implements
         WikiPageProvider {
@@ -51,7 +46,6 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
     // TODO: should be taken as a configuration parameter
     /** Time out to recognize new version of the page or continuation. */
     private static final int getContinuationEditTimeout = 15 * 1000;
-
 
     private Collection<PageUtil.WikiVersion> toVersions(WikiPageBlob u)
             throws WikiSecurityException {
@@ -142,6 +136,9 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
         protected void getContent(EntityManager eF) {
             long l = w.getKey().getId();
             pa = ECommand.getSingleObject(eF, "FindPageContent", l, v.version);
+            if (pa == null)
+                log.error("Cannot find page version: " + pageName + " v:"
+                        + v.version);
         }
 
         protected void saveContent(EntityManager eF, String content) {
@@ -463,7 +460,11 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
                 return;
             }
             getContent(eF);
-            content = pa.getContent();
+            if (pa == null)
+                content = "<empty>";
+            else
+                content = pa.getContent();
+
         }
 
     }
@@ -583,9 +584,9 @@ public class WikiPageBlobProvider extends AbstractWikiProvider implements
                 throws WikiSecurityException {
             removeEntities(eF, AttachmentEnt.class);
             removeEntities(eF, AttachmentOneEnt.class);
-            removeEntities(eF,WikiObject.class);
-            removeEntities(eF,WikiOnePage.class);
-            removeEntities(eF,WikiPageBlob.class);            
+            removeEntities(eF, WikiObject.class);
+            removeEntities(eF, WikiOnePage.class);
+            removeEntities(eF, WikiPageBlob.class);
         }
 
     }
