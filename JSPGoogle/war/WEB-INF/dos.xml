@@ -65,5 +65,46 @@
     <subnet>37.187.89.0/24</subnet>
     <description>spam</description>
   </blacklist>   
+
+    <blacklist>
+    <subnet>188.143.232.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
   
+
+  <blacklist>
+    <subnet>195.40.6.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+  
+    <blacklist>
+    <subnet>92.255.27.0/24</subnet>
+    <description>spam</description>
+  </blacklist>         
+  
+    <blacklist>
+    <subnet>176.10.104.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
+  
+  <blacklist>
+    <subnet>93.184.3.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
+
+  <blacklist>
+    <subnet>91.207.9.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
+
+  <blacklist>
+    <subnet>173.203.198.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
+
+  <blacklist>
+    <subnet>95.130.13.0/24</subnet>
+    <description>spam</description>
+  </blacklist>   
+                
 </blacklistentries>

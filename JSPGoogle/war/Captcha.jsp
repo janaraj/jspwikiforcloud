@@ -10,7 +10,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
-<%!
+<%! 
     Log log = LogFactory.getLog("JSPWiki");
 %>
 <%
