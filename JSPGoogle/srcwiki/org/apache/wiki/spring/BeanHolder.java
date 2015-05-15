@@ -35,7 +35,6 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
-import org.apache.wiki.cache.IWikiCache;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.downup.IDownloadWiki;
@@ -269,11 +268,6 @@ public class BeanHolder {
     public static IAclHolder getAclHolder() {
         IAclHolder a = (IAclHolder) getObject("aclHolder");
         return a;
-    }
-
-    public static IWikiCache getWikiCache() {
-        IWikiCache w = (IWikiCache) getObject("wikiCache");
-        return w;
     }
     
     public static AclManager getAclManager() {

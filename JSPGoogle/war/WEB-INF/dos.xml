@@ -105,6 +105,27 @@
   <blacklist>
     <subnet>95.130.13.0/24</subnet>
     <description>spam</description>
-  </blacklist>   
-                
+  </blacklist>
+
+  <blacklist>
+    <subnet>181.88.177.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>91.229.20.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>169.53.14.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+  <blacklist>
+    <subnet>218.161.34.0/24</subnet>
+    <description>spam</description>
+  </blacklist>
+
+
 </blacklistentries>

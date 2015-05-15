@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="srcprovider"/>
 	<classpathentry excluding="org/apache/commons/logging/" kind="src" path="srcstub"/>
 	<classpathentry kind="src" path="srcwiki"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_75"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
@@ -50,6 +50,100 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.struts-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LOG"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/appengine-local-runtime-shared.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/jsp/repackaged-appengine-tomcat-juli-6.0.29.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/jsp/repackaged-appengine-ant-launcher-1.7.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/jsp/repackaged-appengine-jasper-el-6.0.29.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/jsp/repackaged-appengine-jasper-6.0.29.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/jsp/repackaged-appengine-ant-1.7.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/servlet-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/el-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/shared/jsp-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/appengine-tools-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/geronimo-jpa_2.0_spec-1.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/datanucleus-core-3.1.3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/jta-1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/jdo-api-3.0.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/datanucleus-api-jpa-3.1.3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/datanucleus-api-jdo-3.1.3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/asm-4.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/opt/user/datanucleus/v2/datanucleus-appengine-2.1.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/lib/user/appengine-api-1.0-sdk-1.9.20.jar" sourcepath="/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/src/user/appengine-api-1.0-sdk-1.9.20-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/opt/eclipse-luna/plugins/com.google.appengine.eclipse.sdkbundle_1.9.20/appengine-java-sdk-1.9.20/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
